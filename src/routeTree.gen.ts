@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedHelpdeskRouteImport } from './routes/_authenticated/helpdesk'
+import { Route as AuthenticatedResidentsRouteImport } from './routes/_authenticated/residents'
 import { Route as AuthenticatedSecurityRouteImport } from './routes/_authenticated/security'
 import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated/staff'
 
@@ -41,6 +42,11 @@ const AuthenticatedHelpdeskRoute = AuthenticatedHelpdeskRouteImport.update({
   path: '/helpdesk',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedResidentsRoute = AuthenticatedResidentsRouteImport.update({
+  id: '/residents',
+  path: '/residents',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSecurityRoute = AuthenticatedSecurityRouteImport.update({
   id: '/security',
   path: '/security',
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/helpdesk': typeof AuthenticatedHelpdeskRoute
+  '/residents': typeof AuthenticatedResidentsRoute
   '/security': typeof AuthenticatedSecurityRoute
   '/staff': typeof AuthenticatedStaffRoute
 }
@@ -65,6 +72,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/helpdesk': typeof AuthenticatedHelpdeskRoute
+  '/residents': typeof AuthenticatedResidentsRoute
   '/security': typeof AuthenticatedSecurityRoute
   '/staff': typeof AuthenticatedStaffRoute
 }
@@ -75,14 +83,29 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/helpdesk': typeof AuthenticatedHelpdeskRoute
+  '/_authenticated/residents': typeof AuthenticatedResidentsRoute
   '/_authenticated/security': typeof AuthenticatedSecurityRoute
   '/_authenticated/staff': typeof AuthenticatedStaffRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/dashboard' | '/helpdesk' | '/security' | '/staff'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/helpdesk'
+    | '/residents'
+    | '/security'
+    | '/staff'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/dashboard' | '/helpdesk' | '/security' | '/staff'
+  to:
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/helpdesk'
+    | '/residents'
+    | '/security'
+    | '/staff'
   id:
     | '__root__'
     | '/'
@@ -90,6 +113,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/dashboard'
     | '/_authenticated/helpdesk'
+    | '/_authenticated/residents'
     | '/_authenticated/security'
     | '/_authenticated/staff'
   fileRoutesById: FileRoutesById
@@ -137,6 +161,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHelpdeskRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/residents': {
+      id: '/_authenticated/residents'
+      path: '/residents'
+      fullPath: '/residents'
+      preLoaderRoute: typeof AuthenticatedResidentsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/security': {
       id: '/_authenticated/security'
       path: '/security'
@@ -157,6 +188,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedHelpdeskRoute: typeof AuthenticatedHelpdeskRoute
+  AuthenticatedResidentsRoute: typeof AuthenticatedResidentsRoute
   AuthenticatedSecurityRoute: typeof AuthenticatedSecurityRoute
   AuthenticatedStaffRoute: typeof AuthenticatedStaffRoute
 }
@@ -164,6 +196,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedHelpdeskRoute: AuthenticatedHelpdeskRoute,
+  AuthenticatedResidentsRoute: AuthenticatedResidentsRoute,
   AuthenticatedSecurityRoute: AuthenticatedSecurityRoute,
   AuthenticatedStaffRoute: AuthenticatedStaffRoute,
 }
