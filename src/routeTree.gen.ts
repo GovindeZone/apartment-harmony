@@ -13,6 +13,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedHelpdeskRouteImport } from './routes/_authenticated/helpdesk'
+import { Route as AuthenticatedResidentsRouteImport } from './routes/_authenticated/residents'
+import { Route as AuthenticatedSecurityRouteImport } from './routes/_authenticated/security'
 import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated/staff'
 
 const IndexRoute = IndexRouteImport.update({
@@ -34,6 +37,21 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedHelpdeskRoute = AuthenticatedHelpdeskRouteImport.update({
+  id: '/helpdesk',
+  path: '/helpdesk',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedResidentsRoute = AuthenticatedResidentsRouteImport.update({
+  id: '/residents',
+  path: '/residents',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSecurityRoute = AuthenticatedSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedStaffRoute = AuthenticatedStaffRouteImport.update({
   id: '/staff',
   path: '/staff',
@@ -44,12 +62,18 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/helpdesk': typeof AuthenticatedHelpdeskRoute
+  '/residents': typeof AuthenticatedResidentsRoute
+  '/security': typeof AuthenticatedSecurityRoute
   '/staff': typeof AuthenticatedStaffRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/helpdesk': typeof AuthenticatedHelpdeskRoute
+  '/residents': typeof AuthenticatedResidentsRoute
+  '/security': typeof AuthenticatedSecurityRoute
   '/staff': typeof AuthenticatedStaffRoute
 }
 export interface FileRoutesById {
@@ -58,19 +82,39 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/helpdesk': typeof AuthenticatedHelpdeskRoute
+  '/_authenticated/residents': typeof AuthenticatedResidentsRoute
+  '/_authenticated/security': typeof AuthenticatedSecurityRoute
   '/_authenticated/staff': typeof AuthenticatedStaffRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/dashboard' | '/staff'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/helpdesk'
+    | '/residents'
+    | '/security'
+    | '/staff'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/dashboard' | '/staff'
+  to:
+    | '/'
+    | '/auth'
+    | '/dashboard'
+    | '/helpdesk'
+    | '/residents'
+    | '/security'
+    | '/staff'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/dashboard'
+    | '/_authenticated/helpdesk'
+    | '/_authenticated/residents'
+    | '/_authenticated/security'
     | '/_authenticated/staff'
   fileRoutesById: FileRoutesById
 }
@@ -110,6 +154,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/helpdesk': {
+      id: '/_authenticated/helpdesk'
+      path: '/helpdesk'
+      fullPath: '/helpdesk'
+      preLoaderRoute: typeof AuthenticatedHelpdeskRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/residents': {
+      id: '/_authenticated/residents'
+      path: '/residents'
+      fullPath: '/residents'
+      preLoaderRoute: typeof AuthenticatedResidentsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/security': {
+      id: '/_authenticated/security'
+      path: '/security'
+      fullPath: '/security'
+      preLoaderRoute: typeof AuthenticatedSecurityRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/staff': {
       id: '/_authenticated/staff'
       path: '/staff'
@@ -122,11 +187,17 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedHelpdeskRoute: typeof AuthenticatedHelpdeskRoute
+  AuthenticatedResidentsRoute: typeof AuthenticatedResidentsRoute
+  AuthenticatedSecurityRoute: typeof AuthenticatedSecurityRoute
   AuthenticatedStaffRoute: typeof AuthenticatedStaffRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedHelpdeskRoute: AuthenticatedHelpdeskRoute,
+  AuthenticatedResidentsRoute: AuthenticatedResidentsRoute,
+  AuthenticatedSecurityRoute: AuthenticatedSecurityRoute,
   AuthenticatedStaffRoute: AuthenticatedStaffRoute,
 }
 
