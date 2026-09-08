@@ -72,8 +72,8 @@ const fmtTime = (v: string | null) =>
 
 function toCsv(rows: Row[]) {
   if (!rows.length) return "";
-  const cols = Object.keys(rows[0]);
-  const esc = (v: string | number) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const cols = Object.keys(rows[0] ?? {});
+  const esc = (v: string | number | undefined) => `"${String(v ?? "").replace(/"/g, '""')}"`;
   return [cols.join(","), ...rows.map((r) => cols.map((c) => esc(r[c])).join(","))].join("\n");
 }
 
@@ -200,7 +200,10 @@ function ReportsPage() {
 
   function exportCsv() {
     const csv = toCsv(rows);
-    if (!csv) return toast.error("Nothing to export for this range.");
+    if (!csv) {
+      toast.error("Nothing to export for this range.");
+      return;
+    }
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -211,7 +214,7 @@ function ReportsPage() {
     toast.success("Report exported.");
   }
 
-  const columns = rows.length ? Object.keys(rows[0]) : [];
+  const columns = Object.keys(rows[0] ?? {});
 
   return (
     <AppShell
