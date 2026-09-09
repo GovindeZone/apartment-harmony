@@ -248,3 +248,16 @@ export function familyQuery(residentId: string) {
       ),
   });
 }
+
+export function staffDocsQuery(staffId: string) {
+  return queryOptions({
+    queryKey: ["staff_documents", staffId],
+    queryFn: () =>
+      unwrap<StaffDocument[]>(
+        table("staff_documents")
+          .select("*")
+          .eq("staff_id", staffId)
+          .order("created_at", { ascending: false }),
+      ),
+  });
+}
