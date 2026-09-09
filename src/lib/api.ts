@@ -17,14 +17,17 @@ export type Resident = {
   flat_id: string | null;
   full_name: string;
   resident_type: string;
+  occupant_type: string;
   phone: string | null;
   whatsapp: string | null;
   email: string | null;
   move_in_date: string | null;
   move_out_date: string | null;
   status: string;
+  notes?: string | null;
   flats?: Flat | null;
 };
+
 
 export type FamilyMember = {
   id: string;
@@ -57,10 +60,36 @@ export type Staff = {
   whatsapp: string | null;
   shift: string;
   join_date: string | null;
+  relieving_date: string | null;
   monthly_salary: number;
   status: string;
   address: string | null;
+  aadhaar_number: string | null;
+  reference_name: string | null;
+  reference_phone: string | null;
+  emergency_contact: string | null;
 };
+
+export type StaffDocument = {
+  id: string;
+  staff_id: string;
+  doc_type: string;
+  file_name: string;
+  file_path: string;
+  created_at: string;
+};
+
+export const DEPARTMENTS = [
+  "Admin",
+  "Security",
+  "Electrician",
+  "Plumber",
+  "STP Technician",
+  "Gardener",
+] as const;
+
+export const OCCUPANT_TYPES = ["family", "bachelors"] as const;
+
 
 export type Attendance = {
   id: string;
