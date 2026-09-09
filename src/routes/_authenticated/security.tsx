@@ -23,13 +23,13 @@ import { gateEntriesQuery } from "@/lib/api";
 export const Route = createFileRoute("/_authenticated/security")({
   head: () => ({
     meta: [
-      { title: "Security Gates — Ashvale Residency Ops" },
+      { title: "Security Gates — Indus Anantya Apartment" },
       {
         name: "description",
         content:
           "Record and track resident, vendor, visitor and vehicle movement across the IN, Side and OUT gates.",
       },
-      { property: "og:title", content: "Security Gates — Ashvale Residency Ops" },
+      { property: "og:title", content: "Security Gates — Indus Anantya Apartment" },
       {
         property: "og:description",
         content: "Fast gate entry and exit logging for the community security team.",

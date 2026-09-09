@@ -17,14 +17,17 @@ export type Resident = {
   flat_id: string | null;
   full_name: string;
   resident_type: string;
+  occupant_type: string;
   phone: string | null;
   whatsapp: string | null;
   email: string | null;
   move_in_date: string | null;
   move_out_date: string | null;
   status: string;
+  notes?: string | null;
   flats?: Flat | null;
 };
+
 
 export type FamilyMember = {
   id: string;
@@ -57,10 +60,36 @@ export type Staff = {
   whatsapp: string | null;
   shift: string;
   join_date: string | null;
+  relieving_date: string | null;
   monthly_salary: number;
   status: string;
   address: string | null;
+  aadhaar_number: string | null;
+  reference_name: string | null;
+  reference_phone: string | null;
+  emergency_contact: string | null;
 };
+
+export type StaffDocument = {
+  id: string;
+  staff_id: string;
+  doc_type: string;
+  file_name: string;
+  file_path: string;
+  created_at: string;
+};
+
+export const DEPARTMENTS = [
+  "Admin",
+  "Security",
+  "Electrician",
+  "Plumber",
+  "STP Technician",
+  "Gardener",
+] as const;
+
+export const OCCUPANT_TYPES = ["family", "bachelors"] as const;
+
 
 export type Attendance = {
   id: string;
@@ -216,6 +245,19 @@ export function familyQuery(residentId: string) {
     queryFn: () =>
       unwrap<FamilyMember[]>(
         table("family_members").select("*").eq("resident_id", residentId).order("full_name"),
+      ),
+  });
+}
+
+export function staffDocsQuery(staffId: string) {
+  return queryOptions({
+    queryKey: ["staff_documents", staffId],
+    queryFn: () =>
+      unwrap<StaffDocument[]>(
+        table("staff_documents")
+          .select("*")
+          .eq("staff_id", staffId)
+          .order("created_at", { ascending: false }),
       ),
   });
 }

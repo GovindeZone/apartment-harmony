@@ -13,16 +13,16 @@ export const Route = createFileRoute("/auth")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Team Sign In — Ashvale Residency Ops" },
+      { title: "Team Sign In — Indus Anantya Apartment" },
       {
         name: "description",
         content:
-          "Secure sign in for facility managers, admins, security and help desk staff of Ashvale Residency.",
+          "Secure sign in for facility managers, admins, security and help desk staff of Indus Anantya Apartment.",
       },
-      { property: "og:title", content: "Team Sign In — Ashvale Residency Ops" },
+      { property: "og:title", content: "Team Sign In — Indus Anantya Apartment" },
       {
         property: "og:description",
-        content: "Secure sign in for the Ashvale Residency facility operations team.",
+        content: "Secure sign in for the Indus Anantya Apartment facility operations team.",
       },
     ],
   }),
@@ -74,7 +74,7 @@ function AuthPage() {
           <span className="grid size-11 place-items-center rounded-xl bg-primary/12 text-primary">
             <Building2 className="size-6" />
           </span>
-          <span className="text-base font-semibold">Ashvale Residency</span>
+          <span className="text-base font-semibold">Indus Anantya Apartment</span>
         </div>
         <div className="max-w-md">
           <h2 className="text-3xl font-semibold leading-tight tracking-tight text-foreground">

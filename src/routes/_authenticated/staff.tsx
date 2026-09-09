@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, Upload, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { SectionCard, StatusBadge, EmptyState } from "@/components/ui-bits";
@@ -13,7 +13,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -33,17 +32,24 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
-import { attendanceQuery, salariesQuery, staffQuery, type Staff } from "@/lib/api";
+import {
+  attendanceQuery,
+  salariesQuery,
+  staffQuery,
+  staffDocsQuery,
+  DEPARTMENTS,
+  type Staff,
+} from "@/lib/api";
 
 export const Route = createFileRoute("/_authenticated/staff")({
   head: () => ({
     meta: [
-      { title: "Staff — Ashvale Residency Ops" },
+      { title: "Staff — Indus Anantya Apartment" },
       {
         name: "description",
         content: "Staff records, daily attendance and monthly salary reports for the community team.",
       },
-      { property: "og:title", content: "Staff — Ashvale Residency Ops" },
+      { property: "og:title", content: "Staff — Indus Anantya Apartment" },
       { property: "og:description", content: "Staff records, attendance and salary reports." },
     ],
   }),
@@ -51,6 +57,7 @@ export const Route = createFileRoute("/_authenticated/staff")({
 });
 
 const money = (n: number) => `₹${Number(n).toLocaleString("en-IN")}`;
+const SHIFTS = ["Morning", "Evening", "Night"];
 
 function StaffPage() {
   const qc = useQueryClient();
@@ -61,11 +68,14 @@ function StaffPage() {
   const [q, setQ] = useState("");
   const [dept, setDept] = useState("all");
   const [status, setStatus] = useState("all");
-  const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState<Staff | null | undefined>(undefined); // undefined = closed, null = new
   const [selected, setSelected] = useState<Staff | null>(null);
 
   const departments = useMemo(
-    () => Array.from(new Set((staff.data ?? []).map((s) => s.department))).sort(),
+    () =>
+      Array.from(
+        new Set([...DEPARTMENTS, ...(staff.data ?? []).map((s) => s.department)]),
+      ).sort(),
     [staff.data],
   );
 
@@ -80,14 +90,30 @@ function StaffPage() {
   });
 
   const save = useMutation({
-    mutationFn: async (payload: Record<string, unknown>) => {
-      const { error } = await supabase.from("staff").insert(payload as never);
+    mutationFn: async ({ id, payload }: { id?: string; payload: Record<string, unknown> }) => {
+      const { error } = id
+        ? await supabase.from("staff").update(payload as never).eq("id", id)
+        : await supabase.from("staff").insert(payload as never);
       if (error) throw new Error(error.message);
     },
     onSuccess: () => {
-      toast.success("Staff member added");
-      setOpen(false);
+      toast.success("Staff record saved");
+      setEditing(undefined);
       qc.invalidateQueries({ queryKey: ["staff"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const removeStaff = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("staff").delete().eq("id", id);
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => {
+      toast.success("Staff member deleted");
+      qc.invalidateQueries({ queryKey: ["staff"] });
+      qc.invalidateQueries({ queryKey: ["attendance"] });
+      qc.invalidateQueries({ queryKey: ["salaries"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -109,22 +135,29 @@ function StaffPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const f = new FormData(e.currentTarget);
-    save.mutate({
-      employee_code: String(f.get("employee_code")),
-      full_name: String(f.get("full_name")),
-      designation: String(f.get("designation")),
-      department: String(f.get("department")),
-      phone: String(f.get("phone") || ""),
-      whatsapp: String(f.get("whatsapp") || ""),
-      shift: String(f.get("shift")),
-      monthly_salary: Number(f.get("monthly_salary") || 0),
-      join_date: String(f.get("join_date") || "") || null,
-      status: "active",
-    });
-  }
+  const editAttendance = useMutation({
+    mutationFn: async ({ id, patch }: { id: string; patch: Record<string, unknown> }) => {
+      const { error } = await supabase.from("staff_attendance").update(patch as never).eq("id", id);
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => {
+      toast.success("Attendance record updated");
+      qc.invalidateQueries({ queryKey: ["attendance"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const removeAttendance = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("staff_attendance").delete().eq("id", id);
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => {
+      toast.success("Attendance record deleted");
+      qc.invalidateQueries({ queryKey: ["attendance"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
 
   const todayStr = new Date().toISOString().slice(0, 10);
   const todayAtt = new Map(
@@ -138,46 +171,9 @@ function StaffPage() {
       title="Staff"
       description="Personal records, attendance and salary"
       actions={
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button className="gap-2">
-              <Plus className="size-4" /> Add staff
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
-            <DialogHeader>
-              <DialogTitle>Add staff member</DialogTitle>
-            </DialogHeader>
-            <form className="grid gap-4 sm:grid-cols-2" onSubmit={onSubmit}>
-              <Field name="employee_code" label="Employee code" required />
-              <Field name="full_name" label="Full name" required />
-              <Field name="designation" label="Designation" required />
-              <Field name="department" label="Department" required />
-              <Field name="phone" label="Phone" />
-              <Field name="whatsapp" label="WhatsApp" />
-              <div className="space-y-2">
-                <Label htmlFor="shift">Shift</Label>
-                <select
-                  id="shift"
-                  name="shift"
-                  className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
-                  defaultValue="Morning"
-                >
-                  <option>Morning</option>
-                  <option>Evening</option>
-                  <option>Night</option>
-                </select>
-              </div>
-              <Field name="monthly_salary" label="Monthly salary" type="number" />
-              <Field name="join_date" label="Join date" type="date" />
-              <DialogFooter className="sm:col-span-2">
-                <Button type="submit" disabled={save.isPending}>
-                  {save.isPending ? "Saving…" : "Save staff member"}
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
+        <Button className="gap-2" onClick={() => setEditing(null)}>
+          <Plus className="size-4" /> Add staff
+        </Button>
       }
     >
       <Tabs defaultValue="records">
@@ -239,7 +235,7 @@ function StaffPage() {
                       <TableHead>Phone</TableHead>
                       <TableHead>Salary</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead />
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -255,9 +251,24 @@ function StaffPage() {
                         <TableCell>
                           <StatusBadge value={s.status} />
                         </TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="whitespace-nowrap text-right">
                           <Button variant="ghost" size="sm" onClick={() => setSelected(s)}>
                             View
+                          </Button>
+                          <Button variant="ghost" size="icon" aria-label="Edit" onClick={() => setEditing(s)}>
+                            <Pencil className="size-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label="Delete"
+                            className="text-destructive hover:text-destructive"
+                            onClick={() => {
+                              if (confirm(`Delete ${s.full_name}? This also removes their attendance and salary records.`))
+                                removeStaff.mutate(s.id);
+                            }}
+                          >
+                            <Trash2 className="size-4" />
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -269,7 +280,7 @@ function StaffPage() {
           </SectionCard>
         </TabsContent>
 
-        <TabsContent value="attendance" className="mt-4">
+        <TabsContent value="attendance" className="mt-4 space-y-4">
           <SectionCard title="Today's attendance" description={todayStr}>
             <div className="overflow-x-auto">
               <Table>
@@ -300,6 +311,63 @@ function StaffPage() {
                             {v}
                           </Button>
                         ))}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </SectionCard>
+
+          <SectionCard title="Attendance history" description="Edit or remove any past record">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Staff</TableHead>
+                    <TableHead>Department</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>In</TableHead>
+                    <TableHead>Out</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {(attendance.data ?? []).map((a) => (
+                    <TableRow key={a.id}>
+                      <TableCell className="whitespace-nowrap">{a.attendance_date}</TableCell>
+                      <TableCell className="font-medium">{a.staff?.full_name ?? "—"}</TableCell>
+                      <TableCell>{a.staff?.department ?? "—"}</TableCell>
+                      <TableCell>
+                        <select
+                          value={a.status}
+                          onChange={(e) =>
+                            editAttendance.mutate({ id: a.id, patch: { status: e.target.value } })
+                          }
+                          className="h-9 rounded-md border border-input bg-background px-2 text-sm capitalize"
+                        >
+                          {["present", "absent", "leave"].map((v) => (
+                            <option key={v} value={v}>
+                              {v}
+                            </option>
+                          ))}
+                        </select>
+                      </TableCell>
+                      <TableCell>{a.check_in ?? "—"}</TableCell>
+                      <TableCell>{a.check_out ?? "—"}</TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          aria-label="Delete attendance"
+                          className="text-destructive hover:text-destructive"
+                          onClick={() => {
+                            if (confirm("Delete this attendance record?")) removeAttendance.mutate(a.id);
+                          }}
+                        >
+                          <Trash2 className="size-4" />
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -345,28 +413,302 @@ function StaffPage() {
         </TabsContent>
       </Tabs>
 
+      <StaffFormDialog
+        open={editing !== undefined}
+        record={editing ?? null}
+        pending={save.isPending}
+        onClose={() => setEditing(undefined)}
+        onSave={(payload) => save.mutate({ id: editing?.id, payload })}
+      />
+
       <Dialog open={!!selected} onOpenChange={(v) => !v && setSelected(null)}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-xl">
           <DialogHeader>
             <DialogTitle>{selected?.full_name}</DialogTitle>
           </DialogHeader>
           {selected ? (
-            <dl className="grid grid-cols-2 gap-3 text-sm">
-              <Info label="Employee code" value={selected.employee_code} />
-              <Info label="Designation" value={selected.designation} />
-              <Info label="Department" value={selected.department} />
-              <Info label="Shift" value={selected.shift} />
-              <Info label="Phone" value={selected.phone ?? "—"} />
-              <Info label="WhatsApp" value={selected.whatsapp ?? "—"} />
-              <Info label="Joined" value={selected.join_date ?? "—"} />
-              <Info label="Salary" value={money(selected.monthly_salary)} />
-              <Info label="Address" value={selected.address ?? "—"} />
-              <Info label="Status" value={selected.status} />
-            </dl>
+            <div className="space-y-6">
+              <dl className="grid grid-cols-2 gap-3 text-sm">
+                <Info label="Employee code" value={selected.employee_code} />
+                <Info label="Designation" value={selected.designation} />
+                <Info label="Department" value={selected.department} />
+                <Info label="Shift" value={selected.shift} />
+                <Info label="Phone" value={selected.phone ?? "—"} />
+                <Info label="WhatsApp" value={selected.whatsapp ?? "—"} />
+                <Info label="Joining date" value={selected.join_date ?? "—"} />
+                <Info label="Relieving date" value={selected.relieving_date ?? "—"} />
+                <Info label="Aadhaar number" value={selected.aadhaar_number ?? "—"} />
+                <Info label="Salary" value={money(selected.monthly_salary)} />
+                <Info label="Reference name" value={selected.reference_name ?? "—"} />
+                <Info label="Reference phone" value={selected.reference_phone ?? "—"} />
+                <Info label="Emergency contact" value={selected.emergency_contact ?? "—"} />
+                <Info label="Status" value={selected.status} />
+                <div className="col-span-2">
+                  <Info label="Address" value={selected.address ?? "—"} />
+                </div>
+              </dl>
+              <StaffDocuments staffId={selected.id} />
+            </div>
           ) : null}
         </DialogContent>
       </Dialog>
     </AppShell>
+  );
+}
+
+function StaffDocuments({ staffId }: { staffId: string }) {
+  const qc = useQueryClient();
+  const docs = useQuery(staffDocsQuery(staffId));
+  const [docType, setDocType] = useState("aadhaar");
+  const [busy, setBusy] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  async function upload(file: File) {
+    setBusy(true);
+    try {
+      const path = `${staffId}/${Date.now()}-${file.name.replace(/[^\w.\-]/g, "_")}`;
+      const up = await supabase.storage.from("staff-documents").upload(path, file);
+      if (up.error) throw new Error(up.error.message);
+      const { error } = await supabase
+        .from("staff_documents")
+        .insert({ staff_id: staffId, doc_type: docType, file_name: file.name, file_path: path } as never);
+      if (error) throw new Error(error.message);
+      toast.success("Document uploaded");
+      qc.invalidateQueries({ queryKey: ["staff_documents", staffId] });
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  }
+
+  async function open(path: string) {
+    const { data, error } = await supabase.storage.from("staff-documents").createSignedUrl(path, 120);
+    if (error || !data) return toast.error(error?.message ?? "Could not open document");
+    window.open(data.signedUrl, "_blank", "noopener");
+  }
+
+  async function remove(id: string, path: string) {
+    if (!confirm("Delete this document?")) return;
+    await supabase.storage.from("staff-documents").remove([path]);
+    const { error } = await supabase.from("staff_documents").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Document deleted");
+    qc.invalidateQueries({ queryKey: ["staff_documents", staffId] });
+  }
+
+  return (
+    <div className="space-y-3">
+      <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        Documents
+      </h3>
+      <div className="flex flex-wrap items-end gap-2">
+        <div className="space-y-2">
+          <Label htmlFor="doc_type">Document type</Label>
+          <select
+            id="doc_type"
+            value={docType}
+            onChange={(e) => setDocType(e.target.value)}
+            className="h-9 rounded-md border border-input bg-background px-3 text-sm capitalize"
+          >
+            <option value="aadhaar">Aadhaar</option>
+            <option value="resume">Resume</option>
+            <option value="other">Other (memo, certificate)</option>
+          </select>
+        </div>
+        <input
+          ref={fileRef}
+          type="file"
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) void upload(file);
+          }}
+        />
+        <Button
+          type="button"
+          variant="outline"
+          className="gap-2"
+          disabled={busy}
+          onClick={() => fileRef.current?.click()}
+        >
+          <Upload className="size-4" /> {busy ? "Uploading…" : "Upload file"}
+        </Button>
+      </div>
+      {(docs.data ?? []).length === 0 ? (
+        <p className="text-sm text-muted-foreground">No documents uploaded yet.</p>
+      ) : (
+        <ul className="space-y-1 text-sm">
+          {(docs.data ?? []).map((d) => (
+            <li key={d.id} className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2">
+              <button
+                type="button"
+                onClick={() => void open(d.file_path)}
+                className="flex min-w-0 items-center gap-2 text-left hover:underline"
+              >
+                <FileText className="size-4 shrink-0 text-muted-foreground" />
+                <span className="truncate font-medium">{d.file_name}</span>
+                <span className="shrink-0 text-xs capitalize text-muted-foreground">· {d.doc_type}</span>
+              </button>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Delete document"
+                className="text-destructive hover:text-destructive"
+                onClick={() => void remove(d.id, d.file_path)}
+              >
+                <Trash2 className="size-4" />
+              </Button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+function StaffFormDialog({
+  open,
+  record,
+  pending,
+  onClose,
+  onSave,
+}: {
+  open: boolean;
+  record: Staff | null;
+  pending: boolean;
+  onClose: () => void;
+  onSave: (payload: Record<string, unknown>) => void;
+}) {
+  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const f = new FormData(e.currentTarget);
+    const str = (k: string) => String(f.get(k) ?? "").trim();
+    onSave({
+      employee_code: str("employee_code") || `EMP-${Date.now().toString().slice(-6)}`,
+      full_name: str("full_name"),
+      designation: str("designation") || str("department"),
+      department: str("department"),
+      phone: str("phone"),
+      whatsapp: str("whatsapp") || str("phone"),
+      shift: str("shift"),
+      monthly_salary: Number(f.get("monthly_salary") || 0),
+      join_date: str("join_date") || null,
+      relieving_date: str("relieving_date") || null,
+      aadhaar_number: str("aadhaar_number"),
+      address: str("address"),
+      reference_name: str("reference_name"),
+      reference_phone: str("reference_phone"),
+      emergency_contact: str("emergency_contact"),
+      status: str("status") || "active",
+    });
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>{record ? `Edit ${record.full_name}` : "Add staff member"}</DialogTitle>
+        </DialogHeader>
+        <form className="grid gap-4 sm:grid-cols-2" onSubmit={onSubmit}>
+          <Field name="full_name" label="Full name" required defaultValue={record?.full_name} />
+          <Field name="phone" label="Phone number" required defaultValue={record?.phone ?? ""} />
+          <div className="space-y-2">
+            <Label htmlFor="department">
+              Department <span className="text-destructive">*</span>
+            </Label>
+            <select
+              id="department"
+              name="department"
+              required
+              defaultValue={record?.department ?? ""}
+              className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+            >
+              <option value="" disabled>
+                Select department
+              </option>
+              {DEPARTMENTS.map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+            </select>
+          </div>
+          <Field name="join_date" label="Joining date" type="date" required defaultValue={record?.join_date ?? ""} />
+          <Field
+            name="aadhaar_number"
+            label="Aadhaar number"
+            required
+            defaultValue={record?.aadhaar_number ?? ""}
+          />
+          <Field name="relieving_date" label="Relieving date" type="date" defaultValue={record?.relieving_date ?? ""} />
+          <div className="sm:col-span-2">
+            <Field name="address" label="Address" required defaultValue={record?.address ?? ""} />
+          </div>
+          <Field
+            name="reference_name"
+            label="Reference name"
+            required
+            defaultValue={record?.reference_name ?? ""}
+          />
+          <Field
+            name="reference_phone"
+            label="Reference phone number"
+            required
+            defaultValue={record?.reference_phone ?? ""}
+          />
+          <Field
+            name="emergency_contact"
+            label="Emergency contact"
+            required
+            defaultValue={record?.emergency_contact ?? ""}
+          />
+          <Field name="employee_code" label="Employee code" defaultValue={record?.employee_code ?? ""} />
+          <Field name="designation" label="Designation" defaultValue={record?.designation ?? ""} />
+          <Field name="whatsapp" label="WhatsApp" defaultValue={record?.whatsapp ?? ""} />
+          <div className="space-y-2">
+            <Label htmlFor="shift">Shift</Label>
+            <select
+              id="shift"
+              name="shift"
+              className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+              defaultValue={record?.shift ?? "Morning"}
+            >
+              {SHIFTS.map((s) => (
+                <option key={s}>{s}</option>
+              ))}
+            </select>
+          </div>
+          <Field
+            name="monthly_salary"
+            label="Monthly salary"
+            type="number"
+            defaultValue={record ? String(record.monthly_salary) : ""}
+          />
+          <div className="space-y-2">
+            <Label htmlFor="status">Status</Label>
+            <select
+              id="status"
+              name="status"
+              className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+              defaultValue={record?.status ?? "active"}
+            >
+              <option value="active">active</option>
+              <option value="inactive">inactive</option>
+            </select>
+          </div>
+          <DialogFooter className="sm:col-span-2">
+            <Button type="button" variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={pending}>
+              {pending ? "Saving…" : "Save staff member"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -384,16 +726,20 @@ function Field({
   label,
   type = "text",
   required,
+  defaultValue,
 }: {
   name: string;
   label: string;
   type?: string;
   required?: boolean;
+  defaultValue?: string;
 }) {
   return (
     <div className="space-y-2">
-      <Label htmlFor={name}>{label}</Label>
-      <Input id={name} name={name} type={type} required={required} />
+      <Label htmlFor={name}>
+        {label} {required ? <span className="text-destructive">*</span> : null}
+      </Label>
+      <Input id={name} name={name} type={type} required={required} defaultValue={defaultValue} />
     </div>
   );
 }

@@ -27,13 +27,13 @@ import {
 export const Route = createFileRoute("/_authenticated/residents")({
   head: () => ({
     meta: [
-      { title: "Residents — Ashvale Residency Ops" },
+      { title: "Residents — Indus Anantya Apartment" },
       {
         name: "description",
         content:
           "Resident and flat directory with owner/tenant filters, family members, vehicles and contact details.",
       },
-      { property: "og:title", content: "Residents — Ashvale Residency Ops" },
+      { property: "og:title", content: "Residents — Indus Anantya Apartment" },
       {
         property: "og:description",
         content: "Searchable resident, flat and vehicle directory for the community.",

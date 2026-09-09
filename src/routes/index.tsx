@@ -6,13 +6,13 @@ export const Route = createFileRoute("/")({
   },
   head: () => ({
     meta: [
-      { title: "Ashvale Residency — Apartment Operations" },
+      { title: "Indus Anantya Apartment — Apartment Operations" },
       {
         name: "description",
         content:
           "Apartment admin system for staff, security gates, residents, help desk and reports.",
       },
-      { property: "og:title", content: "Ashvale Residency — Apartment Operations" },
+      { property: "og:title", content: "Indus Anantya Apartment — Apartment Operations" },
       {
         property: "og:description",
         content: "Apartment admin system for staff, gates, residents and help desk.",
