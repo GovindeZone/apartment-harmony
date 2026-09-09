@@ -286,6 +286,7 @@ export type Database = {
           move_in_date: string | null
           move_out_date: string | null
           notes: string | null
+          occupant_type: string
           phone: string | null
           resident_type: string
           status: string
@@ -301,6 +302,7 @@ export type Database = {
           move_in_date?: string | null
           move_out_date?: string | null
           notes?: string | null
+          occupant_type?: string
           phone?: string | null
           resident_type?: string
           status?: string
@@ -316,6 +318,7 @@ export type Database = {
           move_in_date?: string | null
           move_out_date?: string | null
           notes?: string | null
+          occupant_type?: string
           phone?: string | null
           resident_type?: string
           status?: string
@@ -333,46 +336,61 @@ export type Database = {
       }
       staff: {
         Row: {
+          aadhaar_number: string | null
           address: string | null
           created_at: string
           department: string
           designation: string
+          emergency_contact: string | null
           employee_code: string
           full_name: string
           id: string
           join_date: string | null
           monthly_salary: number
           phone: string | null
+          reference_name: string | null
+          reference_phone: string | null
+          relieving_date: string | null
           shift: string
           status: string
           whatsapp: string | null
         }
         Insert: {
+          aadhaar_number?: string | null
           address?: string | null
           created_at?: string
           department: string
           designation: string
+          emergency_contact?: string | null
           employee_code: string
           full_name: string
           id?: string
           join_date?: string | null
           monthly_salary?: number
           phone?: string | null
+          reference_name?: string | null
+          reference_phone?: string | null
+          relieving_date?: string | null
           shift?: string
           status?: string
           whatsapp?: string | null
         }
         Update: {
+          aadhaar_number?: string | null
           address?: string | null
           created_at?: string
           department?: string
           designation?: string
+          emergency_contact?: string | null
           employee_code?: string
           full_name?: string
           id?: string
           join_date?: string | null
           monthly_salary?: number
           phone?: string | null
+          reference_name?: string | null
+          reference_phone?: string | null
+          relieving_date?: string | null
           shift?: string
           status?: string
           whatsapp?: string | null
@@ -413,6 +431,41 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "staff_attendance_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "staff"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      staff_documents: {
+        Row: {
+          created_at: string
+          doc_type: string
+          file_name: string
+          file_path: string
+          id: string
+          staff_id: string
+        }
+        Insert: {
+          created_at?: string
+          doc_type?: string
+          file_name: string
+          file_path: string
+          id?: string
+          staff_id: string
+        }
+        Update: {
+          created_at?: string
+          doc_type?: string
+          file_name?: string
+          file_path?: string
+          id?: string
+          staff_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_documents_staff_id_fkey"
             columns: ["staff_id"]
             isOneToOne: false
             referencedRelation: "staff"
