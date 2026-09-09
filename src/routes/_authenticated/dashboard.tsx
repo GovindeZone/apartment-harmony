@@ -37,12 +37,12 @@ import {
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
-      { title: "Dashboard — Ashvale Residency Ops" },
+      { title: "Dashboard — Indus Anantya Apartment" },
       {
         name: "description",
         content: "Daily snapshot of staff attendance, gate activity, visitors and flat occupancy.",
       },
-      { property: "og:title", content: "Dashboard — Ashvale Residency Ops" },
+      { property: "og:title", content: "Dashboard — Indus Anantya Apartment" },
       {
         property: "og:description",
         content: "Daily snapshot of staff, gates, visitors and occupancy.",

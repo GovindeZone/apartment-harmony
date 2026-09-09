@@ -36,13 +36,13 @@ import {
 export const Route = createFileRoute("/_authenticated/reports")({
   head: () => ({
     meta: [
-      { title: "Reports — Ashvale Residency Ops" },
+      { title: "Reports — Indus Anantya Apartment" },
       {
         name: "description",
         content:
           "Build and export attendance, salary, gate movement, guest, resident, vehicle, occupancy and help desk reports with date filtering.",
       },
-      { property: "og:title", content: "Reports — Ashvale Residency Ops" },
+      { property: "og:title", content: "Reports — Indus Anantya Apartment" },
       {
         property: "og:description",
         content: "Date-filtered community reports with one-click export and scheduling.",

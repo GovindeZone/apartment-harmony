@@ -38,12 +38,12 @@ import { attendanceQuery, salariesQuery, staffQuery, type Staff } from "@/lib/ap
 export const Route = createFileRoute("/_authenticated/staff")({
   head: () => ({
     meta: [
-      { title: "Staff — Ashvale Residency Ops" },
+      { title: "Staff — Indus Anantya Apartment" },
       {
         name: "description",
         content: "Staff records, daily attendance and monthly salary reports for the community team.",
       },
-      { property: "og:title", content: "Staff — Ashvale Residency Ops" },
+      { property: "og:title", content: "Staff — Indus Anantya Apartment" },
       { property: "og:description", content: "Staff records, attendance and salary reports." },
     ],
   }),

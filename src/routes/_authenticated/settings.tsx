@@ -15,13 +15,13 @@ import { flatsQuery, settingsQuery, type Settings } from "@/lib/api";
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
     meta: [
-      { title: "Settings — Ashvale Residency Ops" },
+      { title: "Settings — Indus Anantya Apartment" },
       {
         name: "description",
         content:
           "Configure apartment details, blocks, zones, gates, staff shifts, WhatsApp numbers and notification preferences.",
       },
-      { property: "og:title", content: "Settings — Ashvale Residency Ops" },
+      { property: "og:title", content: "Settings — Indus Anantya Apartment" },
       {
         property: "og:description",
         content: "Community configuration: blocks, zones, gates, shifts and WhatsApp setup.",

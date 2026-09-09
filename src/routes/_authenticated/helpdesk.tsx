@@ -23,13 +23,13 @@ import { helpdeskQuery, residentsQuery, settingsQuery, type Resident } from "@/l
 export const Route = createFileRoute("/_authenticated/helpdesk")({
   head: () => ({
     meta: [
-      { title: "Help Desk — Ashvale Residency Ops" },
+      { title: "Help Desk — Indus Anantya Apartment" },
       {
         name: "description",
         content:
           "Contact residents and the facility manager over WhatsApp and keep a record of every community conversation.",
       },
-      { property: "og:title", content: "Help Desk — Ashvale Residency Ops" },
+      { property: "og:title", content: "Help Desk — Indus Anantya Apartment" },
       {
         property: "og:description",
         content: "WhatsApp-first resident communication with a full conversation log.",
