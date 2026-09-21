@@ -20,6 +20,7 @@ import { Route as AuthenticatedSecurityRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated/staff'
 import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authenticated/attendance'
+import { Route as AuthenticatedContractorRouteImport } from './routes/_authenticated/contractor'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin-settings'
 import { Route as AuthenticatedAdminUserRightsRouteImport } from './routes/_authenticated/admin-user-rights'
@@ -74,6 +75,9 @@ const AuthenticatedStaffRoute = AuthenticatedStaffRouteImport.update({
 const AuthenticatedAttendanceRoute = AuthenticatedAttendanceRouteImport.update({
   id: '/attendance', path: '/attendance', getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedContractorRoute = AuthenticatedContractorRouteImport.update({
+  id: '/contractor', path: '/contractor', getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin', path: '/admin', getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
@@ -95,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRoute
   '/staff': typeof AuthenticatedStaffRoute
   '/attendance': typeof AuthenticatedAttendanceRoute
+  '/contractor': typeof AuthenticatedContractorRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/user-rights': typeof AuthenticatedAdminUserRightsRoute
@@ -127,6 +132,7 @@ export interface FileRoutesById {
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/staff': typeof AuthenticatedStaffRoute
   '/_authenticated/attendance': typeof AuthenticatedAttendanceRoute
+  '/_authenticated/contractor': typeof AuthenticatedContractorRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/user-rights': typeof AuthenticatedAdminUserRightsRoute
@@ -144,6 +150,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/staff'
     | '/attendance'
+    | '/contractor'
     | '/admin'
     | '/admin/settings'
     | '/admin/user-rights'
@@ -175,6 +182,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings'
     | '/_authenticated/staff'
     | '/_authenticated/attendance'
+    | '/_authenticated/contractor'
     | '/_authenticated/admin'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/user-rights'
@@ -253,6 +261,7 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/staff': { id: '/_authenticated/staff'; path: '/staff'; fullPath: '/staff'; preLoaderRoute: typeof AuthenticatedStaffRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
     '/_authenticated/attendance': { id: '/_authenticated/attendance'; path: '/attendance'; fullPath: '/attendance'; preLoaderRoute: typeof AuthenticatedAttendanceRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
+    '/_authenticated/contractor': { id: '/_authenticated/contractor'; path: '/contractor'; fullPath: '/contractor'; preLoaderRoute: typeof AuthenticatedContractorRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
     '/_authenticated/admin': { id: '/_authenticated/admin'; path: '/admin'; fullPath: '/admin'; preLoaderRoute: typeof AuthenticatedAdminRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
     '/_authenticated/admin/settings': { id: '/_authenticated/admin/settings'; path: '/admin/settings'; fullPath: '/admin/settings'; preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
     '/_authenticated/admin/user-rights': { id: '/_authenticated/admin/user-rights'; path: '/admin/user-rights'; fullPath: '/admin/user-rights'; preLoaderRoute: typeof AuthenticatedAdminUserRightsRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
@@ -268,6 +277,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedStaffRoute: typeof AuthenticatedStaffRoute
   AuthenticatedAttendanceRoute: typeof AuthenticatedAttendanceRoute
+  AuthenticatedContractorRoute: typeof AuthenticatedContractorRoute
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminUserRightsRoute: typeof AuthenticatedAdminUserRightsRoute
@@ -282,6 +292,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedStaffRoute: AuthenticatedStaffRoute,
   AuthenticatedAttendanceRoute: AuthenticatedAttendanceRoute,
+  AuthenticatedContractorRoute: AuthenticatedContractorRoute,
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminUserRightsRoute: AuthenticatedAdminUserRightsRoute,
