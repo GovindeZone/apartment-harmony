@@ -293,3 +293,87 @@ export function staffDocsQuery(staffId: string) {
       ),
   });
 }
+
+
+export type OfficialRecord = {
+  id: string;
+  document_name: string;
+  document_description: string | null;
+  additional_remarks: string | null;
+  document_type: "Confidential" | "Semi-Confidential" | "Normal";
+  document_path: string | null;
+  document_file_name: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type RepositoryMember = {
+  id: string;
+  flat_id: string;
+  resident_id: string;
+  family_member_id: string | null;
+  member_name: string;
+  flat_no: string;
+  phone: string | null;
+  email: string | null;
+};
+
+export type McRecord = {
+  id: string;
+  period_from: string;
+  period_to: string;
+  flat_id: string;
+  resident_id: string;
+  family_member_id: string | null;
+  designation: string;
+  primary_portfolio: string | null;
+  secondary_portfolio: string | null;
+  phone: string | null;
+  email: string | null;
+  member_name: string;
+  flat_no: string;
+};
+
+export type EcRecord = {
+  id: string;
+  period_from: string;
+  period_to: string;
+  flat_id: string;
+  resident_id: string;
+  family_member_id: string | null;
+  designation: string;
+  general_body_approved_date: string | null;
+  phone: string | null;
+  email: string | null;
+  member_name: string;
+  flat_no: string;
+};
+
+
+export const officialRecordsQuery = queryOptions({
+  queryKey: ["official_records"],
+  queryFn: () =>
+    unwrap<OfficialRecord[]>(
+      table("official_records").select("*").order("created_at", { ascending: false }),
+    ),
+});
+
+export const mcRepositoryQuery = queryOptions({
+  queryKey: ["mc_repository"],
+  queryFn: () =>
+    unwrap<McRecord[]>(
+      table("mc_repository")
+        .select("*, flats(flat_no), residents(full_name, phone, email), family_members(full_name, phone)")
+        .order("period_from", { ascending: false }),
+    ),
+});
+
+export const ecRepositoryQuery = queryOptions({
+  queryKey: ["ec_repository"],
+  queryFn: () =>
+    unwrap<EcRecord[]>(
+      table("ec_repository")
+        .select("*, flats(flat_no), residents(full_name, phone, email), family_members(full_name, phone)")
+        .order("period_from", { ascending: false }),
+    ),
+});
