@@ -338,6 +338,143 @@ export type Database = {
         }
         Relationships: []
       }
+      official_records: {
+        Row: {
+          id: string
+          document_name: string
+          document_description: string | null
+          additional_remarks: string | null
+          document_type: string
+          document_path: string | null
+          document_file_name: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          document_name: string
+          document_description?: string | null
+          additional_remarks?: string | null
+          document_type?: string
+          document_path?: string | null
+          document_file_name?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          document_name?: string
+          document_description?: string | null
+          additional_remarks?: string | null
+          document_type?: string
+          document_path?: string | null
+          document_file_name?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      mc_repository: {
+        Row: {
+          id: string
+          period_from: string
+          period_to: string
+          flat_id: string
+          resident_id: string
+          family_member_id: string | null
+          designation: string
+          primary_portfolio: string | null
+          secondary_portfolio: string | null
+          phone: string | null
+          email: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          period_from: string
+          period_to: string
+          flat_id: string
+          resident_id: string
+          family_member_id?: string | null
+          designation: string
+          primary_portfolio?: string | null
+          secondary_portfolio?: string | null
+          phone?: string | null
+          email?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          period_from?: string
+          period_to?: string
+          flat_id?: string
+          resident_id?: string
+          family_member_id?: string | null
+          designation?: string
+          primary_portfolio?: string | null
+          secondary_portfolio?: string | null
+          phone?: string | null
+          email?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          { foreignKeyName: "mc_repository_flat_id_fkey"; columns: ["flat_id"]; isOneToOne: false; referencedRelation: "flats"; referencedColumns: ["id"] },
+          { foreignKeyName: "mc_repository_resident_id_fkey"; columns: ["resident_id"]; isOneToOne: false; referencedRelation: "residents"; referencedColumns: ["id"] },
+          { foreignKeyName: "mc_repository_family_member_id_fkey"; columns: ["family_member_id"]; isOneToOne: false; referencedRelation: "family_members"; referencedColumns: ["id"] },
+        ]
+      }
+      ec_repository: {
+        Row: {
+          id: string
+          period_from: string
+          period_to: string
+          flat_id: string
+          resident_id: string
+          family_member_id: string | null
+          designation: string
+          general_body_approved_date: string | null
+          phone: string | null
+          email: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          period_from: string
+          period_to: string
+          flat_id: string
+          resident_id: string
+          family_member_id?: string | null
+          designation: string
+          general_body_approved_date?: string | null
+          phone?: string | null
+          email?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          period_from?: string
+          period_to?: string
+          flat_id?: string
+          resident_id?: string
+          family_member_id?: string | null
+          designation?: string
+          general_body_approved_date?: string | null
+          phone?: string | null
+          email?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          { foreignKeyName: "ec_repository_flat_id_fkey"; columns: ["flat_id"]; isOneToOne: false; referencedRelation: "flats"; referencedColumns: ["id"] },
+          { foreignKeyName: "ec_repository_resident_id_fkey"; columns: ["resident_id"]; isOneToOne: false; referencedRelation: "residents"; referencedColumns: ["id"] },
+          { foreignKeyName: "ec_repository_family_member_id_fkey"; columns: ["family_member_id"]; isOneToOne: false; referencedRelation: "family_members"; referencedColumns: ["id"] },
+        ]
+      }
       residents: {
         Row: {
           created_at: string
