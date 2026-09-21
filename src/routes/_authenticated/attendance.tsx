@@ -333,7 +333,6 @@ function AttendancePage() {
                   <th className="px-4 py-3">Staff</th>
                   <th className="px-4 py-3">Department</th>
                   <th className="px-4 py-3">Current status</th>
-                  <th className="px-4 py-3">Shift</th>
                   <th className="px-4 py-3 text-right">Shift &amp; mark attendance</th>
                 </tr>
               </thead>
@@ -350,7 +349,6 @@ function AttendancePage() {
                       </td>
                       <td className="px-4 py-3">{member.department}</td>
                       <td className="px-4 py-3"><StatusBadge value={row ? statusLabel(row.status) : "Not marked"} /></td>
-                      <td className="px-4 py-3">{row?.shift ?? member.shift ?? "—"}</td>
                       <td className="px-4 py-3 text-right">
                         <select
                           value={selectedShift}
