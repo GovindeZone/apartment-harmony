@@ -95,6 +95,20 @@ function ReportsPage() {
   const [to, setTo] = useState(today);
   const [frequency, setFrequency] = useState("weekly");
   const [recipient, setRecipient] = useState("");
+  const [canViewSalaryReport, setCanViewSalaryReport] = useState(false);
+
+  useMemo(() => {
+    let active = true;
+    void (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: admin } = await supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle();
+      if (admin) { if (active) setCanViewSalaryReport(true); return; }
+      const { data: permission } = await supabase.from("user_tab_permissions").select("can_view").eq("user_id", user.id).eq("tab_key", "salary_report").maybeSingle();
+      if (active) setCanViewSalaryReport(!!permission?.can_view);
+    })();
+    return () => { active = false; };
+  }, []);
 
   const attendance = useQuery(attendanceQuery);
   const salaries = useQuery(salariesQuery);
@@ -232,8 +246,10 @@ function ReportsPage() {
     }
   }, [report, from, to, attendance.data, salaries.data, gate.data, residents.data, vehicles.data, flats.data, helpdesk.data]);
 
-  const label = REPORTS.find((r) => r.value === report)?.label ?? "Report";
+  const availableReports = REPORTS.filter((item) => item.value !== "salary" || canViewSalaryReport);
+  const label = availableReports.find((r) => r.value === report)?.label ?? "Report";
   const salaryReport = report === "salary";
+  if (salaryReport && !canViewSalaryReport) return null;
 
   function exportCsv() {
     const csv = toCsv(rows);
@@ -284,7 +300,7 @@ function ReportsPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {REPORTS.map((r) => (
+                  {availableReports.map((r) => (
                     <SelectItem key={r.value} value={r.value}>
                       {r.label}
                     </SelectItem>
