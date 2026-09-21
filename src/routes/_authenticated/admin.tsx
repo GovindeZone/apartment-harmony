@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Building2, FileSpreadsheet, Home, Shield, Upload, Users } from "lucide-react";
@@ -13,7 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { flatsQuery, residentsQuery, staffQuery } from "@/lib/api";
 import * as XLSX from "xlsx";
 
-export const Route=createFileRoute("/_authenticated/admin")({component:AdminPage});
+export const Route=createFileRoute("/_authenticated/admin")({component:AdminPage , beforeLoad: async () => { const { data:{user} } = await supabase.auth.getUser(); if (!user) throw redirect({ to: "/auth" }); const { data } = await supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role","admin").maybeSingle(); if (!data) throw redirect({ to: "/dashboard" }); } });
 function normalize(row:Record<string,unknown>){const o:Record<string,unknown>={};for(const [k,v] of Object.entries(row))o[k.trim().toLowerCase().replace(/[\s-]+/g,"_")]=typeof v==="string"?v.trim():v;return o}
 function AdminPage(){
  const qc=useQueryClient();const flats=useQuery(flatsQuery),residents=useQuery(residentsQuery),staff=useQuery(staffQuery);
