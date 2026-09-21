@@ -350,6 +350,14 @@ export type EcRecord = {
 };
 
 
+export const familyMembersQuery = queryOptions({
+  queryKey: ["family_members_all"],
+  queryFn: () =>
+    unwrap<FamilyMember[]>(
+      table("family_members").select("*").order("full_name"),
+    ),
+});
+
 export const officialRecordsQuery = queryOptions({
   queryKey: ["official_records"],
   queryFn: () =>
@@ -360,20 +368,36 @@ export const officialRecordsQuery = queryOptions({
 
 export const mcRepositoryQuery = queryOptions({
   queryKey: ["mc_repository"],
-  queryFn: () =>
-    unwrap<McRecord[]>(
-      table("mc_repository")
-        .select("*, flats(flat_no), residents(full_name, phone, email), family_members(full_name, phone)")
-        .order("period_from", { ascending: false }),
-    ),
+  queryFn: async () => {
+    const { data, error } = await table("mc_repository")
+      .select("*, flats(flat_no), residents(full_name, phone, email), family_members(full_name, phone)")
+      .order("period_from", { ascending: false });
+    if (error) throw new Error(error.message);
+    return (data ?? []).map((r: any) => ({
+      ...r,
+      member_name: r.family_member_id ? (r.family_members?.full_name ?? "—") : (r.residents?.full_name ?? "—"),
+      flat_no: r.flats?.flat_no ?? "—",
+      phone: r.phone ?? (r.family_member_id ? r.family_members?.phone : r.residents?.phone) ?? null,
+      email: r.email ?? r.residents?.email ?? null,
+    })) as McRecord[];
+  },
 });
+
+
 
 export const ecRepositoryQuery = queryOptions({
   queryKey: ["ec_repository"],
-  queryFn: () =>
-    unwrap<EcRecord[]>(
-      table("ec_repository")
-        .select("*, flats(flat_no), residents(full_name, phone, email), family_members(full_name, phone)")
-        .order("period_from", { ascending: false }),
-    ),
+  queryFn: async () => {
+    const { data, error } = await table("ec_repository")
+      .select("*, flats(flat_no), residents(full_name, phone, email), family_members(full_name, phone)")
+      .order("period_from", { ascending: false });
+    if (error) throw new Error(error.message);
+    return (data ?? []).map((r: any) => ({
+      ...r,
+      member_name: r.family_member_id ? (r.family_members?.full_name ?? "—") : (r.residents?.full_name ?? "—"),
+      flat_no: r.flats?.flat_no ?? "—",
+      phone: r.phone ?? (r.family_member_id ? r.family_members?.phone : r.residents?.phone) ?? null,
+      email: r.email ?? r.residents?.email ?? null,
+    })) as EcRecord[];
+  },
 });
