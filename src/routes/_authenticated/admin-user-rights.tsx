@@ -7,7 +7,7 @@ import { SectionCard } from "@/components/ui-bits";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 export const Route=createFileRoute("/_authenticated/admin/user-rights")({component:UserRightsPage , beforeLoad: async () => { const { data:{user} } = await supabase.auth.getUser(); if (!user) throw redirect({ to: "/auth" }); const { data } = await supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role","admin").maybeSingle(); if (!data) throw redirect({ to: "/dashboard" }); } });
-const TABS=[["dashboard","Dashboard"],["staff","Staff"],["security","Security"],["helpdesk","Help Desk"],["residents","Residents"],["reports","Reports"],["admin","Admin"]] as const;
+const TABS=[["dashboard","Dashboard"],["staff","Staff"],["attendance","Attendance"],["security","Security"],["helpdesk","Help Desk"],["residents","Residents"],["reports","Reports"],["admin","Admin"]] as const;
 type Profile={id:string;full_name:string|null;email:string|null};type Perm={user_id:string;tab_key:string;can_view:boolean;can_create:boolean;can_edit:boolean;can_delete:boolean};
 function UserRightsPage(){const [users,setUsers]=useState<Profile[]>([]),[selected,setSelected]=useState(""),[perms,setPerms]=useState<Record<string,Perm>>({}),[me,setMe]=useState("");
  useEffect(()=>{(async()=>{const {data:{user}}=await supabase.auth.getUser();if(!user)return;setMe(user.id);const {data,error}=await supabase.from("profiles").select("id,full_name,email").order("created_at");if(error)toast.error(error.message);setUsers(data??[]);setSelected(user.id)})()},[]);
