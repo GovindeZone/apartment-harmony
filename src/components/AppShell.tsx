@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useRouter } from "@tanstack/react-router";
-import { LayoutDashboard, Users, ShieldCheck, MessageSquare, Home, FileBarChart, Settings as SettingsIcon, Menu, LogOut, Building2, Shield, CalendarCheck } from "lucide-react";
+import { LayoutDashboard, Users, ShieldCheck, MessageSquare, Home, FileBarChart, Settings as SettingsIcon, Menu, LogOut, Building2, Shield, CalendarCheck, FileText, UsersRound, Vote } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -14,6 +14,9 @@ const NAV = [
   { to: "/security", label: "Security", icon: ShieldCheck },
   { to: "/helpdesk", label: "Help Desk", icon: MessageSquare },
   { to: "/residents", label: "Residents", icon: Home },
+  { to: "/official-records", label: "Official Records", icon: FileText },
+  { to: "/mc-repository", label: "MC Repository", icon: UsersRound },
+  { to: "/ec-repository", label: "EC Repository", icon: Vote },
   { to: "/reports", label: "Reports", icon: FileBarChart },
 ] as const;
 
