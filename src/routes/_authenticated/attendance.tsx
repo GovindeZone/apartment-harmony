@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CalendarDays, CheckCircle2, Clock3, Search, Users, XCircle } from "lucide-react";
+import { CalendarDays, CheckCircle2, Clock3, Search, Users, XCircle, Gift, Timer, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { EmptyState, SectionCard, StatCard, StatusBadge } from "@/components/ui-bits";
@@ -50,6 +50,9 @@ const STATUS_OPTIONS = [
   { value: "half_day_pm_absent", label: "1/2 PM Absent" },
   { value: "leave", label: "Leave" },
   { value: "week_off", label: "Week Off" },
+  { value: "festival_holiday", label: "Festival Holiday" },
+  { value: "overtime", label: "Overtime" },
+  { value: "comp_off", label: "Comp-Off" },
 ] as const;
 
 const statusLabel = (value: string) =>
@@ -181,6 +184,9 @@ function AttendancePage() {
       absent: rows.filter((row) => row.status === "absent").length,
       leave: rows.filter((row) => row.status === "leave").length,
       weekOff: rows.filter((row) => row.status === "week_off").length,
+      festivalHoliday: rows.filter((row) => row.status === "festival_holiday").length,
+      overtime: rows.filter((row) => row.status === "overtime").length,
+      compOff: rows.filter((row) => row.status === "comp_off").length,
     };
   }, [selectedDateMap]);
 
@@ -203,6 +209,9 @@ function AttendancePage() {
           absent: rows.filter((row) => row.status === "absent").length,
           leave: rows.filter((row) => row.status === "leave").length,
           weekOff: rows.filter((row) => row.status === "week_off").length,
+          festivalHoliday: rows.filter((row) => row.status === "festival_holiday").length,
+          overtime: rows.filter((row) => row.status === "overtime").length,
+          compOff: rows.filter((row) => row.status === "comp_off").length,
           notMarked: Math.max(ids.size - rows.length, 0),
         };
       });
@@ -220,6 +229,9 @@ function AttendancePage() {
         absent: memberRows.filter((row) => row.status === "absent").length,
         leave: memberRows.filter((row) => row.status === "leave").length,
         weekOff: memberRows.filter((row) => row.status === "week_off").length,
+        festivalHoliday: memberRows.filter((row) => row.status === "festival_holiday").length,
+        overtime: memberRows.filter((row) => row.status === "overtime").length,
+        compOff: memberRows.filter((row) => row.status === "comp_off").length,
         recorded: memberRows.length,
         presentEquivalent: memberRows.reduce((sum, row) => sum + attendanceUnit(row.status), 0),
       };
@@ -352,12 +364,12 @@ function AttendancePage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead><tr className="border-b border-border text-left text-muted-foreground">
-              <th className="px-4 py-3">Department</th><th className="px-4 py-3 text-right">Present</th><th className="px-4 py-3 text-right">1/2 AM</th><th className="px-4 py-3 text-right">1/2 PM</th><th className="px-4 py-3 text-right">Absent</th><th className="px-4 py-3 text-right">Leave</th><th className="px-4 py-3 text-right">Week Off</th><th className="px-4 py-3 text-right">Not marked</th><th className="px-4 py-3 text-right">Staff</th>
+              <th className="px-4 py-3">Department</th><th className="px-4 py-3 text-right">Present</th><th className="px-4 py-3 text-right">1/2 AM</th><th className="px-4 py-3 text-right">1/2 PM</th><th className="px-4 py-3 text-right">Absent</th><th className="px-4 py-3 text-right">Leave</th><th className="px-4 py-3 text-right">Week Off</th><th className="px-4 py-3 text-right">Festival</th><th className="px-4 py-3 text-right">Overtime</th><th className="px-4 py-3 text-right">Comp-Off</th><th className="px-4 py-3 text-right">Not marked</th><th className="px-4 py-3 text-right">Staff</th>
             </tr></thead>
             <tbody>
               {departmentSummary.map((row) => (
                 <tr key={row.department} className="border-b border-border last:border-0">
-                  <td className="px-4 py-3 font-medium">{row.department}</td><td className="px-4 py-3 text-right">{row.present}</td><td className="px-4 py-3 text-right">{row.halfAM}</td><td className="px-4 py-3 text-right">{row.halfPM}</td><td className="px-4 py-3 text-right">{row.absent}</td><td className="px-4 py-3 text-right">{row.leave}</td><td className="px-4 py-3 text-right">{row.weekOff}</td><td className="px-4 py-3 text-right">{row.notMarked}</td><td className="px-4 py-3 text-right">{row.total}</td>
+                  <td className="px-4 py-3 font-medium">{row.department}</td><td className="px-4 py-3 text-right">{row.present}</td><td className="px-4 py-3 text-right">{row.halfAM}</td><td className="px-4 py-3 text-right">{row.halfPM}</td><td className="px-4 py-3 text-right">{row.absent}</td><td className="px-4 py-3 text-right">{row.leave}</td><td className="px-4 py-3 text-right">{row.weekOff}</td><td className="px-4 py-3 text-right">{row.festivalHoliday}</td><td className="px-4 py-3 text-right">{row.overtime}</td><td className="px-4 py-3 text-right">{row.compOff}</td><td className="px-4 py-3 text-right">{row.notMarked}</td><td className="px-4 py-3 text-right">{row.total}</td>
                 </tr>
               ))}
             </tbody>
@@ -369,13 +381,13 @@ function AttendancePage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead><tr className="border-b border-border text-left text-muted-foreground">
-              <th className="px-4 py-3">Staff</th><th className="px-4 py-3">Department</th><th className="px-4 py-3 text-right">Present</th><th className="px-4 py-3 text-right">1/2 AM</th><th className="px-4 py-3 text-right">1/2 PM</th><th className="px-4 py-3 text-right">Absent</th><th className="px-4 py-3 text-right">Leave</th><th className="px-4 py-3 text-right">Week Off</th><th className="px-4 py-3 text-right">Present equivalent</th>
+              <th className="px-4 py-3">Staff</th><th className="px-4 py-3">Department</th><th className="px-4 py-3 text-right">Present</th><th className="px-4 py-3 text-right">1/2 AM</th><th className="px-4 py-3 text-right">1/2 PM</th><th className="px-4 py-3 text-right">Absent</th><th className="px-4 py-3 text-right">Leave</th><th className="px-4 py-3 text-right">Week Off</th><th className="px-4 py-3 text-right">Festival</th><th className="px-4 py-3 text-right">Overtime</th><th className="px-4 py-3 text-right">Comp-Off</th><th className="px-4 py-3 text-right">Present equivalent</th>
             </tr></thead>
             <tbody>
               {monthlySummary.map((row) => (
                 <tr key={row.staff.id} className="border-b border-border last:border-0">
                   <td className="px-4 py-3 font-medium">{row.staff.full_name}<div className="text-xs text-muted-foreground">{row.staff.employee_code}</div></td>
-                  <td className="px-4 py-3">{row.staff.department}</td><td className="px-4 py-3 text-right">{row.present}</td><td className="px-4 py-3 text-right">{row.halfAM}</td><td className="px-4 py-3 text-right">{row.halfPM}</td><td className="px-4 py-3 text-right">{row.absent}</td><td className="px-4 py-3 text-right">{row.leave}</td><td className="px-4 py-3 text-right">{row.weekOff}</td><td className="px-4 py-3 text-right font-semibold">{row.presentEquivalent.toFixed(1)}</td>
+                  <td className="px-4 py-3">{row.staff.department}</td><td className="px-4 py-3 text-right">{row.present}</td><td className="px-4 py-3 text-right">{row.halfAM}</td><td className="px-4 py-3 text-right">{row.halfPM}</td><td className="px-4 py-3 text-right">{row.absent}</td><td className="px-4 py-3 text-right">{row.leave}</td><td className="px-4 py-3 text-right">{row.weekOff}</td><td className="px-4 py-3 text-right">{row.festivalHoliday}</td><td className="px-4 py-3 text-right">{row.overtime}</td><td className="px-4 py-3 text-right">{row.compOff}</td><td className="px-4 py-3 text-right font-semibold">{row.presentEquivalent.toFixed(1)}</td>
                 </tr>
               ))}
             </tbody>
