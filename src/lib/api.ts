@@ -28,7 +28,6 @@ export type Resident = {
   flats?: Flat | null;
 };
 
-
 export type FamilyMember = {
   id: string;
   resident_id: string;
@@ -50,6 +49,27 @@ export type Vehicle = {
   residents?: { full_name: string } | null;
 };
 
+export type Contractor = {
+  id: string;
+  company_name: string;
+  proprietor_owner_name: string | null;
+  contact_person: string | null;
+  registration_number: string | null;
+  phone1: string | null;
+  phone2: string | null;
+  phone3: string | null;
+  email: string | null;
+  website: string | null;
+  contract_start_date: string | null;
+  contract_end_date: string | null;
+  contract_amount: number | null;
+  contract_particulars: string | null;
+  contract_document_path: string | null;
+  contract_document_name: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 export type Staff = {
   id: string;
   employee_code: string;
@@ -68,6 +88,9 @@ export type Staff = {
   reference_name: string | null;
   reference_phone: string | null;
   emergency_contact: string | null;
+  staff_type: "Permanent" | "Contractor";
+  contractor_id: string | null;
+  contractors?: { company_name: string } | null;
 };
 
 export type StaffDocument = {
@@ -89,7 +112,6 @@ export const DEPARTMENTS = [
 ] as const;
 
 export const OCCUPANT_TYPES = ["family", "bachelors"] as const;
-
 
 export type Attendance = {
   id: string;
@@ -176,8 +198,7 @@ export const flatsQuery = queryOptions({
 
 export const residentsQuery = queryOptions({
   queryKey: ["residents"],
-  queryFn: () =>
-    unwrap<Resident[]>(table("residents").select("*, flats(*)").order("full_name")),
+  queryFn: () => unwrap<Resident[]>(table("residents").select("*, flats(*)").order("full_name")),
 });
 
 export const vehiclesQuery = queryOptions({
@@ -190,7 +211,18 @@ export const vehiclesQuery = queryOptions({
 
 export const staffQuery = queryOptions({
   queryKey: ["staff"],
-  queryFn: () => unwrap<Staff[]>(table("staff").select("*").order("employee_code")),
+  queryFn: () =>
+    unwrap<Staff[]>(
+      table("staff").select("*, contractors(company_name)").order("employee_code"),
+    ),
+});
+
+export const contractorsQuery = queryOptions({
+  queryKey: ["contractors"],
+  queryFn: () =>
+    unwrap<Contractor[]>(
+      table("contractors").select("*").order("company_name"),
+    ),
 });
 
 export const attendanceQuery = queryOptions({
