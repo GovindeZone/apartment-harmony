@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -97,7 +97,7 @@ function ReportsPage() {
   const [recipient, setRecipient] = useState("");
   const [canViewSalaryReport, setCanViewSalaryReport] = useState(false);
 
-  useMemo(() => {
+  useEffect(() => {
     let active = true;
     void (async () => {
       const { data: { user } } = await supabase.auth.getUser();
