@@ -204,14 +204,31 @@ function AuthPage() {
       <div className="flex items-center justify-center px-4 py-12">
         <Card className="w-full max-w-md">
           <CardContent className="p-6">
-            <h1 className="text-xl font-semibold tracking-tight">
-              {resetMode ? "Reset your password" : "Facility team access"}
-            </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {resetMode
-                ? "Choose a new password for your account."
-                : "Sign in to manage the community operations."}
-            </p>
+            {!resetMode && (
+              <div className="mb-6 flex flex-col items-center text-center">
+                <div className="mb-4 flex size-20 items-center justify-center overflow-hidden rounded-2xl border border-primary/15 bg-primary/5 p-2 shadow-sm">
+                  <img
+                    src="/favicon.ico"
+                    alt="Indus Anantya Apartment logo"
+                    className="size-full object-contain"
+                  />
+                </div>
+                <h1 className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-4xl font-bold tracking-tight text-transparent">
+                  Welcome
+                </h1>
+                <p className="mt-2 text-sm font-medium text-muted-foreground">
+                  Indus Anantya Apartment, Egattur, Chennai
+                </p>
+              </div>
+            )}
+            {resetMode && (
+              <>
+                <h1 className="text-xl font-semibold tracking-tight">Reset your password</h1>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Choose a new password for your account.
+                </p>
+              </>
+            )}
 
             {resetMode ? (
               <form className="mt-6 space-y-4" onSubmit={updatePassword}>
