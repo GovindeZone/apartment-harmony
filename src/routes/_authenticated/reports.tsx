@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { CalendarClock, Download, FileBarChart } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
@@ -49,6 +50,14 @@ export const Route = createFileRoute("/_authenticated/reports")({
       },
     ],
   }),
+  beforeLoad: async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw redirect({ to: "/auth" });
+    const { data: admin } = await supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle();
+    if (admin) return;
+    const { data: permission } = await supabase.from("user_tab_permissions").select("can_view").eq("user_id", user.id).eq("tab_key", "reports").maybeSingle();
+    if (!permission?.can_view) throw redirect({ to: "/dashboard" });
+  },
   component: ReportsPage,
 });
 
@@ -115,19 +124,46 @@ function ReportsPage() {
             "Check in": a.check_in ?? "—",
             "Check out": a.check_out ?? "—",
           }));
-      case "salary":
-        return (salaries.data ?? [])
-          .filter((s) => inRange(s.salary_month) || true)
-          .map((s) => ({
-            Month: s.salary_month.slice(0, 7),
-            Staff: s.staff?.full_name ?? "—",
-            Code: s.staff?.employee_code ?? "—",
-            Base: s.base_amount,
-            Bonus: s.bonus,
-            Deductions: s.deductions,
-            Net: s.net_amount,
-            Status: s.status,
-          }));
+      case "salary": {
+        const eligible = new Set(["present", "week_off", "festival_holiday", "overtime"]);
+        const attendanceRows = (attendance.data ?? []).filter((a) => inRange(a.attendance_date) && eligible.has(a.status));
+        const grouped = new Map<string, { staff: string; code: string; department: string; monthlySalary: number; present: number; weekOff: number; festivalHoliday: number; overtime: number }>();
+        for (const a of attendanceRows) {
+          const staffId = a.staff_id;
+          const member = a.staff;
+          const existing = grouped.get(staffId) ?? {
+            staff: member?.full_name ?? "—",
+            code: member?.employee_code ?? "—",
+            department: member?.department ?? "—",
+            monthlySalary: (salaries.data ?? []).find((s) => s.staff_id === staffId)?.base_amount ?? 0,
+            present: 0,
+            weekOff: 0,
+            festivalHoliday: 0,
+            overtime: 0,
+          };
+          if (a.status === "present") existing.present++;
+          if (a.status === "week_off") existing.weekOff++;
+          if (a.status === "festival_holiday") existing.festivalHoliday++;
+          if (a.status === "overtime") existing.overtime++;
+          grouped.set(staffId, existing);
+        }
+        return Array.from(grouped.values()).map((r) => {
+          const payableDays = r.present + r.weekOff + r.festivalHoliday + r.overtime;
+          const dailyRate = r.monthlySalary / 30;
+          return {
+            Staff: r.staff,
+            Code: r.code,
+            Department: r.department,
+            "Monthly Salary": Number(r.monthlySalary.toFixed(2)),
+            Present: r.present,
+            "Week Off": r.weekOff,
+            "Festival Holiday": r.festivalHoliday,
+            Overtime: r.overtime,
+            "Payable Days": payableDays,
+            "Calculated Salary": Number((dailyRate * payableDays).toFixed(2)),
+          };
+        });
+      }
       case "gate":
       case "guest":
         return (gate.data ?? [])
@@ -197,6 +233,7 @@ function ReportsPage() {
   }, [report, from, to, attendance.data, salaries.data, gate.data, residents.data, vehicles.data, flats.data, helpdesk.data]);
 
   const label = REPORTS.find((r) => r.value === report)?.label ?? "Report";
+  const salaryReport = report === "salary";
 
   function exportCsv() {
     const csv = toCsv(rows);
@@ -227,6 +264,11 @@ function ReportsPage() {
       }
     >
       <div className="grid gap-4 sm:grid-cols-3">
+        {salaryReport ? (
+          <div className="sm:col-span-3 rounded-xl border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-foreground">
+            <strong>Salary Report rule:</strong> only Present, Week Off, Festival Holiday and Overtime days are payable. Absent, half-days, Leave and Comp-Off are excluded. Daily rate is calculated as Monthly Salary ÷ 30.
+          </div>
+        ) : null}
         <StatCard label="Report" value={label} icon={FileBarChart} />
         <StatCard label="Rows in range" value={rows.length} hint={`${from} → ${to}`} />
         <StatCard label="Schedule" value={frequency} tone="success" icon={CalendarClock} />
