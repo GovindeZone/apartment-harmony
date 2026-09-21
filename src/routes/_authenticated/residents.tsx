@@ -1,10 +1,13 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { Home, KeyRound, Search, Users } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Home, KeyRound, Search, Users, Pencil } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { SectionCard, StatCard, StatusBadge, EmptyState } from "@/components/ui-bits";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -44,6 +47,7 @@ export const Route = createFileRoute("/_authenticated/residents")({
 });
 
 function ResidentsPage() {
+  const qc = useQueryClient();
   const residents = useQuery(residentsQuery);
   const flats = useQuery(flatsQuery);
   const vehicles = useQuery(vehiclesQuery);
@@ -53,6 +57,7 @@ function ResidentsPage() {
   const [block, setBlock] = useState("all");
   const [zone, setZone] = useState("all");
   const [selected, setSelected] = useState<Resident | null>(null);
+  const [editingTenant, setEditingTenant] = useState<Resident | null>(null);
 
   const blocks = useMemo(
     () => Array.from(new Set((flats.data ?? []).map((f) => f.block))).sort(),
@@ -164,7 +169,7 @@ function ResidentsPage() {
                       <TableHead>Type</TableHead>
                       <TableHead>Phone</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Profile</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -262,6 +267,7 @@ function ResidentsPage() {
       </Tabs>
 
       <ResidentDialog resident={selected} onClose={() => setSelected(null)} />
+      <TenantEditDialog resident={editingTenant} onClose={() => setEditingTenant(null)} onSaved={() => { setEditingTenant(null); qc.invalidateQueries({ queryKey: ["residents"] }); }} />
     </AppShell>
   );
 }
@@ -378,4 +384,10 @@ function Pick({
       ))}
     </select>
   );
+}
+
+function TenantEditDialog({resident,onClose,onSaved}:{resident:Resident|null;onClose:()=>void;onSaved:()=>void}){
+ const [saving,setSaving]=useState(false);
+ async function submit(e:React.FormEvent<HTMLFormElement>){e.preventDefault();if(!resident)return;setSaving(true);const f=new FormData(e.currentTarget);const phone=String(f.get("phone")??"").replace(/\D/g,"");if(phone && !/^\d{10}$/.test(phone)){toast.error("Phone number must be exactly 10 digits.");setSaving(false);return}const {error}=await supabase.from("residents").update({full_name:String(f.get("full_name")??"").trim(),phone,whatsapp:String(f.get("whatsapp")??"").replace(/\D/g,""),email:String(f.get("email")??"").trim(),status:String(f.get("status")??"active"),move_in_date:String(f.get("move_in_date")??"")||null,move_out_date:String(f.get("move_out_date")??"")||null} as never).eq("id",resident.id);if(error)toast.error(error.message);else{toast.success("Tenant details updated");onSaved()}setSaving(false)}
+ return <Dialog open={!!resident} onOpenChange={v=>!v&&onClose()}><DialogContent><DialogHeader><DialogTitle>Edit Tenant</DialogTitle></DialogHeader>{resident?<form className="grid gap-4 sm:grid-cols-2" onSubmit={submit}><div className="space-y-2 sm:col-span-2"><Label>Full name</Label><Input name="full_name" required defaultValue={resident.full_name}/></div><div className="space-y-2"><Label>Phone (10 digits)</Label><Input name="phone" required maxLength={10} pattern="[0-9]{10}" inputMode="numeric" defaultValue={resident.phone??""}/></div><div className="space-y-2"><Label>WhatsApp (10 digits)</Label><Input name="whatsapp" maxLength={10} pattern="[0-9]{10}" inputMode="numeric" defaultValue={resident.whatsapp??""}/></div><div className="space-y-2 sm:col-span-2"><Label>Email</Label><Input name="email" type="email" defaultValue={resident.email??""}/></div><div className="space-y-2"><Label>Move-in date</Label><Input name="move_in_date" type="date" defaultValue={resident.move_in_date??""}/></div><div className="space-y-2"><Label>Move-out date</Label><Input name="move_out_date" type="date" defaultValue={resident.move_out_date??""}/></div><div className="space-y-2"><Label>Status</Label><select name="status" defaultValue={resident.status} className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"><option value="active">active</option><option value="inactive">inactive</option></select></div><div className="sm:col-span-2 flex justify-end gap-2"><Button type="button" variant="outline" onClick={onClose}>Cancel</Button><Button type="submit" disabled={saving}>{saving?"Saving…":"Save Tenant"}</Button></div></form>:null}</DialogContent></Dialog>
 }
