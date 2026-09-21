@@ -37,6 +37,7 @@ import {
   salariesQuery,
   staffQuery,
   staffDocsQuery,
+  contractorsQuery,
   DEPARTMENTS,
   type Staff,
 } from "@/lib/api";
@@ -64,6 +65,7 @@ function StaffPage() {
   const staff = useQuery(staffQuery);
   const attendance = useQuery(attendanceQuery);
   const salaries = useQuery(salariesQuery);
+  const contractors = useQuery(contractorsQuery);
 
   const [q, setQ] = useState("");
   const [dept, setDept] = useState("all");
@@ -83,7 +85,7 @@ function StaffPage() {
     const needle = q.trim().toLowerCase();
     const match =
       !needle ||
-      [s.full_name, s.employee_code, s.designation, s.phone ?? ""].some((v) =>
+      [s.full_name, s.employee_code, s.designation, s.phone ?? "", s.contractors?.company_name ?? ""].some((v) =>
         v.toLowerCase().includes(needle),
       );
     return match && (dept === "all" || s.department === dept) && (status === "all" || s.status === status);
@@ -100,6 +102,7 @@ function StaffPage() {
       toast.success("Staff record saved");
       setEditing(undefined);
       qc.invalidateQueries({ queryKey: ["staff"] });
+      qc.invalidateQueries({ queryKey: ["contractors"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -231,6 +234,8 @@ function StaffPage() {
                       <TableHead>Name</TableHead>
                       <TableHead>Designation</TableHead>
                       <TableHead>Department</TableHead>
+                      <TableHead>Staff type</TableHead>
+                      <TableHead>Contractor</TableHead>
                       <TableHead>Shift</TableHead>
                       <TableHead>Phone</TableHead>
                       <TableHead>Salary</TableHead>
@@ -245,6 +250,8 @@ function StaffPage() {
                         <TableCell className="font-medium">{s.full_name}</TableCell>
                         <TableCell>{s.designation}</TableCell>
                         <TableCell>{s.department}</TableCell>
+                        <TableCell>{s.staff_type}</TableCell>
+                        <TableCell>{s.contractors?.company_name ?? "—"}</TableCell>
                         <TableCell>{s.shift}</TableCell>
                         <TableCell>{s.phone ?? "—"}</TableCell>
                         <TableCell>{money(s.monthly_salary)}</TableCell>
@@ -432,6 +439,8 @@ function StaffPage() {
                 <Info label="Employee code" value={selected.employee_code} />
                 <Info label="Designation" value={selected.designation} />
                 <Info label="Department" value={selected.department} />
+                <Info label="Staff type" value={selected.staff_type} />
+                <Info label="Contractor" value={selected.contractors?.company_name ?? "—"} />
                 <Info label="Shift" value={selected.shift} />
                 <Info label="Phone" value={selected.phone ?? "—"} />
                 <Info label="WhatsApp" value={selected.whatsapp ?? "—"} />
@@ -590,6 +599,8 @@ function StaffFormDialog({
       full_name: str("full_name"),
       designation: str("designation") || str("department"),
       department: str("department"),
+      staff_type: str("staff_type") || "Permanent",
+      contractor_id: str("staff_type") === "Contractor" ? (str("contractor_id") || null) : null,
       phone: str("phone").replace(/\D/g, ""),
       whatsapp: str("whatsapp").replace(/\D/g, "") || str("phone").replace(/\D/g, ""),
       phone_country_code: str("phone_country_code") || "+91",
@@ -616,6 +627,44 @@ function StaffFormDialog({
         <form className="grid gap-4 sm:grid-cols-2" onSubmit={onSubmit}>
           <Field name="full_name" label="Full name" required defaultValue={record?.full_name} />
           <div className="space-y-2"><Label htmlFor="phone">Phone number <span className="text-destructive">*</span></Label><div className="flex gap-2"><select name="phone_country_code" defaultValue={record?.phone_country_code ?? "+91"} className="h-9 w-24 rounded-md border border-input bg-background px-2 text-sm"><option>+91</option><option>+1</option><option>+44</option><option>+65</option><option>+971</option></select><Input id="phone" name="phone" required inputMode="numeric" maxLength={10} pattern="[0-9]{10}" defaultValue={record?.phone ?? ""} /></div></div>
+          <div className="space-y-2">
+            <Label htmlFor="staff_type">Staff type</Label>
+            <select
+              id="staff_type"
+              name="staff_type"
+              defaultValue={record?.staff_type ?? "Permanent"}
+              className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+              onChange={(e) => {
+                const contractor = document.getElementById("contractor_id") as HTMLSelectElement | null;
+                if (contractor) {
+                  contractor.disabled = e.target.value !== "Contractor";
+                  if (e.target.value !== "Contractor") contractor.value = "";
+                }
+              }}
+            >
+              <option value="Permanent">Permanent</option>
+              <option value="Contractor">Contractor</option>
+            </select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="contractor_id">Contractor company</Label>
+            <select
+              id="contractor_id"
+              name="contractor_id"
+              required={record?.staff_type === "Contractor"}
+              defaultValue={record?.contractor_id ?? ""}
+              disabled={record?.staff_type !== "Contractor"}
+              className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+            >
+              <option value="">Select contractor company</option>
+              {(contractors.data ?? []).map((c) => (
+                <option key={c.id} value={c.id}>{c.company_name}</option>
+              ))}
+            </select>
+            {(contractors.data ?? []).length === 0 ? (
+              <p className="text-xs text-muted-foreground">Create a contractor company in the Contractor tab first.</p>
+            ) : null}
+          </div>
           <div className="space-y-2">
             <Label htmlFor="department">
               Department <span className="text-destructive">*</span>
