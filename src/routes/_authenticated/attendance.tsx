@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CalendarDays, CheckCircle2, Clock3, Search, Users, XCircle, Gift, Timer, RotateCcw } from "lucide-react";
+import { CalendarDays, CheckCircle2, Clock3, Search, Users, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { EmptyState, SectionCard, StatCard, StatusBadge } from "@/components/ui-bits";
@@ -10,6 +10,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { attendanceQuery, staffQuery, type Attendance, type Staff } from "@/lib/api";
+
+const SHIFT_OPTIONS = [
+  "General Shift (9 AM - 6 PM)",
+  "First Shift (2 PM - 10 PM)",
+  "Second Shift (10 PM - 9 AM)",
+] as const;
 
 export const Route = createFileRoute("/_authenticated/attendance")({
   head: () => ({
@@ -110,15 +116,17 @@ function AttendancePage() {
       staffId,
       date,
       status,
+      shift,
     }: {
       staffId: string;
       date: string;
       status: string;
+      shift: string;
     }) => {
       const { error } = await supabase
         .from("staff_attendance")
         .upsert(
-          { staff_id: staffId, attendance_date: date, status } as never,
+          { staff_id: staffId, attendance_date: date, status, shift } as never,
           { onConflict: "staff_id,attendance_date" },
         );
       if (error) throw new Error(error.message);
@@ -324,6 +332,7 @@ function AttendancePage() {
                   <th className="px-4 py-3">Staff</th>
                   <th className="px-4 py-3">Department</th>
                   <th className="px-4 py-3">Current status</th>
+                  <th className="px-4 py-3">Shift</th>
                   <th className="px-4 py-3 text-right">Mark attendance</th>
                 </tr>
               </thead>
@@ -338,12 +347,13 @@ function AttendancePage() {
                       </td>
                       <td className="px-4 py-3">{member.department}</td>
                       <td className="px-4 py-3"><StatusBadge value={row ? statusLabel(row.status) : "Not marked"} /></td>
+                      <td className="px-4 py-3">{row?.shift ?? member.shift ?? "—"}</td>
                       <td className="px-4 py-3 text-right">
                         <select
                           value={row?.status ?? ""}
                           onChange={(event) => {
                             if (!event.target.value) return;
-                            saveAttendance.mutate({ staffId: member.id, date: selectedDate, status: event.target.value });
+                            saveAttendance.mutate({ staffId: member.id, date: selectedDate, status: event.target.value, shift: row?.shift ?? member.shift ?? SHIFT_OPTIONS[0] });
                           }}
                           className="h-9 min-w-[180px] rounded-md border border-input bg-background px-2 text-sm"
                         >
@@ -419,14 +429,14 @@ function AttendancePage() {
                         variant="outline"
                         onClick={() => {
                           const next = window.prompt(
-                            "Enter a new attendance status: present, absent, half_day_am_absent, half_day_pm_absent, leave, week_off",
+                            "Enter a new attendance status: present, absent, half_day_am_absent, half_day_pm_absent, leave, week_off, festival_holiday, overtime, comp_off",
                             row.status,
                           );
                           if (!next || !STATUS_OPTIONS.some((item) => item.value === next)) {
                             if (next) toast.error("Invalid attendance status");
                             return;
                           }
-                          saveAttendance.mutate({ staffId: row.staff_id, date: row.attendance_date, status: next });
+                          saveAttendance.mutate({ staffId: row.staff_id, date: row.attendance_date, status: next, shift: row.shift ?? SHIFT_OPTIONS[0] });
                         }}
                       >
                         Change status
