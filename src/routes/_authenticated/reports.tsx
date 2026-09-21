@@ -44,7 +44,7 @@ export const Route = createFileRoute("/_authenticated/reports")({
       {
         name: "description",
         content:
-          "Build and export attendance, salary, gate movement, guest, resident, vehicle, occupancy and help desk reports with date filtering.",
+          "Build and export attendance, salary, document, MC, Election Commission, gate movement, guest, resident, vehicle, occupancy and help desk reports with date filtering.",
       },
       { property: "og:title", content: "Reports — Indus Anantya Apartment" },
       {
