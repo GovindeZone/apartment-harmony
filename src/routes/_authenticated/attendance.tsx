@@ -422,7 +422,7 @@ function AttendancePage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead><tr className="border-b border-border text-left text-muted-foreground">
-                <th className="px-4 py-3">Date</th><th className="px-4 py-3">Staff</th><th className="px-4 py-3">Department</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">In</th><th className="px-4 py-3">Out</th><th className="px-4 py-3 text-right">Action</th>
+                <th className="px-4 py-3">Date</th><th className="px-4 py-3">Staff</th><th className="px-4 py-3">Department</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Shift</th><th className="px-4 py-3">In</th><th className="px-4 py-3">Out</th><th className="px-4 py-3 text-right">Action</th>
               </tr></thead>
               <tbody>
                 {historyRows.map((row) => (
@@ -431,6 +431,7 @@ function AttendancePage() {
                     <td className="px-4 py-3 font-medium">{row.staff?.full_name ?? "—"}</td>
                     <td className="px-4 py-3">{row.staff?.department ?? "—"}</td>
                     <td className="px-4 py-3"><StatusBadge value={statusLabel(row.status)} /></td>
+                    <td className="px-4 py-3">{row.shift ?? "—"}</td>
                     <td className="px-4 py-3">{row.check_in ?? "—"}</td>
                     <td className="px-4 py-3">{row.check_out ?? "—"}</td>
                     <td className="px-4 py-3 text-right">
