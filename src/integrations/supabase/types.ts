@@ -62,6 +62,69 @@ export type Database = {
         }
         Relationships: []
       }
+      contractors: {
+        Row: {
+          company_name: string
+          proprietor_owner_name: string | null
+          contact_person: string | null
+          registration_number: string | null
+          phone1: string | null
+          phone2: string | null
+          phone3: string | null
+          email: string | null
+          website: string | null
+          contract_start_date: string | null
+          contract_end_date: string | null
+          contract_amount: number | null
+          contract_particulars: string | null
+          contract_document_path: string | null
+          contract_document_name: string | null
+          created_at: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          company_name: string
+          proprietor_owner_name?: string | null
+          contact_person?: string | null
+          registration_number?: string | null
+          phone1?: string | null
+          phone2?: string | null
+          phone3?: string | null
+          email?: string | null
+          website?: string | null
+          contract_start_date?: string | null
+          contract_end_date?: string | null
+          contract_amount?: number | null
+          contract_particulars?: string | null
+          contract_document_path?: string | null
+          contract_document_name?: string | null
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          company_name?: string
+          proprietor_owner_name?: string | null
+          contact_person?: string | null
+          registration_number?: string | null
+          phone1?: string | null
+          phone2?: string | null
+          phone3?: string | null
+          email?: string | null
+          website?: string | null
+          contract_start_date?: string | null
+          contract_end_date?: string | null
+          contract_amount?: number | null
+          contract_particulars?: string | null
+          contract_document_path?: string | null
+          contract_document_name?: string | null
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       family_members: {
         Row: {
           age: number | null
@@ -338,6 +401,8 @@ export type Database = {
         Row: {
           aadhaar_number: string | null
           address: string | null
+          contractor_id: string | null
+          staff_type: string
           created_at: string
           department: string
           designation: string
@@ -358,6 +423,8 @@ export type Database = {
         Insert: {
           aadhaar_number?: string | null
           address?: string | null
+          contractor_id?: string | null
+          staff_type?: string
           created_at?: string
           department: string
           designation: string
@@ -378,6 +445,8 @@ export type Database = {
         Update: {
           aadhaar_number?: string | null
           address?: string | null
+          contractor_id?: string | null
+          staff_type?: string
           created_at?: string
           department?: string
           designation?: string
@@ -395,7 +464,15 @@ export type Database = {
           status?: string
           whatsapp?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "staff_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "contractors"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       staff_attendance: {
         Row: {
