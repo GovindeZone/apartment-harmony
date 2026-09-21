@@ -590,13 +590,15 @@ function StaffFormDialog({
       full_name: str("full_name"),
       designation: str("designation") || str("department"),
       department: str("department"),
-      phone: str("phone"),
-      whatsapp: str("whatsapp") || str("phone"),
+      phone: str("phone").replace(/\D/g, ""),
+      whatsapp: str("whatsapp").replace(/\D/g, "") || str("phone").replace(/\D/g, ""),
+      phone_country_code: str("phone_country_code") || "+91",
+      whatsapp_country_code: str("whatsapp_country_code") || str("phone_country_code") || "+91",
       shift: str("shift"),
       monthly_salary: Number(f.get("monthly_salary") || 0),
       join_date: str("join_date") || null,
       relieving_date: str("relieving_date") || null,
-      aadhaar_number: str("aadhaar_number"),
+      aadhaar_number: str("aadhaar_number").replace(/\D/g, ""),
       address: str("address"),
       reference_name: str("reference_name"),
       reference_phone: str("reference_phone"),
@@ -613,7 +615,7 @@ function StaffFormDialog({
         </DialogHeader>
         <form className="grid gap-4 sm:grid-cols-2" onSubmit={onSubmit}>
           <Field name="full_name" label="Full name" required defaultValue={record?.full_name} />
-          <Field name="phone" label="Phone number" required defaultValue={record?.phone ?? ""} />
+          <div className="space-y-2"><Label htmlFor="phone">Phone number <span className="text-destructive">*</span></Label><div className="flex gap-2"><select name="phone_country_code" defaultValue={record?.phone_country_code ?? "+91"} className="h-9 w-24 rounded-md border border-input bg-background px-2 text-sm"><option>+91</option><option>+1</option><option>+44</option><option>+65</option><option>+971</option></select><Input id="phone" name="phone" required inputMode="numeric" maxLength={10} pattern="[0-9]{10}" defaultValue={record?.phone ?? ""} /></div></div>
           <div className="space-y-2">
             <Label htmlFor="department">
               Department <span className="text-destructive">*</span>
@@ -666,7 +668,7 @@ function StaffFormDialog({
           />
           <Field name="employee_code" label="Employee code" defaultValue={record?.employee_code ?? ""} />
           <Field name="designation" label="Designation" defaultValue={record?.designation ?? ""} />
-          <Field name="whatsapp" label="WhatsApp" defaultValue={record?.whatsapp ?? ""} />
+          <div className="space-y-2"><Label htmlFor="whatsapp">WhatsApp</Label><div className="flex gap-2"><select name="whatsapp_country_code" defaultValue={record?.whatsapp_country_code ?? "+91"} className="h-9 w-24 rounded-md border border-input bg-background px-2 text-sm"><option>+91</option><option>+1</option><option>+44</option><option>+65</option><option>+971</option></select><Input id="whatsapp" name="whatsapp" inputMode="numeric" maxLength={10} pattern="[0-9]{10}" defaultValue={record?.whatsapp ?? ""} /></div></div>
           <div className="space-y-2">
             <Label htmlFor="shift">Shift</Label>
             <select
@@ -739,7 +741,7 @@ function Field({
       <Label htmlFor={name}>
         {label} {required ? <span className="text-destructive">*</span> : null}
       </Label>
-      <Input id={name} name={name} type={type} required={required} defaultValue={defaultValue} />
+      <Input id={name} name={name} type={type} required={required} defaultValue={defaultValue} maxLength={name.includes("phone") || name.includes("contact") || name==="aadhaar_number" ? (name==="aadhaar_number" ? 12 : 10) : undefined} inputMode={name.includes("phone") || name.includes("contact") || name==="aadhaar_number" ? "numeric" : undefined} pattern={name==="aadhaar_number" ? "[0-9]{12}" : (name.includes("phone") || name.includes("contact") ? "[0-9]{10}" : undefined)} />
     </div>
   );
 }
