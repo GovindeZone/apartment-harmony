@@ -65,7 +65,7 @@ type Row = Record<string, string | number>;
 
 const REPORTS = [
   { value: "attendance", label: "Staff attendance" },
-  { value: "salary", label: "Staff salary" },
+  { value: "salary", label: "Salary Report" },
   { value: "gate", label: "Gate entry / exit" },
   { value: "guest", label: "Guests & visitors" },
   { value: "vehicle", label: "Vehicles" },
