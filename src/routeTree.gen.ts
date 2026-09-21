@@ -130,6 +130,10 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRoute
   '/staff': typeof AuthenticatedStaffRoute
   '/attendance': typeof AuthenticatedAttendanceRoute
+  '/contractor': typeof AuthenticatedContractorRoute
+  '/official-records': typeof AuthenticatedOfficialRecordsRoute
+  '/mc-repository': typeof AuthenticatedMcRepositoryRoute
+  '/ec-repository': typeof AuthenticatedEcRepositoryRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/user-rights': typeof AuthenticatedAdminUserRightsRoute
