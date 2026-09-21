@@ -165,6 +165,9 @@ export interface FileRouteTypes {
     | '/_authenticated/security'
     | '/_authenticated/settings'
     | '/_authenticated/staff'
+    | '/_authenticated/admin'
+    | '/_authenticated/admin/settings'
+    | '/_authenticated/admin/user-rights'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -238,13 +241,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/staff': {
-      id: '/_authenticated/staff'
-      path: '/staff'
-      fullPath: '/staff'
-      preLoaderRoute: typeof AuthenticatedStaffRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
+    '/_authenticated/staff': { id: '/_authenticated/staff'; path: '/staff'; fullPath: '/staff'; preLoaderRoute: typeof AuthenticatedStaffRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
+    '/_authenticated/admin': { id: '/_authenticated/admin'; path: '/admin'; fullPath: '/admin'; preLoaderRoute: typeof AuthenticatedAdminRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
+    '/_authenticated/admin/settings': { id: '/_authenticated/admin/settings'; path: '/admin/settings'; fullPath: '/admin/settings'; preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
+    '/_authenticated/admin/user-rights': { id: '/_authenticated/admin/user-rights'; path: '/admin/user-rights'; fullPath: '/admin/user-rights'; preLoaderRoute: typeof AuthenticatedAdminUserRightsRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
   }
 }
 
