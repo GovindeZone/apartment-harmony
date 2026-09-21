@@ -21,6 +21,9 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated/staff'
 import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authenticated/attendance'
 import { Route as AuthenticatedContractorRouteImport } from './routes/_authenticated/contractor'
+import { Route as AuthenticatedOfficialRecordsRouteImport } from './routes/_authenticated/official-records'
+import { Route as AuthenticatedMcRepositoryRouteImport } from './routes/_authenticated/mc-repository'
+import { Route as AuthenticatedEcRepositoryRouteImport } from './routes/_authenticated/ec-repository'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin-settings'
 import { Route as AuthenticatedAdminUserRightsRouteImport } from './routes/_authenticated/admin-user-rights'
@@ -78,6 +81,15 @@ const AuthenticatedAttendanceRoute = AuthenticatedAttendanceRouteImport.update({
 const AuthenticatedContractorRoute = AuthenticatedContractorRouteImport.update({
   id: '/contractor', path: '/contractor', getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedOfficialRecordsRoute = AuthenticatedOfficialRecordsRouteImport.update({
+  id: '/official-records', path: '/official-records', getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMcRepositoryRoute = AuthenticatedMcRepositoryRouteImport.update({
+  id: '/mc-repository', path: '/mc-repository', getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedEcRepositoryRoute = AuthenticatedEcRepositoryRouteImport.update({
+  id: '/ec-repository', path: '/ec-repository', getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin', path: '/admin', getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
@@ -100,6 +112,9 @@ export interface FileRoutesByFullPath {
   '/staff': typeof AuthenticatedStaffRoute
   '/attendance': typeof AuthenticatedAttendanceRoute
   '/contractor': typeof AuthenticatedContractorRoute
+  '/official-records': typeof AuthenticatedOfficialRecordsRoute
+  '/mc-repository': typeof AuthenticatedMcRepositoryRoute
+  '/ec-repository': typeof AuthenticatedEcRepositoryRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/user-rights': typeof AuthenticatedAdminUserRightsRoute
@@ -133,6 +148,9 @@ export interface FileRoutesById {
   '/_authenticated/staff': typeof AuthenticatedStaffRoute
   '/_authenticated/attendance': typeof AuthenticatedAttendanceRoute
   '/_authenticated/contractor': typeof AuthenticatedContractorRoute
+  '/_authenticated/official-records': typeof AuthenticatedOfficialRecordsRoute
+  '/_authenticated/mc-repository': typeof AuthenticatedMcRepositoryRoute
+  '/_authenticated/ec-repository': typeof AuthenticatedEcRepositoryRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/user-rights': typeof AuthenticatedAdminUserRightsRoute
@@ -151,6 +169,9 @@ export interface FileRouteTypes {
     | '/staff'
     | '/attendance'
     | '/contractor'
+    | '/official-records'
+    | '/mc-repository'
+    | '/ec-repository'
     | '/admin'
     | '/admin/settings'
     | '/admin/user-rights'
@@ -183,6 +204,9 @@ export interface FileRouteTypes {
     | '/_authenticated/staff'
     | '/_authenticated/attendance'
     | '/_authenticated/contractor'
+    | '/_authenticated/official-records'
+    | '/_authenticated/mc-repository'
+    | '/_authenticated/ec-repository'
     | '/_authenticated/admin'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/user-rights'
@@ -262,6 +286,9 @@ declare module '@tanstack/react-router' {
     '/_authenticated/staff': { id: '/_authenticated/staff'; path: '/staff'; fullPath: '/staff'; preLoaderRoute: typeof AuthenticatedStaffRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
     '/_authenticated/attendance': { id: '/_authenticated/attendance'; path: '/attendance'; fullPath: '/attendance'; preLoaderRoute: typeof AuthenticatedAttendanceRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
     '/_authenticated/contractor': { id: '/_authenticated/contractor'; path: '/contractor'; fullPath: '/contractor'; preLoaderRoute: typeof AuthenticatedContractorRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
+    '/_authenticated/official-records': { id: '/_authenticated/official-records'; path: '/official-records'; fullPath: '/official-records'; preLoaderRoute: typeof AuthenticatedOfficialRecordsRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
+    '/_authenticated/mc-repository': { id: '/_authenticated/mc-repository'; path: '/mc-repository'; fullPath: '/mc-repository'; preLoaderRoute: typeof AuthenticatedMcRepositoryRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
+    '/_authenticated/ec-repository': { id: '/_authenticated/ec-repository'; path: '/ec-repository'; fullPath: '/ec-repository'; preLoaderRoute: typeof AuthenticatedEcRepositoryRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
     '/_authenticated/admin': { id: '/_authenticated/admin'; path: '/admin'; fullPath: '/admin'; preLoaderRoute: typeof AuthenticatedAdminRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
     '/_authenticated/admin/settings': { id: '/_authenticated/admin/settings'; path: '/admin/settings'; fullPath: '/admin/settings'; preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
     '/_authenticated/admin/user-rights': { id: '/_authenticated/admin/user-rights'; path: '/admin/user-rights'; fullPath: '/admin/user-rights'; preLoaderRoute: typeof AuthenticatedAdminUserRightsRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
@@ -278,6 +305,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedStaffRoute: typeof AuthenticatedStaffRoute
   AuthenticatedAttendanceRoute: typeof AuthenticatedAttendanceRoute
   AuthenticatedContractorRoute: typeof AuthenticatedContractorRoute
+  AuthenticatedOfficialRecordsRoute: typeof AuthenticatedOfficialRecordsRoute
+  AuthenticatedMcRepositoryRoute: typeof AuthenticatedMcRepositoryRoute
+  AuthenticatedEcRepositoryRoute: typeof AuthenticatedEcRepositoryRoute
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminUserRightsRoute: typeof AuthenticatedAdminUserRightsRoute
@@ -293,6 +323,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedStaffRoute: AuthenticatedStaffRoute,
   AuthenticatedAttendanceRoute: AuthenticatedAttendanceRoute,
   AuthenticatedContractorRoute: AuthenticatedContractorRoute,
+  AuthenticatedOfficialRecordsRoute: AuthenticatedOfficialRecordsRoute,
+  AuthenticatedMcRepositoryRoute: AuthenticatedMcRepositoryRoute,
+  AuthenticatedEcRepositoryRoute: AuthenticatedEcRepositoryRoute,
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminUserRightsRoute: AuthenticatedAdminUserRightsRoute,
