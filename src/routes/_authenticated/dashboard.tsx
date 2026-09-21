@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Users, UserCheck, UserX, Building, Home } from "lucide-react";
+import { Users, UserCheck, UserX, Building } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { AppShell } from "@/components/AppShell";
 import { SectionCard } from "@/components/ui-bits";
@@ -53,9 +53,7 @@ function Dashboard() {
     { category: "Tenants – Bachelors", count: bachelorTenants },
   ];
 
-  const visitorSummary = [
-    { label: "Visitor", owner: 0, family: 0, bachelor: 0 },
-  ];
+  const visitorSummary = [{ label: "Visitor", owner: 0, family: 0, bachelor: 0 }];
   gateRows.filter((entry) => entry.entry_time.slice(0, 10) === date && entry.category !== "resident").forEach((entry) => {
     const category = `${entry.category} ${entry.purpose ?? ""}`.toLowerCase();
     if (category.includes("bachelor")) visitorSummary[0].bachelor += 1;
