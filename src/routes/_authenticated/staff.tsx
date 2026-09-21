@@ -421,8 +421,10 @@ function StaffPage() {
       </Tabs>
 
       <StaffFormDialog
+        key={editing?.id ?? "new"}
         open={editing !== undefined}
         record={editing ?? null}
+        contractors={contractors.data ?? []}
         pending={save.isPending}
         onClose={() => setEditing(undefined)}
         onSave={(payload) => save.mutate({ id: editing?.id, payload })}
@@ -580,16 +582,20 @@ function StaffDocuments({ staffId }: { staffId: string }) {
 function StaffFormDialog({
   open,
   record,
+  contractors,
   pending,
   onClose,
   onSave,
 }: {
   open: boolean;
   record: Staff | null;
+  contractors: { id: string; company_name: string }[];
   pending: boolean;
   onClose: () => void;
   onSave: (payload: Record<string, unknown>) => void;
 }) {
+  const [staffType, setStaffType] = useState<"Permanent" | "Contractor">(record?.staff_type ?? "Permanent");
+
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
@@ -632,15 +638,9 @@ function StaffFormDialog({
             <select
               id="staff_type"
               name="staff_type"
-              defaultValue={record?.staff_type ?? "Permanent"}
+              value={staffType}
+              onChange={(e) => setStaffType(e.target.value as "Permanent" | "Contractor")}
               className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
-              onChange={(e) => {
-                const contractor = document.getElementById("contractor_id") as HTMLSelectElement | null;
-                if (contractor) {
-                  contractor.disabled = e.target.value !== "Contractor";
-                  if (e.target.value !== "Contractor") contractor.value = "";
-                }
-              }}
             >
               <option value="Permanent">Permanent</option>
               <option value="Contractor">Contractor</option>
@@ -651,17 +651,17 @@ function StaffFormDialog({
             <select
               id="contractor_id"
               name="contractor_id"
-              required={record?.staff_type === "Contractor"}
+              required={staffType === "Contractor"}
               defaultValue={record?.contractor_id ?? ""}
-              disabled={record?.staff_type !== "Contractor"}
+              disabled={staffType !== "Contractor"}
               className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
             >
               <option value="">Select contractor company</option>
-              {(contractors.data ?? []).map((c) => (
+              {contractors.map((c) => (
                 <option key={c.id} value={c.id}>{c.company_name}</option>
               ))}
             </select>
-            {(contractors.data ?? []).length === 0 ? (
+            {contractors.length === 0 ? (
               <p className="text-xs text-muted-foreground">Create a contractor company in the Contractor tab first.</p>
             ) : null}
           </div>
