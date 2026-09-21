@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useRouter } from "@tanstack/react-router";
-import { LayoutDashboard, Users, ShieldCheck, MessageSquare, Home, FileBarChart, Settings as SettingsIcon, Menu, LogOut, Building2, Shield, CalendarCheck, FileText, UsersRound, Vote, ClipboardList, BookOpenCheck } from "lucide-react";
+import { LayoutDashboard, Users, ShieldCheck, MessageSquare, Home, FileBarChart, Settings as SettingsIcon, Menu, LogOut, Building2, Shield, CalendarCheck, FileText, UsersRound, Vote, ClipboardList, BookOpenCheck, Boxes, BookOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -12,6 +12,7 @@ const NAV = [
   { to: "/contractor", label: "Contractor", icon: Building2 },
   { to: "/attendance", label: "Attendance", icon: CalendarCheck },
   { to: "/facility-management", label: "Facility Management", icon: ClipboardList },
+  { to: "/asset-management", label: "Asset Management", icon: Boxes },
   { to: "/security", label: "Security", icon: ShieldCheck },
   { to: "/helpdesk", label: "Help Desk", icon: MessageSquare },
   { to: "/residents", label: "Residents", icon: Home },
@@ -19,6 +20,7 @@ const NAV = [
   { to: "/mc-repository", label: "MC Repository", icon: UsersRound },
   { to: "/ec-repository", label: "EC Repository", icon: Vote },
   { to: "/bye-law-repository", label: "Bye-Law Repository", icon: BookOpenCheck },
+  { to: "/mc-handbook", label: "MC Handbook", icon: BookOpen },
   { to: "/reports", label: "Reports", icon: FileBarChart },
 ] as const;
 
