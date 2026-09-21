@@ -20,6 +20,7 @@ import { Route as AuthenticatedSecurityRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated/staff'
 import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authenticated/attendance'
+import { Route as AuthenticatedFacilityManagementRouteImport } from './routes/_authenticated/facility-management'
 import { Route as AuthenticatedContractorRouteImport } from './routes/_authenticated/contractor'
 import { Route as AuthenticatedOfficialRecordsRouteImport } from './routes/_authenticated/official-records'
 import { Route as AuthenticatedMcRepositoryRouteImport } from './routes/_authenticated/mc-repository'
@@ -78,6 +79,9 @@ const AuthenticatedStaffRoute = AuthenticatedStaffRouteImport.update({
 const AuthenticatedAttendanceRoute = AuthenticatedAttendanceRouteImport.update({
   id: '/attendance', path: '/attendance', getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedFacilityManagementRoute = AuthenticatedFacilityManagementRouteImport.update({
+  id: '/facility-management', path: '/facility-management', getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedContractorRoute = AuthenticatedContractorRouteImport.update({
   id: '/contractor', path: '/contractor', getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
@@ -111,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRoute
   '/staff': typeof AuthenticatedStaffRoute
   '/attendance': typeof AuthenticatedAttendanceRoute
+  '/facility-management': typeof AuthenticatedFacilityManagementRoute
   '/contractor': typeof AuthenticatedContractorRoute
   '/official-records': typeof AuthenticatedOfficialRecordsRoute
   '/mc-repository': typeof AuthenticatedMcRepositoryRoute
@@ -151,6 +156,7 @@ export interface FileRoutesById {
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/staff': typeof AuthenticatedStaffRoute
   '/_authenticated/attendance': typeof AuthenticatedAttendanceRoute
+  '/_authenticated/facility-management': typeof AuthenticatedFacilityManagementRoute
   '/_authenticated/contractor': typeof AuthenticatedContractorRoute
   '/_authenticated/official-records': typeof AuthenticatedOfficialRecordsRoute
   '/_authenticated/mc-repository': typeof AuthenticatedMcRepositoryRoute
@@ -172,6 +178,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/staff'
     | '/attendance'
+    | '/facility-management'
     | '/contractor'
     | '/official-records'
     | '/mc-repository'
@@ -211,6 +218,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings'
     | '/_authenticated/staff'
     | '/_authenticated/attendance'
+    | '/_authenticated/facility-management'
     | '/_authenticated/contractor'
     | '/_authenticated/official-records'
     | '/_authenticated/mc-repository'
@@ -293,6 +301,7 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/staff': { id: '/_authenticated/staff'; path: '/staff'; fullPath: '/staff'; preLoaderRoute: typeof AuthenticatedStaffRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
     '/_authenticated/attendance': { id: '/_authenticated/attendance'; path: '/attendance'; fullPath: '/attendance'; preLoaderRoute: typeof AuthenticatedAttendanceRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
+    '/_authenticated/facility-management': { id: '/_authenticated/facility-management'; path: '/facility-management'; fullPath: '/facility-management'; preLoaderRoute: typeof AuthenticatedFacilityManagementRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
     '/_authenticated/contractor': { id: '/_authenticated/contractor'; path: '/contractor'; fullPath: '/contractor'; preLoaderRoute: typeof AuthenticatedContractorRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
     '/_authenticated/official-records': { id: '/_authenticated/official-records'; path: '/official-records'; fullPath: '/official-records'; preLoaderRoute: typeof AuthenticatedOfficialRecordsRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
     '/_authenticated/mc-repository': { id: '/_authenticated/mc-repository'; path: '/mc-repository'; fullPath: '/mc-repository'; preLoaderRoute: typeof AuthenticatedMcRepositoryRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
@@ -312,6 +321,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedStaffRoute: typeof AuthenticatedStaffRoute
   AuthenticatedAttendanceRoute: typeof AuthenticatedAttendanceRoute
+  AuthenticatedFacilityManagementRoute: typeof AuthenticatedFacilityManagementRoute
   AuthenticatedContractorRoute: typeof AuthenticatedContractorRoute
   AuthenticatedOfficialRecordsRoute: typeof AuthenticatedOfficialRecordsRoute
   AuthenticatedMcRepositoryRoute: typeof AuthenticatedMcRepositoryRoute
@@ -330,6 +340,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedStaffRoute: AuthenticatedStaffRoute,
   AuthenticatedAttendanceRoute: AuthenticatedAttendanceRoute,
+  AuthenticatedFacilityManagementRoute: AuthenticatedFacilityManagementRoute,
   AuthenticatedContractorRoute: AuthenticatedContractorRoute,
   AuthenticatedOfficialRecordsRoute: AuthenticatedOfficialRecordsRoute,
   AuthenticatedMcRepositoryRoute: AuthenticatedMcRepositoryRoute,
