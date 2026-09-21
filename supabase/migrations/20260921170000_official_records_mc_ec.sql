@@ -108,6 +108,10 @@ INSERT INTO storage.buckets (id, name, public)
 VALUES ('official-records', 'official-records', false)
 ON CONFLICT (id) DO NOTHING;
 
+UPDATE storage.buckets
+SET allowed_mime_types = ARRAY['application/pdf', 'image/jpeg']
+WHERE id = 'official-records';
+
 DROP POLICY IF EXISTS "official records storage read" ON storage.objects;
 CREATE POLICY "official records storage read" ON storage.objects
   FOR SELECT TO authenticated USING (bucket_id = 'official-records');
