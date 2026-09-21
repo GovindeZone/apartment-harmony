@@ -118,6 +118,7 @@ export type Attendance = {
   staff_id: string;
   attendance_date: string;
   status: string;
+  shift: string | null;
   check_in: string | null;
   check_out: string | null;
   staff?: { full_name: string; employee_code: string; department: string } | null;
