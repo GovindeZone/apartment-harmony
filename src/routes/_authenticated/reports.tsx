@@ -27,6 +27,9 @@ import {
 import {
   attendanceQuery,
   flatsQuery,
+  officialRecordsQuery,
+  mcRepositoryQuery,
+  ecRepositoryQuery,
   gateEntriesQuery,
   helpdeskQuery,
   residentsQuery,
@@ -66,6 +69,9 @@ type Row = Record<string, string | number>;
 const REPORTS = [
   { value: "attendance", label: "Staff attendance" },
   { value: "salary", label: "Salary Report" },
+  { value: "document", label: "Document Report" },
+  { value: "mc_repository", label: "MC Repository Report" },
+  { value: "election_commission", label: "Election Commission Report" },
   { value: "gate", label: "Gate entry / exit" },
   { value: "guest", label: "Guests & visitors" },
   { value: "vehicle", label: "Vehicles" },
@@ -96,6 +102,9 @@ function ReportsPage() {
   const [frequency, setFrequency] = useState("weekly");
   const [recipient, setRecipient] = useState("");
   const [canViewSalaryReport, setCanViewSalaryReport] = useState(false);
+  const [canViewDocumentReport, setCanViewDocumentReport] = useState(false);
+  const [canViewMcRepositoryReport, setCanViewMcRepositoryReport] = useState(false);
+  const [canViewElectionCommissionReport, setCanViewElectionCommissionReport] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -104,8 +113,14 @@ function ReportsPage() {
       if (!user) return;
       const { data: admin } = await supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle();
       if (admin) { if (active) setCanViewSalaryReport(true); return; }
-      const { data: permission } = await supabase.from("user_tab_permissions").select("can_view").eq("user_id", user.id).eq("tab_key", "salary_report").maybeSingle();
-      if (active) setCanViewSalaryReport(!!permission?.can_view);
+      const { data } = await supabase.from("user_tab_permissions").select("tab_key, can_view").eq("user_id", user.id);
+      if (active) {
+        const permissions = Object.fromEntries((data ?? []).map((p) => [p.tab_key, !!p.can_view]));
+        setCanViewSalaryReport(!!permissions.salary_report);
+        setCanViewDocumentReport(!!permissions.document_report);
+        setCanViewMcRepositoryReport(!!permissions.mc_repository_report);
+        setCanViewElectionCommissionReport(!!permissions.election_commission_report);
+      }
     })();
     return () => { active = false; };
   }, []);
@@ -117,6 +132,9 @@ function ReportsPage() {
   const vehicles = useQuery(vehiclesQuery);
   const flats = useQuery(flatsQuery);
   const helpdesk = useQuery(helpdeskQuery);
+  const officialRecords = useQuery(officialRecordsQuery);
+  const mcRepository = useQuery(mcRepositoryQuery);
+  const ecRepository = useQuery(ecRepositoryQuery);
 
   const inRange = (d: string | null) => {
     if (!d) return false;
@@ -178,6 +196,44 @@ function ReportsPage() {
           };
         });
       }
+      case "document":
+        return (officialRecords.data ?? [])
+          .filter((r) => inRange(r.created_at))
+          .map((r) => ({
+            "Document Name": r.document_name,
+            Description: r.document_description ?? "—",
+            "Document Type": r.document_type,
+            "Additional Remarks": r.additional_remarks ?? "—",
+            "File Name": r.document_file_name ?? "—",
+            "Created Date": fmtDate(r.created_at),
+          }));
+      case "mc_repository":
+        return (mcRepository.data ?? [])
+          .filter((r) => r.period_from <= to && r.period_to >= from)
+          .map((r) => ({
+            "Period From": r.period_from,
+            "Period To": r.period_to,
+            Flat: r.flat_no,
+            "Committee Member": r.member_name,
+            Designation: r.designation,
+            "Primary Portfolio": r.primary_portfolio ?? "—",
+            "Secondary Portfolio": r.secondary_portfolio ?? "—",
+            Phone: r.phone ?? "—",
+            Email: r.email ?? "—",
+          }));
+      case "election_commission":
+        return (ecRepository.data ?? [])
+          .filter((r) => r.period_from <= to && r.period_to >= from)
+          .map((r) => ({
+            "Period From": r.period_from,
+            "Period To": r.period_to,
+            Flat: r.flat_no,
+            "Committee Member": r.member_name,
+            Designation: r.designation,
+            "General Body Approved Date": r.general_body_approved_date ?? "—",
+            Phone: r.phone ?? "—",
+            Email: r.email ?? "—",
+          }));
       case "gate":
       case "guest":
         return (gate.data ?? [])
@@ -244,12 +300,19 @@ function ReportsPage() {
       default:
         return [];
     }
-  }, [report, from, to, attendance.data, salaries.data, gate.data, residents.data, vehicles.data, flats.data, helpdesk.data]);
+  }, [report, from, to, attendance.data, salaries.data, gate.data, residents.data, vehicles.data, flats.data, helpdesk.data, officialRecords.data, mcRepository.data, ecRepository.data]);
 
-  const availableReports = REPORTS.filter((item) => item.value !== "salary" || canViewSalaryReport);
-  const label = availableReports.find((r) => r.value === report)?.label ?? "Report";
-  const salaryReport = report === "salary";
-  if (salaryReport && !canViewSalaryReport) return null;
+  const reportPermission: Record<string, boolean> = {
+    salary: canViewSalaryReport,
+    document: canViewDocumentReport,
+    mc_repository: canViewMcRepositoryReport,
+    election_commission: canViewElectionCommissionReport,
+  };
+  const restrictedReports = new Set(["salary", "document", "mc_repository", "election_commission"]);
+  const visibleReports = REPORTS.filter((item) => !restrictedReports.has(item.value) || !!reportPermission[item.value]);
+  const label = visibleReports.find((r) => r.value === report)?.label ?? "Report";
+  const restrictedSelected = restrictedReports.has(report);
+  if (restrictedSelected && !reportPermission[report]) return null;
 
   function exportCsv() {
     const csv = toCsv(rows);
@@ -300,7 +363,7 @@ function ReportsPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {availableReports.map((r) => (
+                  {visibleReports.map((r) => (
                     <SelectItem key={r.value} value={r.value}>
                       {r.label}
                     </SelectItem>
