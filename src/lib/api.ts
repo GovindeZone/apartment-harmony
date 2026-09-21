@@ -312,6 +312,28 @@ export type FacilityTask = {
   staff?: { full_name: string; employee_code: string; department: string } | null;
 };
 
+export type ByeLawRecord = {
+  id: string;
+  bye_law_type: "Change in Existing particulars" | "New Rule" | "Existing";
+  document_name: string;
+  document_description: string | null;
+  gb_approved_date: string | null;
+  effective_date: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export const byeLawRepositoryQuery = queryOptions({
+  queryKey: ["bye_law_repository"],
+  queryFn: () =>
+    unwrap<ByeLawRecord[]>(
+      table("bye_law_repository")
+        .select("*")
+        .order("effective_date", { ascending: false, nullsFirst: false })
+        .order("gb_approved_date", { ascending: false, nullsFirst: false }),
+    ),
+});
+
 export type OfficialRecord = {
   id: string;
   document_name: string;
