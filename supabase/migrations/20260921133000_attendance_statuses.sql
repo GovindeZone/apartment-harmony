@@ -10,7 +10,10 @@ ALTER TABLE public.staff_attendance
     'half_day_am_absent',
     'half_day_pm_absent',
     'leave',
-    'week_off'
+    'week_off',
+    'festival_holiday',
+    'overtime',
+    'comp_off'
   ));
 
 CREATE INDEX IF NOT EXISTS idx_staff_attendance_status_date
