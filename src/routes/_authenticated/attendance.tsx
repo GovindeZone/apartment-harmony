@@ -94,6 +94,7 @@ function AttendancePage() {
   const [query, setQuery] = useState("");
   const [department, setDepartment] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [selectedShifts, setSelectedShifts] = useState<Record<string, string>>({});
 
   const monthlyAttendance = useQuery({
     queryKey: ["attendance-range", selectedMonth],
@@ -333,12 +334,14 @@ function AttendancePage() {
                   <th className="px-4 py-3">Department</th>
                   <th className="px-4 py-3">Current status</th>
                   <th className="px-4 py-3">Shift</th>
-                  <th className="px-4 py-3 text-right">Mark attendance</th>
+                  <th className="px-4 py-3 text-right">Shift &amp; mark attendance</th>
                 </tr>
               </thead>
               <tbody>
                 {staffRows.map((member) => {
                   const row = selectedDateMap.get(member.id);
+                  const memberShift = SHIFT_OPTIONS.includes(member.shift as (typeof SHIFT_OPTIONS)[number]) ? member.shift : SHIFT_OPTIONS[0];
+                  const selectedShift = selectedShifts[member.id] ?? row?.shift ?? memberShift;
                   return (
                     <tr key={member.id} className="border-b border-border last:border-0">
                       <td className="px-4 py-3">
@@ -350,10 +353,18 @@ function AttendancePage() {
                       <td className="px-4 py-3">{row?.shift ?? member.shift ?? "—"}</td>
                       <td className="px-4 py-3 text-right">
                         <select
+                          value={selectedShift}
+                          onChange={(event) => setSelectedShifts((current) => ({ ...current, [member.id]: event.target.value }))}
+                          className="mb-2 h-9 min-w-[220px] rounded-md border border-input bg-background px-2 text-sm"
+                          aria-label={`Shift for ${member.full_name}`}
+                        >
+                          {SHIFT_OPTIONS.map((shift) => <option key={shift} value={shift}>{shift}</option>)}
+                        </select>
+                        <select
                           value={row?.status ?? ""}
                           onChange={(event) => {
                             if (!event.target.value) return;
-                            saveAttendance.mutate({ staffId: member.id, date: selectedDate, status: event.target.value, shift: row?.shift ?? member.shift ?? SHIFT_OPTIONS[0] });
+                            saveAttendance.mutate({ staffId: member.id, date: selectedDate, status: event.target.value, shift: selectedShift });
                           }}
                           className="h-9 min-w-[180px] rounded-md border border-input bg-background px-2 text-sm"
                         >
