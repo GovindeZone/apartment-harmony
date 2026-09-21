@@ -321,7 +321,7 @@ function AttendancePage() {
       <SectionCard
         className="mt-6"
         title={`Mark attendance · ${selectedDate}`}
-        description="1/2 AM Absent means absent in the morning and present in the afternoon; 1/2 PM Absent means the reverse. Week Off is not treated as absence."
+        description="Select the applicable shift before marking attendance. Shifts are General (9 AM - 6 PM), First (2 PM - 10 PM), and Second (10 PM - 9 AM). 1/2 AM/PM options represent half-day attendance. Week Off is not treated as absence."
       >
         {staffRows.length === 0 ? (
           <EmptyState message="No active staff match the selected filters." />
@@ -340,7 +340,8 @@ function AttendancePage() {
                 {staffRows.map((member) => {
                   const row = selectedDateMap.get(member.id);
                   const memberShift = SHIFT_OPTIONS.includes(member.shift as (typeof SHIFT_OPTIONS)[number]) ? member.shift : SHIFT_OPTIONS[0];
-                  const selectedShift = selectedShifts[member.id] ?? row?.shift ?? memberShift;
+                  const shiftKey = `${selectedDate}:${member.id}`;
+                  const selectedShift = selectedShifts[shiftKey] ?? row?.shift ?? memberShift;
                   return (
                     <tr key={member.id} className="border-b border-border last:border-0">
                       <td className="px-4 py-3">
@@ -352,7 +353,7 @@ function AttendancePage() {
                       <td className="px-4 py-3 text-right">
                         <select
                           value={selectedShift}
-                          onChange={(event) => setSelectedShifts((current) => ({ ...current, [member.id]: event.target.value }))}
+                          onChange={(event) => setSelectedShifts((current) => ({ ...current, [shiftKey]: event.target.value }))}
                           className="mb-2 h-9 min-w-[220px] rounded-md border border-input bg-background px-2 text-sm"
                           aria-label={`Shift for ${member.full_name}`}
                         >
