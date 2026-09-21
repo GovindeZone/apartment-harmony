@@ -25,6 +25,7 @@ import { Route as AuthenticatedContractorRouteImport } from './routes/_authentic
 import { Route as AuthenticatedOfficialRecordsRouteImport } from './routes/_authenticated/official-records'
 import { Route as AuthenticatedMcRepositoryRouteImport } from './routes/_authenticated/mc-repository'
 import { Route as AuthenticatedEcRepositoryRouteImport } from './routes/_authenticated/ec-repository'
+import { Route as AuthenticatedByeLawRepositoryRouteImport } from './routes/_authenticated/bye-law-repository'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin-settings'
 import { Route as AuthenticatedAdminUserRightsRouteImport } from './routes/_authenticated/admin-user-rights'
@@ -94,6 +95,9 @@ const AuthenticatedMcRepositoryRoute = AuthenticatedMcRepositoryRouteImport.upda
 const AuthenticatedEcRepositoryRoute = AuthenticatedEcRepositoryRouteImport.update({
   id: '/ec-repository', path: '/ec-repository', getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedByeLawRepositoryRoute = AuthenticatedByeLawRepositoryRouteImport.update({
+  id: '/bye-law-repository', path: '/bye-law-repository', getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin', path: '/admin', getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
@@ -120,6 +124,7 @@ export interface FileRoutesByFullPath {
   '/official-records': typeof AuthenticatedOfficialRecordsRoute
   '/mc-repository': typeof AuthenticatedMcRepositoryRoute
   '/ec-repository': typeof AuthenticatedEcRepositoryRoute
+  '/bye-law-repository': typeof AuthenticatedByeLawRepositoryRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/user-rights': typeof AuthenticatedAdminUserRightsRoute
@@ -162,6 +167,7 @@ export interface FileRoutesById {
   '/_authenticated/official-records': typeof AuthenticatedOfficialRecordsRoute
   '/_authenticated/mc-repository': typeof AuthenticatedMcRepositoryRoute
   '/_authenticated/ec-repository': typeof AuthenticatedEcRepositoryRoute
+  '/_authenticated/bye-law-repository': typeof AuthenticatedByeLawRepositoryRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/user-rights': typeof AuthenticatedAdminUserRightsRoute
@@ -184,6 +190,7 @@ export interface FileRouteTypes {
     | '/official-records'
     | '/mc-repository'
     | '/ec-repository'
+    | '/bye-law-repository'
     | '/admin'
     | '/admin/settings'
     | '/admin/user-rights'
@@ -225,6 +232,7 @@ export interface FileRouteTypes {
     | '/_authenticated/official-records'
     | '/_authenticated/mc-repository'
     | '/_authenticated/ec-repository'
+    | '/_authenticated/bye-law-repository'
     | '/_authenticated/admin'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/user-rights'
@@ -308,6 +316,7 @@ declare module '@tanstack/react-router' {
     '/_authenticated/official-records': { id: '/_authenticated/official-records'; path: '/official-records'; fullPath: '/official-records'; preLoaderRoute: typeof AuthenticatedOfficialRecordsRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
     '/_authenticated/mc-repository': { id: '/_authenticated/mc-repository'; path: '/mc-repository'; fullPath: '/mc-repository'; preLoaderRoute: typeof AuthenticatedMcRepositoryRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
     '/_authenticated/ec-repository': { id: '/_authenticated/ec-repository'; path: '/ec-repository'; fullPath: '/ec-repository'; preLoaderRoute: typeof AuthenticatedEcRepositoryRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
+    '/_authenticated/bye-law-repository': { id: '/_authenticated/bye-law-repository'; path: '/bye-law-repository'; fullPath: '/bye-law-repository'; preLoaderRoute: typeof AuthenticatedByeLawRepositoryRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
     '/_authenticated/admin': { id: '/_authenticated/admin'; path: '/admin'; fullPath: '/admin'; preLoaderRoute: typeof AuthenticatedAdminRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
     '/_authenticated/admin/settings': { id: '/_authenticated/admin/settings'; path: '/admin/settings'; fullPath: '/admin/settings'; preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
     '/_authenticated/admin/user-rights': { id: '/_authenticated/admin/user-rights'; path: '/admin/user-rights'; fullPath: '/admin/user-rights'; preLoaderRoute: typeof AuthenticatedAdminUserRightsRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
@@ -328,6 +337,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedOfficialRecordsRoute: typeof AuthenticatedOfficialRecordsRoute
   AuthenticatedMcRepositoryRoute: typeof AuthenticatedMcRepositoryRoute
   AuthenticatedEcRepositoryRoute: typeof AuthenticatedEcRepositoryRoute
+  AuthenticatedByeLawRepositoryRoute: typeof AuthenticatedByeLawRepositoryRoute
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminUserRightsRoute: typeof AuthenticatedAdminUserRightsRoute
@@ -347,6 +357,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedOfficialRecordsRoute: AuthenticatedOfficialRecordsRoute,
   AuthenticatedMcRepositoryRoute: AuthenticatedMcRepositoryRoute,
   AuthenticatedEcRepositoryRoute: AuthenticatedEcRepositoryRoute,
+  AuthenticatedByeLawRepositoryRoute: AuthenticatedByeLawRepositoryRoute,
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminUserRightsRoute: AuthenticatedAdminUserRightsRoute,
