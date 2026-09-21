@@ -295,6 +295,22 @@ export function staffDocsQuery(staffId: string) {
 }
 
 
+export type FacilityTask = {
+  id: string;
+  task_name: string;
+  task_type: "Regular" | "Occasional";
+  assigned_staff_id: string | null;
+  assigned_department: string | null;
+  task_description: string | null;
+  task_start_date: string;
+  expected_end_date: string | null;
+  status: "Started" | "In-Progress" | "Completed" | "Aborted";
+  frequency: "Daily" | "Weekly" | "Monthly" | "Quarterly" | "Half Yearly" | "Full Year" | null;
+  created_at: string;
+  updated_at: string;
+  staff?: { full_name: string; employee_code: string; department: string } | null;
+};
+
 export type OfficialRecord = {
   id: string;
   document_name: string;
@@ -355,6 +371,17 @@ export const familyMembersQuery = queryOptions({
   queryFn: () =>
     unwrap<FamilyMember[]>(
       table("family_members").select("*").order("full_name"),
+    ),
+});
+
+export const facilityTasksQuery = queryOptions({
+  queryKey: ["facility_tasks"],
+  queryFn: () =>
+    unwrap<FacilityTask[]>(
+      table("facility_management_tasks")
+        .select("*, staff:assigned_staff_id(full_name, employee_code, department)")
+        .order("task_start_date", { ascending: false })
+        .order("created_at", { ascending: false }),
     ),
 });
 
