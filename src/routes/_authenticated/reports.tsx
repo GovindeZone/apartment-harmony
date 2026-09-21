@@ -112,7 +112,7 @@ function ReportsPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
       const { data: admin } = await supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle();
-      if (admin) { if (active) setCanViewSalaryReport(true); return; }
+      if (admin) { if (active) { setCanViewSalaryReport(true); setCanViewDocumentReport(true); setCanViewMcRepositoryReport(true); setCanViewElectionCommissionReport(true); } return; }
       const { data } = await supabase.from("user_tab_permissions").select("tab_key, can_view").eq("user_id", user.id);
       if (active) {
         const permissions = Object.fromEntries((data ?? []).map((p) => [p.tab_key, !!p.can_view]));
@@ -311,6 +311,7 @@ function ReportsPage() {
   const restrictedReports = new Set(["salary", "document", "mc_repository", "election_commission"]);
   const visibleReports = REPORTS.filter((item) => !restrictedReports.has(item.value) || !!reportPermission[item.value]);
   const label = visibleReports.find((r) => r.value === report)?.label ?? "Report";
+  const salaryReport = report === "salary";
   const restrictedSelected = restrictedReports.has(report);
   if (restrictedSelected && !reportPermission[report]) return null;
 
