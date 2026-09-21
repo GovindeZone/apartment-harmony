@@ -380,7 +380,7 @@ export const facilityTasksQuery = queryOptions({
   queryFn: () =>
     unwrap<FacilityTask[]>(
       table("facility_management_tasks")
-        .select("*, staff:assigned_staff_id(full_name, employee_code, department)")
+        .select("*, staff(full_name, employee_code, department)")
         .order("task_start_date", { ascending: false })
         .order("created_at", { ascending: false }),
     ),
