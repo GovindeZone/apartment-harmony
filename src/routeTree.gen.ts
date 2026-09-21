@@ -199,6 +199,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/staff'
     | '/attendance'
+    | '/facility-management'
     | '/contractor'
     | '/official-records'
     | '/mc-repository'
