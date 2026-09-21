@@ -9,50 +9,12 @@ import { SectionCard, StatCard, EmptyState } from "@/components/ui-bits";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  attendanceQuery,
-  flatsQuery,
-  officialRecordsQuery,
-  mcRepositoryQuery,
-  ecRepositoryQuery,
-  gateEntriesQuery,
-  helpdeskQuery,
-  residentsQuery,
-  salariesQuery,
-  vehiclesQuery,
-} from "@/lib/api";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { attendanceQuery, flatsQuery, officialRecordsQuery, mcRepositoryQuery, ecRepositoryQuery, gateEntriesQuery, helpdeskQuery, residentsQuery, salariesQuery, vehiclesQuery } from "@/lib/api";
 
 export const Route = createFileRoute("/_authenticated/reports")({
-  head: () => ({
-    meta: [
-      { title: "Reports — Indus Anantya Apartment" },
-      {
-        name: "description",
-        content:
-          "Build and export attendance, salary, document, MC, Election Commission, gate movement, guest, resident, vehicle, occupancy and help desk reports with date filtering.",
-      },
-      { property: "og:title", content: "Reports — Indus Anantya Apartment" },
-      {
-        property: "og:description",
-        content: "Date-filtered community reports with one-click export and scheduling.",
-      },
-    ],
-  }),
+  head: () => ({ meta: [{ title: "Reports — Indus Anantya Apartment" }, { name: "description", content: "Date-filtered community reports." }] }),
   beforeLoad: async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw redirect({ to: "/auth" });
@@ -65,397 +27,77 @@ export const Route = createFileRoute("/_authenticated/reports")({
 });
 
 type Row = Record<string, string | number>;
-
 const REPORTS = [
-  { value: "attendance", label: "Staff attendance" },
-  { value: "salary", label: "Salary Report" },
-  { value: "document", label: "Document Report" },
-  { value: "mc_repository", label: "MC Repository Report" },
-  { value: "election_commission", label: "Election Commission Report" },
-  { value: "gate", label: "Gate entry / exit" },
-  { value: "guest", label: "Guests & visitors" },
-  { value: "vehicle", label: "Vehicles" },
-  { value: "resident", label: "Residents" },
-  { value: "occupancy", label: "Flat occupancy" },
-  { value: "helpdesk", label: "Help desk / WhatsApp" },
+  { value: "attendance", label: "Staff attendance" }, { value: "salary", label: "Salary Report" }, { value: "document", label: "Document Report" },
+  { value: "mc_repository", label: "MC Repository Report" }, { value: "election_commission", label: "Election Commission Report" },
+  { value: "gate", label: "Gate entry / exit" }, { value: "guest", label: "Guests & visitors" }, { value: "vehicle", label: "Vehicles" },
+  { value: "resident", label: "Residents" }, { value: "occupancy", label: "Flat occupancy" }, { value: "helpdesk", label: "Help desk / WhatsApp" },
+  { value: "fm_checklist", label: "FM Checklist Report" }, { value: "mc_checklist", label: "MC Checklist Report" },
 ] as const;
+const fmtDate = (v: string | null) => v ? new Date(v).toISOString().slice(0, 10) : "—";
+const fmtTime = (v: string | null) => v ? new Date(v).toISOString().slice(11, 16) : "—";
+function toCsv(rows: Row[]) { if (!rows.length) return ""; const cols = Object.keys(rows[0] ?? {}); const esc = (v: string | number | undefined) => `"${String(v ?? "").replace(/"/g, '""')}"`; return [cols.join(","), ...rows.map((r) => cols.map((c) => esc(r[c])).join(","))].join("\n"); }
 
-const fmtDate = (v: string | null) =>
-  v ? new Date(v).toISOString().slice(0, 10) : "—";
-const fmtTime = (v: string | null) =>
-  v ? new Date(v).toISOString().slice(11, 16) : "—";
-
-function toCsv(rows: Row[]) {
-  if (!rows.length) return "";
-  const cols = Object.keys(rows[0] ?? {});
-  const esc = (v: string | number | undefined) => `"${String(v ?? "").replace(/"/g, '""')}"`;
-  return [cols.join(","), ...rows.map((r) => cols.map((c) => esc(r[c])).join(","))].join("\n");
+const FM_TASKS = [
+  ["Inspect common areas and cleanliness", "Daily"], ["Check security and access-control systems", "Daily"], ["Review housekeeping and maintenance issues", "Weekly"],
+  ["Inspect fire-safety equipment and emergency exits", "Monthly"], ["Review preventive-maintenance plan and vendor performance", "Quarterly"],
+] as const;
+const MC_TASKS = [
+  ["Meeting within MC", "Weekly", ["Done", "Not Necessary"]], ["Meeting with FM", "Weekly", ["Done", "Not Necessary"]], ["Meeting with Security", "Weekly", ["Done", "Not Necessary"]],
+  ["Review pending Help Desk Tickets", "Weekly", ["Completed", "Partially Completed"]], ["Renewal of Contracts (if any)", "Monthly", ["Done", "Not Necessary"]], ["Renewal of Association Registration", "Yearly", ["Done", "Not Necessary"]],
+] as const;
+function periodKey(date: Date, frequency: string) {
+  if (frequency === "Daily") return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+  if (frequency === "Weekly") { const start = new Date(date); start.setDate(date.getDate() - date.getDay()); return `${start.getFullYear()}-${start.getMonth() + 1}-${start.getDate()}`; }
+  if (frequency === "Monthly") return `${date.getFullYear()}-${date.getMonth() + 1}`;
+  if (frequency === "Quarterly") return `${date.getFullYear()}-Q${Math.floor(date.getMonth() / 3) + 1}`;
+  return `${date.getFullYear()}`;
+}
+function checklistRows(kind: "fm" | "mc", from: string, to: string): Row[] {
+  if (typeof window === "undefined") return [];
+  const date = new Date(`${to}T12:00:00`);
+  const checked = JSON.parse(localStorage.getItem(kind === "fm" ? "indus_anantya_fm_checklist" : "indus_anantya_mc_checklist") || "{}");
+  const submitted = JSON.parse(localStorage.getItem("indus_anantya_checklist_submissions") || "{}");
+  const tasks = kind === "fm" ? FM_TASKS : MC_TASKS;
+  return tasks.map((task) => {
+    const id = task[0]; const frequency = task[1]; const key = `${kind === "fm" ? `fm-${FM_TASKS.findIndex((t) => t[0] === id) + 1}` : `mc-${MC_TASKS.findIndex((t) => t[0] === id) + 1}`}:${periodKey(date, frequency)}`;
+    const value = checked[key]; const isSubmitted = !!submitted[key];
+    return { Task: id, Frequency: frequency, Period: periodKey(date, frequency), Status: isSubmitted ? (value || "Completed") : value ? (kind === "fm" ? "Completed" : value) : "Pending" };
+  }).filter((row) => row.Period >= from || row.Period <= to);
 }
 
 function ReportsPage() {
-  const today = new Date().toISOString().slice(0, 10);
-  const monthAgo = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10);
-
-  const [report, setReport] = useState<string>("attendance");
-  const [from, setFrom] = useState(monthAgo);
-  const [to, setTo] = useState(today);
-  const [frequency, setFrequency] = useState("weekly");
-  const [recipient, setRecipient] = useState("");
-  const [canViewSalaryReport, setCanViewSalaryReport] = useState(false);
-  const [canViewDocumentReport, setCanViewDocumentReport] = useState(false);
-  const [canViewMcRepositoryReport, setCanViewMcRepositoryReport] = useState(false);
-  const [canViewElectionCommissionReport, setCanViewElectionCommissionReport] = useState(false);
-
-  useEffect(() => {
-    let active = true;
-    void (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      const { data: admin } = await supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle();
-      if (admin) { if (active) { setCanViewSalaryReport(true); setCanViewDocumentReport(true); setCanViewMcRepositoryReport(true); setCanViewElectionCommissionReport(true); } return; }
-      const { data } = await supabase.from("user_tab_permissions").select("tab_key, can_view").eq("user_id", user.id);
-      if (active) {
-        const permissions = Object.fromEntries((data ?? []).map((p) => [p.tab_key, !!p.can_view]));
-        setCanViewSalaryReport(!!permissions.salary_report);
-        setCanViewDocumentReport(!!permissions.document_report);
-        setCanViewMcRepositoryReport(!!permissions.mc_repository_report);
-        setCanViewElectionCommissionReport(!!permissions.election_commission_report);
-      }
-    })();
-    return () => { active = false; };
-  }, []);
-
-  const attendance = useQuery(attendanceQuery);
-  const salaries = useQuery(salariesQuery);
-  const gate = useQuery(gateEntriesQuery);
-  const residents = useQuery(residentsQuery);
-  const vehicles = useQuery(vehiclesQuery);
-  const flats = useQuery(flatsQuery);
-  const helpdesk = useQuery(helpdeskQuery);
-  const officialRecords = useQuery(officialRecordsQuery);
-  const mcRepository = useQuery(mcRepositoryQuery);
-  const ecRepository = useQuery(ecRepositoryQuery);
-
-  const inRange = (d: string | null) => {
-    if (!d) return false;
-    const day = d.slice(0, 10);
-    return day >= from && day <= to;
-  };
-
+  const today = new Date().toISOString().slice(0, 10); const monthAgo = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10);
+  const [report, setReport] = useState("attendance"); const [from, setFrom] = useState(monthAgo); const [to, setTo] = useState(today); const [frequency, setFrequency] = useState("weekly"); const [recipient, setRecipient] = useState("");
+  const [canViewSalaryReport, setCanViewSalaryReport] = useState(false); const [canViewDocumentReport, setCanViewDocumentReport] = useState(false); const [canViewMcRepositoryReport, setCanViewMcRepositoryReport] = useState(false); const [canViewElectionCommissionReport, setCanViewElectionCommissionReport] = useState(false);
+  useEffect(() => { let active = true; void (async () => { const { data: { user } } = await supabase.auth.getUser(); if (!user) return; const { data: admin } = await supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle(); if (admin) { if (active) { setCanViewSalaryReport(true); setCanViewDocumentReport(true); setCanViewMcRepositoryReport(true); setCanViewElectionCommissionReport(true); } return; } const { data } = await supabase.from("user_tab_permissions").select("tab_key, can_view").eq("user_id", user.id); if (active) { const permissions = Object.fromEntries((data ?? []).map((p) => [p.tab_key, !!p.can_view])); setCanViewSalaryReport(!!permissions.salary_report); setCanViewDocumentReport(!!permissions.document_report); setCanViewMcRepositoryReport(!!permissions.mc_repository_report); setCanViewElectionCommissionReport(!!permissions.election_commission_report); } })(); return () => { active = false; }; }, []);
+  const attendance = useQuery(attendanceQuery); const salaries = useQuery(salariesQuery); const gate = useQuery(gateEntriesQuery); const residents = useQuery(residentsQuery); const vehicles = useQuery(vehiclesQuery); const flats = useQuery(flatsQuery); const helpdesk = useQuery(helpdeskQuery); const officialRecords = useQuery(officialRecordsQuery); const mcRepository = useQuery(mcRepositoryQuery); const ecRepository = useQuery(ecRepositoryQuery);
+  const inRange = (d: string | null) => !!d && d.slice(0, 10) >= from && d.slice(0, 10) <= to;
   const rows: Row[] = useMemo(() => {
+    if (report === "fm_checklist") return checklistRows("fm", from, to);
+    if (report === "mc_checklist") return checklistRows("mc", from, to);
     switch (report) {
-      case "attendance":
-        return (attendance.data ?? [])
-          .filter((a) => inRange(a.attendance_date))
-          .map((a) => ({
-            Date: a.attendance_date,
-            Staff: a.staff?.full_name ?? "—",
-            Code: a.staff?.employee_code ?? "—",
-            Department: a.staff?.department ?? "—",
-            Status: a.status,
-            "Check in": a.check_in ?? "—",
-            "Check out": a.check_out ?? "—",
-          }));
-      case "salary": {
-        const eligible = new Set(["present", "week_off", "festival_holiday", "overtime"]);
-        const attendanceRows = (attendance.data ?? []).filter((a) => inRange(a.attendance_date) && eligible.has(a.status));
-        const grouped = new Map<string, { staff: string; code: string; department: string; monthlySalary: number; present: number; weekOff: number; festivalHoliday: number; overtime: number }>();
-        for (const a of attendanceRows) {
-          const staffId = a.staff_id;
-          const member = a.staff;
-          const existing = grouped.get(staffId) ?? {
-            staff: member?.full_name ?? "—",
-            code: member?.employee_code ?? "—",
-            department: member?.department ?? "—",
-            monthlySalary: (salaries.data ?? []).find((s) => s.staff_id === staffId)?.base_amount ?? 0,
-            present: 0,
-            weekOff: 0,
-            festivalHoliday: 0,
-            overtime: 0,
-          };
-          if (a.status === "present") existing.present++;
-          if (a.status === "week_off") existing.weekOff++;
-          if (a.status === "festival_holiday") existing.festivalHoliday++;
-          if (a.status === "overtime") existing.overtime++;
-          grouped.set(staffId, existing);
-        }
-        return Array.from(grouped.values()).map((r) => {
-          const payableDays = r.present + r.weekOff + r.festivalHoliday + r.overtime;
-          const dailyRate = r.monthlySalary / 30;
-          return {
-            Staff: r.staff,
-            Code: r.code,
-            Department: r.department,
-            "Monthly Salary": Number(r.monthlySalary.toFixed(2)),
-            Present: r.present,
-            "Week Off": r.weekOff,
-            "Festival Holiday": r.festivalHoliday,
-            Overtime: r.overtime,
-            "Payable Days": payableDays,
-            "Calculated Salary": Number((dailyRate * payableDays).toFixed(2)),
-          };
-        });
-      }
-      case "document":
-        return (officialRecords.data ?? [])
-          .filter((r) => inRange(r.created_at))
-          .map((r) => ({
-            "Document Name": r.document_name,
-            Description: r.document_description ?? "—",
-            "Document Type": r.document_type,
-            "Additional Remarks": r.additional_remarks ?? "—",
-            "File Name": r.document_file_name ?? "—",
-            "Created Date": fmtDate(r.created_at),
-          }));
-      case "mc_repository":
-        return (mcRepository.data ?? [])
-          .filter((r) => r.period_from <= to && r.period_to >= from)
-          .map((r) => ({
-            "Period From": r.period_from,
-            "Period To": r.period_to,
-            Flat: r.flat_no,
-            "Committee Member": r.member_name,
-            Designation: r.designation,
-            "Primary Portfolio": r.primary_portfolio ?? "—",
-            "Secondary Portfolio": r.secondary_portfolio ?? "—",
-            Phone: r.phone ?? "—",
-            Email: r.email ?? "—",
-          }));
-      case "election_commission":
-        return (ecRepository.data ?? [])
-          .filter((r) => r.period_from <= to && r.period_to >= from)
-          .map((r) => ({
-            "Period From": r.period_from,
-            "Period To": r.period_to,
-            Flat: r.flat_no,
-            "Committee Member": r.member_name,
-            Designation: r.designation,
-            "General Body Approved Date": r.general_body_approved_date ?? "—",
-            Phone: r.phone ?? "—",
-            Email: r.email ?? "—",
-          }));
-      case "gate":
-      case "guest":
-        return (gate.data ?? [])
-          .filter((g) => inRange(g.entry_time))
-          .filter((g) =>
-            report === "guest" ? g.category === "visitor" || g.category === "vendor" : true,
-          )
-          .map((g) => ({
-            Date: fmtDate(g.entry_time),
-            "In time": fmtTime(g.entry_time),
-            "Out time": fmtTime(g.exit_time),
-            Gate: g.gate,
-            Direction: g.direction,
-            Category: g.category,
-            Person: g.person_name,
-            Flat: g.flat_no ?? "—",
-            Vehicle: g.vehicle_no ?? "—",
-            Status: g.status,
-          }));
-      case "vehicle":
-        return (vehicles.data ?? []).map((v) => ({
-          "Vehicle no": v.vehicle_no,
-          Type: v.vehicle_type,
-          Model: v.make_model ?? "—",
-          Sticker: v.sticker_no ?? "—",
-          Flat: v.flats?.flat_no ?? "—",
-          Owner: v.residents?.full_name ?? "—",
-        }));
-      case "resident":
-        return (residents.data ?? []).map((r) => ({
-          Name: r.full_name,
-          Type: r.resident_type,
-          Flat: r.flats?.flat_no ?? "—",
-          Block: r.flats?.block ?? "—",
-          Zone: r.flats?.zone ?? "—",
-          Phone: r.phone ?? "—",
-          WhatsApp: r.whatsapp ?? "—",
-          "Move in": r.move_in_date ?? "—",
-          Status: r.status,
-        }));
-      case "occupancy":
-        return (flats.data ?? []).map((f) => ({
-          Flat: f.flat_no,
-          Block: f.block,
-          Zone: f.zone,
-          Floor: f.floor,
-          Bedrooms: f.bedrooms,
-          "Area sqft": f.area_sqft ?? "—",
-          Status: f.status,
-        }));
-      case "helpdesk":
-        return (helpdesk.data ?? [])
-          .filter((h) => inRange(h.created_at))
-          .map((h) => ({
-            Date: fmtDate(h.created_at),
-            Time: fmtTime(h.created_at),
-            Flat: h.flat_no ?? "—",
-            Category: h.category,
-            Direction: h.direction,
-            Message: h.message,
-            Status: h.status,
-            "Handled by": h.handled_by ?? "—",
-          }));
-      default:
-        return [];
+      case "attendance": return (attendance.data ?? []).filter((a) => inRange(a.attendance_date)).map((a) => ({ Date: a.attendance_date, Staff: a.staff?.full_name ?? "—", Code: a.staff?.employee_code ?? "—", Department: a.staff?.department ?? "—", Status: a.status, "Check in": a.check_in ?? "—", "Check out": a.check_out ?? "—" }));
+      case "salary": { const eligible = new Set(["present", "week_off", "festival_holiday", "overtime"]); const attendanceRows = (attendance.data ?? []).filter((a) => inRange(a.attendance_date) && eligible.has(a.status)); const grouped = new Map<string, any>(); for (const a of attendanceRows) { const e = grouped.get(a.staff_id) ?? { staff: a.staff?.full_name ?? "—", code: a.staff?.employee_code ?? "—", department: a.staff?.department ?? "—", monthlySalary: (salaries.data ?? []).find((s) => s.staff_id === a.staff_id)?.base_amount ?? 0, present: 0, weekOff: 0, festivalHoliday: 0, overtime: 0 }; if (a.status === "present") e.present++; if (a.status === "week_off") e.weekOff++; if (a.status === "festival_holiday") e.festivalHoliday++; if (a.status === "overtime") e.overtime++; grouped.set(a.staff_id, e); } return Array.from(grouped.values()).map((r) => ({ Staff: r.staff, Code: r.code, Department: r.department, "Monthly Salary": Number(r.monthlySalary.toFixed(2)), Present: r.present, "Week Off": r.weekOff, "Festival Holiday": r.festivalHoliday, Overtime: r.overtime, "Payable Days": r.present + r.weekOff + r.festivalHoliday + r.overtime, "Calculated Salary": Number((r.monthlySalary / 30 * (r.present + r.weekOff + r.festivalHoliday + r.overtime)).toFixed(2)) })); }
+      case "document": return (officialRecords.data ?? []).filter((r) => inRange(r.created_at)).map((r) => ({ "Document Name": r.document_name, Description: r.document_description ?? "—", "Document Type": r.document_type, "Additional Remarks": r.additional_remarks ?? "—", "File Name": r.document_file_name ?? "—", "Created Date": fmtDate(r.created_at) }));
+      case "mc_repository": return (mcRepository.data ?? []).filter((r) => r.period_from <= to && r.period_to >= from).map((r) => ({ "Period From": r.period_from, "Period To": r.period_to, Flat: r.flat_no, "Committee Member": r.member_name, Designation: r.designation, "Primary Portfolio": r.primary_portfolio ?? "—", "Secondary Portfolio": r.secondary_portfolio ?? "—", Phone: r.phone ?? "—", Email: r.email ?? "—" }));
+      case "election_commission": return (ecRepository.data ?? []).filter((r) => r.period_from <= to && r.period_to >= from).map((r) => ({ "Period From": r.period_from, "Period To": r.period_to, Flat: r.flat_no, "Committee Member": r.member_name, Designation: r.designation, "General Body Approved Date": r.general_body_approved_date ?? "—", Phone: r.phone ?? "—", Email: r.email ?? "—" }));
+      case "gate": case "guest": return (gate.data ?? []).filter((g) => inRange(g.entry_time)).filter((g) => report === "guest" ? g.category === "visitor" || g.category === "vendor" : true).map((g) => ({ Date: fmtDate(g.entry_time), "In time": fmtTime(g.entry_time), "Out time": fmtTime(g.exit_time), Gate: g.gate, Direction: g.direction, Category: g.category, Person: g.person_name, Flat: g.flat_no ?? "—", Vehicle: g.vehicle_no ?? "—", Status: g.status }));
+      case "vehicle": return (vehicles.data ?? []).map((v) => ({ "Vehicle no": v.vehicle_no, Type: v.vehicle_type, Model: v.make_model ?? "—", Sticker: v.sticker_no ?? "—", Flat: v.flats?.flat_no ?? "—", Owner: v.residents?.full_name ?? "—" }));
+      case "resident": return (residents.data ?? []).map((r) => ({ Name: r.full_name, Type: r.resident_type, Flat: r.flats?.flat_no ?? "—", Block: r.flats?.block ?? "—", Zone: r.flats?.zone ?? "—", Phone: r.phone ?? "—", WhatsApp: r.whatsapp ?? "—", "Move in": r.move_in_date ?? "—", Status: r.status }));
+      case "occupancy": return (flats.data ?? []).map((f) => ({ Flat: f.flat_no, Block: f.block, Zone: f.zone, Floor: f.floor, Bedrooms: f.bedrooms, "Area sqft": f.area_sqft ?? "—", Status: f.status }));
+      case "helpdesk": return (helpdesk.data ?? []).filter((h) => inRange(h.created_at)).map((h) => ({ Date: fmtDate(h.created_at), Time: fmtTime(h.created_at), Flat: h.flat_no ?? "—", Category: h.category, Direction: h.direction, Message: h.message, Status: h.status, "Handled by": h.handled_by ?? "—" }));
+      default: return [];
     }
   }, [report, from, to, attendance.data, salaries.data, gate.data, residents.data, vehicles.data, flats.data, helpdesk.data, officialRecords.data, mcRepository.data, ecRepository.data]);
-
-  const reportPermission: Record<string, boolean> = {
-    salary: canViewSalaryReport,
-    document: canViewDocumentReport,
-    mc_repository: canViewMcRepositoryReport,
-    election_commission: canViewElectionCommissionReport,
-  };
-  const restrictedReports = new Set(["salary", "document", "mc_repository", "election_commission"]);
-  const visibleReports = REPORTS.filter((item) => !restrictedReports.has(item.value) || !!reportPermission[item.value]);
-  const label = visibleReports.find((r) => r.value === report)?.label ?? "Report";
-  const salaryReport = report === "salary";
-  const restrictedSelected = restrictedReports.has(report);
-  if (restrictedSelected && !reportPermission[report]) return null;
-
-  function exportCsv() {
-    const csv = toCsv(rows);
-    if (!csv) {
-      toast.error("Nothing to export for this range.");
-      return;
-    }
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${report}-${from}-to-${to}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast.success("Report exported.");
-  }
-
+  const reportPermission: Record<string, boolean> = { salary: canViewSalaryReport, document: canViewDocumentReport, mc_repository: canViewMcRepositoryReport, election_commission: canViewElectionCommissionReport };
+  const restrictedReports = new Set(["salary", "document", "mc_repository", "election_commission"]); const visibleReports = REPORTS.filter((item) => !restrictedReports.has(item.value) || !!reportPermission[item.value]); const label = visibleReports.find((r) => r.value === report)?.label ?? "Report"; const salaryReport = report === "salary"; if (restrictedReports.has(report) && !reportPermission[report]) return null;
+  function exportCsv() { const csv = toCsv(rows); if (!csv) { toast.error("Nothing to export for this range."); return; } const blob = new Blob([csv], { type: "text/csv;charset=utf-8" }); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = `${report}-${from}-to-${to}.csv`; a.click(); URL.revokeObjectURL(url); toast.success("Report exported."); }
   const columns = Object.keys(rows[0] ?? {});
-
-  return (
-    <AppShell
-      title="Reports"
-      description="Filter, review and export community operations data."
-      actions={
-        <Button onClick={exportCsv} className="gap-2">
-          <Download className="size-4" /> Export CSV
-        </Button>
-      }
-    >
-      <div className="grid gap-4 sm:grid-cols-3">
-        {salaryReport ? (
-          <div className="sm:col-span-3 rounded-xl border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-foreground">
-            <strong>Salary Report rule:</strong> only Present, Week Off, Festival Holiday and Overtime days are payable. Absent, half-days, Leave and Comp-Off are excluded. Daily rate is calculated as Monthly Salary ÷ 30.
-          </div>
-        ) : null}
-        <StatCard label="Report" value={label} icon={FileBarChart} />
-        <StatCard label="Rows in range" value={rows.length} hint={`${from} → ${to}`} />
-        <StatCard label="Schedule" value={frequency} tone="success" icon={CalendarClock} />
-      </div>
-
-      <div className="mt-6 grid gap-6 xl:grid-cols-[1fr_320px]">
-        <SectionCard title={label} description={`${rows.length} record(s) between ${from} and ${to}`}>
-          <div className="grid gap-3 border-b border-border p-4 sm:grid-cols-3">
-            <div className="space-y-2">
-              <Label>Report type</Label>
-              <Select value={report} onValueChange={setReport}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {visibleReports.map((r) => (
-                    <SelectItem key={r.value} value={r.value}>
-                      {r.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="from">From</Label>
-              <Input id="from" type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="to">To</Label>
-              <Input id="to" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
-            </div>
-          </div>
-
-          {rows.length ? (
-            <div className="max-h-[560px] overflow-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    {columns.map((c) => (
-                      <TableHead key={c} className="whitespace-nowrap">
-                        {c}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {rows.slice(0, 200).map((r, i) => (
-                    <TableRow key={i}>
-                      {columns.map((c) => (
-                        <TableCell key={c} className="whitespace-nowrap text-sm">
-                          {r[c]}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          ) : (
-            <div className="p-4">
-              <EmptyState message="No records match this report and date range." />
-            </div>
-          )}
-        </SectionCard>
-
-        <SectionCard title="Schedule delivery" description="Send this report automatically.">
-          <div className="space-y-4 p-5">
-            <div className="space-y-2">
-              <Label>Frequency</Label>
-              <Select value={frequency} onValueChange={setFrequency}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="daily">Daily</SelectItem>
-                  <SelectItem value="weekly">Weekly</SelectItem>
-                  <SelectItem value="monthly">Monthly</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="recipient">Send to (email or WhatsApp)</Label>
-              <Input
-                id="recipient"
-                value={recipient}
-                onChange={(e) => setRecipient(e.target.value)}
-                placeholder="manager@ashvale.in"
-              />
-            </div>
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() =>
-                recipient.trim()
-                  ? toast.success(`${label} scheduled ${frequency} for ${recipient}.`)
-                  : toast.error("Add an email or WhatsApp number first.")
-              }
-            >
-              Save schedule
-            </Button>
-            <p className="text-xs text-muted-foreground">
-              Scheduled delivery is recorded here; automatic sending can be switched on once an
-              email or WhatsApp sender is connected.
-            </p>
-          </div>
-        </SectionCard>
-      </div>
-    </AppShell>
-  );
+  return <AppShell title="Reports" description="Filter, review and export community operations data." actions={<Button onClick={exportCsv} className="gap-2"><Download className="size-4" /> Export CSV</Button>}>
+    <div className="grid gap-4 sm:grid-cols-3">{salaryReport ? <div className="sm:col-span-3 rounded-xl border border-warning/30 bg-warning/10 px-4 py-3 text-sm"><strong>Salary Report rule:</strong> only Present, Week Off, Festival Holiday and Overtime days are payable. Daily rate is Monthly Salary ÷ 30.</div> : null}<StatCard label="Report" value={label} icon={FileBarChart} /><StatCard label="Rows in range" value={rows.length} hint={`${from} → ${to}`} /><StatCard label="Schedule" value={frequency} tone="success" icon={CalendarClock} /></div>
+    <div className="mt-6 grid gap-6 xl:grid-cols-[1fr_320px]"><SectionCard title={label} description={`${rows.length} record(s) between ${from} and ${to}`}><div className="grid gap-3 border-b border-border p-4 sm:grid-cols-3"><div className="space-y-2"><Label>Report type</Label><Select value={report} onValueChange={setReport}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{visibleReports.map((r) => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}</SelectContent></Select></div><div className="space-y-2"><Label htmlFor="from">From</Label><Input id="from" type="date" value={from} onChange={(e) => setFrom(e.target.value)} /></div><div className="space-y-2"><Label htmlFor="to">To</Label><Input id="to" type="date" value={to} onChange={(e) => setTo(e.target.value)} /></div></div>{rows.length ? <div className="max-h-[560px] overflow-auto"><Table><TableHeader><TableRow>{columns.map((c) => <TableHead key={c} className="whitespace-nowrap">{c}</TableHead>)}</TableRow></TableHeader><TableBody>{rows.slice(0, 200).map((r, i) => <TableRow key={i}>{columns.map((c) => <TableCell key={c} className="whitespace-nowrap text-sm">{r[c]}</TableCell>)}</TableRow>)}</TableBody></Table></div> : <div className="p-4"><EmptyState message="No records match this report and date range." /></div>}</SectionCard>
+      <SectionCard title="Schedule delivery" description="Send this report automatically."><div className="space-y-4 p-5"><div className="space-y-2"><Label>Frequency</Label><Select value={frequency} onValueChange={setFrequency}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="daily">Daily</SelectItem><SelectItem value="weekly">Weekly</SelectItem><SelectItem value="monthly">Monthly</SelectItem></SelectContent></Select></div><div className="space-y-2"><Label htmlFor="recipient">Send to (email or WhatsApp)</Label><Input id="recipient" value={recipient} onChange={(e) => setRecipient(e.target.value)} placeholder="manager@example.com" /></div><Button variant="outline" className="w-full" onClick={() => recipient.trim() ? toast.success(`${label} scheduled ${frequency} for ${recipient}.`) : toast.error("Add an email or WhatsApp number first.")}>Save schedule</Button><p className="text-xs text-muted-foreground">Scheduled delivery is recorded here; automatic sending requires a connected sender.</p></div></SectionCard>
+    </div>
+  </AppShell>;
 }
