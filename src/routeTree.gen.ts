@@ -19,6 +19,9 @@ import { Route as AuthenticatedResidentsRouteImport } from './routes/_authentica
 import { Route as AuthenticatedSecurityRouteImport } from './routes/_authenticated/security'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated/staff'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin-settings'
+import { Route as AuthenticatedAdminUserRightsRouteImport } from './routes/_authenticated/admin-user-rights'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -65,9 +68,16 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedStaffRoute = AuthenticatedStaffRouteImport.update({
-  id: '/staff',
-  path: '/staff',
-  getParentRoute: () => AuthenticatedRouteRoute,
+  id: '/staff', path: '/staff', getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin', path: '/admin', getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminSettingsRoute = AuthenticatedAdminSettingsRouteImport.update({
+  id: '/admin/settings', path: '/admin/settings', getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminUserRightsRoute = AuthenticatedAdminUserRightsRouteImport.update({
+  id: '/admin/user-rights', path: '/admin/user-rights', getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -80,6 +90,9 @@ export interface FileRoutesByFullPath {
   '/security': typeof AuthenticatedSecurityRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/staff': typeof AuthenticatedStaffRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/user-rights': typeof AuthenticatedAdminUserRightsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -91,6 +104,9 @@ export interface FileRoutesByTo {
   '/security': typeof AuthenticatedSecurityRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/staff': typeof AuthenticatedStaffRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/user-rights': typeof AuthenticatedAdminUserRightsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -104,6 +120,9 @@ export interface FileRoutesById {
   '/_authenticated/security': typeof AuthenticatedSecurityRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/staff': typeof AuthenticatedStaffRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/_authenticated/admin/user-rights': typeof AuthenticatedAdminUserRightsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -117,6 +136,9 @@ export interface FileRouteTypes {
     | '/security'
     | '/settings'
     | '/staff'
+    | '/admin'
+    | '/admin/settings'
+    | '/admin/user-rights'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -128,6 +150,9 @@ export interface FileRouteTypes {
     | '/security'
     | '/settings'
     | '/staff'
+    | '/admin'
+    | '/admin/settings'
+    | '/admin/user-rights'
   id:
     | '__root__'
     | '/'
@@ -231,6 +256,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSecurityRoute: typeof AuthenticatedSecurityRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedStaffRoute: typeof AuthenticatedStaffRoute
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
+  AuthenticatedAdminUserRightsRoute: typeof AuthenticatedAdminUserRightsRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -241,6 +269,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSecurityRoute: AuthenticatedSecurityRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedStaffRoute: AuthenticatedStaffRoute,
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
+  AuthenticatedAdminUserRightsRoute: AuthenticatedAdminUserRightsRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
