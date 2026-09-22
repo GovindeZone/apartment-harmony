@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Building } from "lucide-react";
+import { Building, Bell } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { AppShell } from "@/components/AppShell";
 import { SectionCard } from "@/components/ui-bits";
@@ -83,6 +83,13 @@ function Dashboard() {
         <h2 className="text-lg font-semibold tracking-tight text-primary">
           Community Status as of {communityStatusDate}
         </h2>
+      </div>
+
+      <div className="mb-5 flex items-center justify-between gap-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 shadow-sm">
+        <div className="flex min-w-0 items-center gap-3">
+          <Bell className="size-5 shrink-0 text-amber-700" />
+          <div className="min-w-0"><h2 className="text-sm font-semibold text-amber-900">Notifications</h2><p className="truncate text-xs text-amber-800">Holiday, MC tenure, license and association renewal reminders will appear here.</p></div>
+        </div>
       </div>
 
       <section>
