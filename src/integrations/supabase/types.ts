@@ -62,6 +62,222 @@ export type Database = {
         }
         Relationships: []
       }
+      bye_law_repository: {
+        Row: {
+          bye_law_type: string
+          created_at: string
+          document_description: string | null
+          document_name: string
+          effective_date: string | null
+          gb_approved_date: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          bye_law_type?: string
+          created_at?: string
+          document_description?: string | null
+          document_name: string
+          effective_date?: string | null
+          gb_approved_date?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          bye_law_type?: string
+          created_at?: string
+          document_description?: string | null
+          document_name?: string
+          effective_date?: string | null
+          gb_approved_date?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      contractors: {
+        Row: {
+          company_name: string
+          contact_person: string | null
+          contract_amount: number | null
+          contract_document_name: string | null
+          contract_document_path: string | null
+          contract_end_date: string | null
+          contract_particulars: string | null
+          contract_start_date: string | null
+          created_at: string
+          email: string | null
+          id: string
+          phone1: string | null
+          phone2: string | null
+          phone3: string | null
+          proprietor_owner_name: string | null
+          registration_number: string | null
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          company_name: string
+          contact_person?: string | null
+          contract_amount?: number | null
+          contract_document_name?: string | null
+          contract_document_path?: string | null
+          contract_end_date?: string | null
+          contract_particulars?: string | null
+          contract_start_date?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          phone1?: string | null
+          phone2?: string | null
+          phone3?: string | null
+          proprietor_owner_name?: string | null
+          registration_number?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          company_name?: string
+          contact_person?: string | null
+          contract_amount?: number | null
+          contract_document_name?: string | null
+          contract_document_path?: string | null
+          contract_end_date?: string | null
+          contract_particulars?: string | null
+          contract_start_date?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          phone1?: string | null
+          phone2?: string | null
+          phone3?: string | null
+          proprietor_owner_name?: string | null
+          registration_number?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
+      ec_repository: {
+        Row: {
+          created_at: string
+          designation: string
+          email: string | null
+          family_member_id: string | null
+          flat_id: string
+          general_body_approved_date: string | null
+          id: string
+          period_from: string
+          period_to: string
+          phone: string | null
+          resident_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          designation: string
+          email?: string | null
+          family_member_id?: string | null
+          flat_id: string
+          general_body_approved_date?: string | null
+          id?: string
+          period_from: string
+          period_to: string
+          phone?: string | null
+          resident_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          designation?: string
+          email?: string | null
+          family_member_id?: string | null
+          flat_id?: string
+          general_body_approved_date?: string | null
+          id?: string
+          period_from?: string
+          period_to?: string
+          phone?: string | null
+          resident_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ec_repository_family_member_id_fkey"
+            columns: ["family_member_id"]
+            isOneToOne: false
+            referencedRelation: "family_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ec_repository_flat_id_fkey"
+            columns: ["flat_id"]
+            isOneToOne: false
+            referencedRelation: "flats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ec_repository_resident_id_fkey"
+            columns: ["resident_id"]
+            isOneToOne: false
+            referencedRelation: "residents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      facility_management_tasks: {
+        Row: {
+          assigned_department: string | null
+          assigned_staff_id: string | null
+          created_at: string
+          expected_end_date: string | null
+          frequency: string | null
+          id: string
+          status: string
+          task_description: string | null
+          task_name: string
+          task_start_date: string
+          task_type: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_department?: string | null
+          assigned_staff_id?: string | null
+          created_at?: string
+          expected_end_date?: string | null
+          frequency?: string | null
+          id?: string
+          status?: string
+          task_description?: string | null
+          task_name: string
+          task_start_date?: string
+          task_type?: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_department?: string | null
+          assigned_staff_id?: string | null
+          created_at?: string
+          expected_end_date?: string | null
+          frequency?: string | null
+          id?: string
+          status?: string
+          task_description?: string | null
+          task_name?: string
+          task_start_date?: string
+          task_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "facility_management_tasks_assigned_staff_id_fkey"
+            columns: ["assigned_staff_id"]
+            isOneToOne: false
+            referencedRelation: "staff"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       family_members: {
         Row: {
           age: number | null
@@ -149,6 +365,7 @@ export type Database = {
           id: string
           person_name: string
           phone: string | null
+          phone_country_code: string
           purpose: string | null
           recorded_by: string | null
           status: string
@@ -167,6 +384,7 @@ export type Database = {
           id?: string
           person_name: string
           phone?: string | null
+          phone_country_code?: string
           purpose?: string | null
           recorded_by?: string | null
           status?: string
@@ -185,6 +403,7 @@ export type Database = {
           id?: string
           person_name?: string
           phone?: string | null
+          phone_country_code?: string
           purpose?: string | null
           recorded_by?: string | null
           status?: string
@@ -254,6 +473,112 @@ export type Database = {
           },
         ]
       }
+      mc_repository: {
+        Row: {
+          created_at: string
+          designation: string
+          email: string | null
+          family_member_id: string | null
+          flat_id: string
+          id: string
+          period_from: string
+          period_to: string
+          phone: string | null
+          primary_portfolio: string | null
+          resident_id: string
+          secondary_portfolio: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          designation: string
+          email?: string | null
+          family_member_id?: string | null
+          flat_id: string
+          id?: string
+          period_from: string
+          period_to: string
+          phone?: string | null
+          primary_portfolio?: string | null
+          resident_id: string
+          secondary_portfolio?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          designation?: string
+          email?: string | null
+          family_member_id?: string | null
+          flat_id?: string
+          id?: string
+          period_from?: string
+          period_to?: string
+          phone?: string | null
+          primary_portfolio?: string | null
+          resident_id?: string
+          secondary_portfolio?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mc_repository_family_member_id_fkey"
+            columns: ["family_member_id"]
+            isOneToOne: false
+            referencedRelation: "family_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mc_repository_flat_id_fkey"
+            columns: ["flat_id"]
+            isOneToOne: false
+            referencedRelation: "flats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mc_repository_resident_id_fkey"
+            columns: ["resident_id"]
+            isOneToOne: false
+            referencedRelation: "residents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      official_records: {
+        Row: {
+          additional_remarks: string | null
+          created_at: string
+          document_description: string | null
+          document_file_name: string | null
+          document_name: string
+          document_path: string | null
+          document_type: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          additional_remarks?: string | null
+          created_at?: string
+          document_description?: string | null
+          document_file_name?: string | null
+          document_name: string
+          document_path?: string | null
+          document_type?: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          additional_remarks?: string | null
+          created_at?: string
+          document_description?: string | null
+          document_file_name?: string | null
+          document_name?: string
+          document_path?: string | null
+          document_type?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -288,9 +613,11 @@ export type Database = {
           notes: string | null
           occupant_type: string
           phone: string | null
+          phone_country_code: string
           resident_type: string
           status: string
           whatsapp: string | null
+          whatsapp_country_code: string
         }
         Insert: {
           created_at?: string
@@ -304,9 +631,11 @@ export type Database = {
           notes?: string | null
           occupant_type?: string
           phone?: string | null
+          phone_country_code?: string
           resident_type?: string
           status?: string
           whatsapp?: string | null
+          whatsapp_country_code?: string
         }
         Update: {
           created_at?: string
@@ -320,9 +649,11 @@ export type Database = {
           notes?: string | null
           occupant_type?: string
           phone?: string | null
+          phone_country_code?: string
           resident_type?: string
           status?: string
           whatsapp?: string | null
+          whatsapp_country_code?: string
         }
         Relationships: [
           {
@@ -336,8 +667,10 @@ export type Database = {
       }
       staff: {
         Row: {
+          aadhaar_document_path: string | null
           aadhaar_number: string | null
           address: string | null
+          contractor_id: string | null
           created_at: string
           department: string
           designation: string
@@ -348,16 +681,22 @@ export type Database = {
           join_date: string | null
           monthly_salary: number
           phone: string | null
+          phone_country_code: string
           reference_name: string | null
           reference_phone: string | null
           relieving_date: string | null
+          resume_document_path: string | null
           shift: string
+          staff_type: string
           status: string
           whatsapp: string | null
+          whatsapp_country_code: string
         }
         Insert: {
+          aadhaar_document_path?: string | null
           aadhaar_number?: string | null
           address?: string | null
+          contractor_id?: string | null
           created_at?: string
           department: string
           designation: string
@@ -368,16 +707,22 @@ export type Database = {
           join_date?: string | null
           monthly_salary?: number
           phone?: string | null
+          phone_country_code?: string
           reference_name?: string | null
           reference_phone?: string | null
           relieving_date?: string | null
+          resume_document_path?: string | null
           shift?: string
+          staff_type?: string
           status?: string
           whatsapp?: string | null
+          whatsapp_country_code?: string
         }
         Update: {
+          aadhaar_document_path?: string | null
           aadhaar_number?: string | null
           address?: string | null
+          contractor_id?: string | null
           created_at?: string
           department?: string
           designation?: string
@@ -388,14 +733,26 @@ export type Database = {
           join_date?: string | null
           monthly_salary?: number
           phone?: string | null
+          phone_country_code?: string
           reference_name?: string | null
           reference_phone?: string | null
           relieving_date?: string | null
+          resume_document_path?: string | null
           shift?: string
+          staff_type?: string
           status?: string
           whatsapp?: string | null
+          whatsapp_country_code?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "staff_contractor_id_fkey"
+            columns: ["contractor_id"]
+            isOneToOne: false
+            referencedRelation: "contractors"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       staff_attendance: {
         Row: {
@@ -405,6 +762,7 @@ export type Database = {
           created_at: string
           id: string
           remarks: string | null
+          shift: string
           staff_id: string
           status: string
         }
@@ -415,6 +773,7 @@ export type Database = {
           created_at?: string
           id?: string
           remarks?: string | null
+          shift?: string
           staff_id: string
           status?: string
         }
@@ -425,6 +784,7 @@ export type Database = {
           created_at?: string
           id?: string
           remarks?: string | null
+          shift?: string
           staff_id?: string
           status?: string
         }
@@ -534,6 +894,42 @@ export type Database = {
         Update: {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_tab_permissions: {
+        Row: {
+          can_create: boolean
+          can_delete: boolean
+          can_edit: boolean
+          can_view: boolean
+          created_at: string
+          id: string
+          tab_key: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          can_create?: boolean
+          can_delete?: boolean
+          can_edit?: boolean
+          can_view?: boolean
+          created_at?: string
+          id?: string
+          tab_key: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          can_create?: boolean
+          can_delete?: boolean
+          can_edit?: boolean
+          can_view?: boolean
+          created_at?: string
+          id?: string
+          tab_key?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
