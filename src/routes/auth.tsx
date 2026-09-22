@@ -177,7 +177,7 @@ function AuthPage() {
       toast.error(error.message);
       return;
     }
-    toast.success("Account created. You can sign in now.");
+    toast.success("Your account has been created. A confirmation email has been sent to your registered email address. Please confirm your email. An administrator will review and approve your access before you use the apartment system.");
   }
 
   return (
