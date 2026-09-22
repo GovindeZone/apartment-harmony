@@ -17,7 +17,7 @@ export const Route = createFileRoute("/_authenticated/user-management")({
   },
 });
 
-type Profile = { id: string; full_name: string | null; email: string | null; is_active: boolean; created_at: string };
+type Profile = { id: string; full_name: string | null; email: string | null; created_at: string; is_active?: boolean };
 
 function UserManagementPage() {
   const [users, setUsers] = useState<Profile[]>([]);
@@ -25,7 +25,7 @@ function UserManagementPage() {
 
   async function loadUsers() {
     setLoading(true);
-    const { data, error } = await supabase.from("profiles").select("id,full_name,email,is_active,created_at").order("created_at", { ascending: false });
+    const { data, error } = await supabase.from("profiles").select("id,full_name,email,created_at").order("created_at", { ascending: false });
     if (error) toast.error(error.message);
     setUsers((data ?? []) as Profile[]);
     setLoading(false);
@@ -34,9 +34,9 @@ function UserManagementPage() {
   useEffect(() => { void loadUsers(); }, []);
 
   async function toggleActive(user: Profile) {
-    const { error } = await supabase.from("profiles").update({ is_active: !user.is_active }).eq("id", user.id);
+    const { error } = await supabase.from("profiles").update({ is_active: !(user.is_active ?? true) }).eq("id", user.id);
     if (error) toast.error(error.message);
-    else { toast.success(user.is_active ? "User disabled." : "User enabled."); void loadUsers(); }
+    else { toast.success((user.is_active ?? true) ? "User disabled." : "User enabled."); void loadUsers(); }
   }
 
   async function deleteUser(user: Profile) {
@@ -56,7 +56,7 @@ function UserManagementPage() {
               users.map(user => <tr key={user.id} className="border-b last:border-0">
                 <td className="p-3 font-medium">{user.full_name || "—"}</td>
                 <td className="p-3">{user.email || "—"}</td>
-                <td className="p-3"><span className={"rounded-full px-2 py-1 text-xs font-medium " + (user.is_active ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800")}>{user.is_active ? "Active" : "Disabled"}</span></td>
+                <td className="p-3"><span className={"rounded-full px-2 py-1 text-xs font-medium " + ((user.is_active ?? true) ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800")}>{(user.is_active ?? true) ? "Active" : "Disabled"}</span></td>
                 <td className="p-3">{new Date(user.created_at).toLocaleDateString("en-US")}</td>
                 <td className="p-3"><div className="flex justify-end gap-2">
                   <Button size="sm" variant="outline" onClick={() => void toggleActive(user)}><UserX className="mr-1 size-4"/>{user.is_active ? "Disable" : "Enable"}</Button>
