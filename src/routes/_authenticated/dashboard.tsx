@@ -86,9 +86,9 @@ function Dashboard() {
       </div>
 
       <section>
-        <div className="mb-4 rounded-xl border border-sky-200/80 bg-sky-50/70 px-5 py-3 dark:border-sky-900/70 dark:bg-sky-950/30">
-          <h2 className="text-base font-semibold tracking-tight text-sky-900 dark:text-sky-100">Facility Management</h2>
-          <p className="mt-0.5 text-xs text-sky-700/80 dark:text-sky-200/70">Staff attendance and facility task monitoring</p>
+        <div className="mb-4 rounded-xl border border-slate-300 bg-slate-100 px-5 py-3 dark:border-slate-700 dark:bg-slate-900/70">
+          <h2 className="text-base font-semibold tracking-tight text-slate-900 dark:text-slate-100">Facility Management</h2>
+          <p className="mt-0.5 text-xs text-slate-700 dark:text-slate-300">Staff attendance and facility task monitoring</p>
         </div>
 
         <div className="grid gap-4 xl:grid-cols-2">
@@ -140,6 +140,17 @@ function Dashboard() {
             </table>
           </div>
         </SectionCard>
+        </div>
+      </section>
+
+      <section className="mt-8">
+        <div className="mb-4 rounded-xl border border-slate-300 bg-slate-100 px-5 py-3 dark:border-slate-700 dark:bg-slate-900/70">
+          <h2 className="text-base font-semibold tracking-tight text-slate-900 dark:text-slate-100">Resident Management</h2>
+          <p className="mt-0.5 text-xs text-slate-700 dark:text-slate-300">Resident, occupancy and visitor information</p>
+        </div>
+
+        <div className="grid gap-4 lg:grid-cols-2">
+
 
         <SectionCard className="border-emerald-200/80 bg-emerald-50/40 dark:border-emerald-900/70 dark:bg-emerald-950/20" title="Flat occupancy" description="Current flat status">
           <div className="overflow-x-auto"><table className="w-full text-sm"><thead className="bg-emerald-100/70 dark:bg-emerald-900/30"><tr className="border-b border-emerald-200/70 text-left text-emerald-900 dark:border-emerald-800 dark:text-emerald-100"><th className="px-4 py-3">Status</th><th className="px-4 py-3 text-right">Number of flats</th></tr></thead><tbody><tr className="border-b border-border"><td className="px-4 py-3 font-medium">Occupied Flats</td><td className="px-4 py-3 text-right">{occupied}</td></tr><tr><td className="px-4 py-3 font-medium">Vacant Flats</td><td className="px-4 py-3 text-right">{vacantFlats.length}</td></tr></tbody></table></div>
@@ -147,23 +158,15 @@ function Dashboard() {
           <div className="mt-2 flex flex-wrap gap-2">{vacantFlats.length ? vacantFlats.map((flat) => <span key={flat.id} className="rounded-md border border-border px-2 py-1 text-sm">{flat.flat_no}</span>) : <span className="text-sm text-muted-foreground">No vacant flats</span>}</div>
         </SectionCard>
 
-          <SectionCard className="border-violet-200/80 bg-violet-50/40 dark:border-violet-900/70 dark:bg-violet-950/20" title="Resident details" description="Active residents by category">
+
+          <SectionCard className="border-violet-200/80 bg-violet-50/40 dark:border-violet-900/70 dark:bg-violet-950/20" title="Resident detail by Category" description="Active residents by category">
           <div className="overflow-x-auto"><table className="w-full text-sm"><thead className="bg-violet-100/70 dark:bg-violet-900/30"><tr className="border-b border-violet-200/70 text-left text-violet-900 dark:border-violet-800 dark:text-violet-100"><th className="px-4 py-3">Resident</th><th className="px-4 py-3 text-right">No. of owner</th><th className="px-4 py-3 text-right">No. of tenant (family)</th><th className="px-4 py-3 text-right">No. of tenant (bachelors)</th></tr></thead><tbody><tr><td className="px-4 py-3 font-medium">Resident</td><td className="px-4 py-3 text-right">{owners}</td><td className="px-4 py-3 text-right">{familyTenants}</td><td className="px-4 py-3 text-right">{bachelorTenants}</td></tr></tbody></table></div>
         </SectionCard>
+
 
           <SectionCard className="border-amber-200/80 bg-amber-50/40 dark:border-amber-900/70 dark:bg-amber-950/20" title="Visitor details" description="Today's visitor entries by resident category">
           <div className="overflow-x-auto"><table className="w-full text-sm"><thead className="bg-amber-100/70 dark:bg-amber-900/30"><tr className="border-b border-amber-200/70 text-left text-amber-900 dark:border-amber-800 dark:text-amber-100"><th className="px-4 py-3">Visitor</th><th className="px-4 py-3 text-right">To owners</th><th className="px-4 py-3 text-right">To tenant (family)</th><th className="px-4 py-3 text-right">To tenant (bachelor)</th></tr></thead><tbody>{visitorSummary.map((row) => <tr key={row.label}><td className="px-4 py-3 font-medium">{row.label}</td><td className="px-4 py-3 text-right">{row.owner}</td><td className="px-4 py-3 text-right">{row.family}</td><td className="px-4 py-3 text-right">{row.bachelor}</td></tr>)}</tbody></table></div>
         </SectionCard>
-        </div>
-      </section>
-
-      <section className="mt-8">
-        <div className="mb-4 rounded-xl border border-violet-200/80 bg-violet-50/70 px-5 py-3 dark:border-violet-900/70 dark:bg-violet-950/30">
-          <h2 className="text-base font-semibold tracking-tight text-violet-900 dark:text-violet-100">Resident Management</h2>
-          <p className="mt-0.5 text-xs text-violet-700/80 dark:text-violet-200/70">Resident, occupancy and visitor information</p>
-        </div>
-
-        <div className="grid gap-4 lg:grid-cols-2">
           <SectionCard
             className="border-violet-200/80 bg-violet-50/40 dark:border-violet-900/70 dark:bg-violet-950/20"
             title="Resident mix"
