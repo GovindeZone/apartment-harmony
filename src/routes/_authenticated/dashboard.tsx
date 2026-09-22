@@ -79,8 +79,8 @@ function Dashboard() {
 
   return (
     <AppShell title="Dashboard" description={new Date().toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long", year: "numeric" })}>
-      <div className="mb-6 rounded-2xl border border-orange-900 bg-orange-800 px-5 py-4 shadow-sm">
-        <h2 className="text-lg font-semibold tracking-tight text-white">
+      <div className="mb-6 rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent px-5 py-4 shadow-sm">
+        <h2 className="text-lg font-semibold tracking-tight text-primary">
           Community Status as of {communityStatusDate}
         </h2>
       </div>
@@ -144,7 +144,7 @@ function Dashboard() {
       </section>
 
       <section className="mt-8">
-        <div className="mb-4 rounded-xl border border-slate-300 bg-slate-100 px-5 py-3 dark:border-slate-700 dark:bg-slate-900/70">
+        <div className="mb-4 rounded-xl border border-blue-900 bg-blue-900 px-5 py-3 shadow-sm">
           <h2 className="text-base font-semibold tracking-tight text-white">Resident Management</h2>
           <p className="mt-0.5 text-xs text-blue-100">Resident, occupancy and visitor information</p>
         </div>
