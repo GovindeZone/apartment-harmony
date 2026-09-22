@@ -8,25 +8,42 @@ import { cn } from "@/lib/utils";
 
 const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/staff", label: "Staff", icon: Users },
-  { to: "/contractor", label: "Contractor", icon: Building2 },
-  { to: "/attendance", label: "Attendance", icon: CalendarCheck },
-  { to: "/facility-management", label: "Facility Management", icon: ClipboardList },
-  { to: "/asset-management", label: "Asset Management", icon: Boxes },
+  { to: "/facility-management", label: "Facility Management", icon: ClipboardList, group: [
+    { to: "/attendance", label: "Attendance", icon: CalendarCheck },
+    { to: "/security", label: "Security", icon: ShieldCheck },
+    { to: "/asset-management", label: "Asset Management", icon: Boxes },
+  ]},
+  { to: "/mc-master", label: "MC Master", icon: UsersRound, group: [
+    { to: "/staff", label: "Staff", icon: Users },
+    { to: "/official-records", label: "Official Records", icon: FileText },
+    { to: "/mc-handbook", label: "MC Handbook", icon: BookOpen },
+    { to: "/contractor", label: "Contractor", icon: Building2 },
+  ]},
+  { to: "/repositories", label: "Repositories", icon: BookOpenCheck, group: [
+    { to: "/mc-repository", label: "MC Repository", icon: UsersRound },
+    { to: "/ec-repository", label: "EC Repository", icon: Vote },
+    { to: "/bye-law-repository", label: "Bye-Law Repository", icon: BookOpenCheck },
+  ]},
   { to: "/check-list", label: "Check list", icon: ListChecks },
-  { to: "/security", label: "Security", icon: ShieldCheck },
   { to: "/helpdesk", label: "Help Desk", icon: MessageSquare },
   { to: "/residents", label: "Residents", icon: Home },
-  { to: "/official-records", label: "Official Records", icon: FileText },
-  { to: "/mc-repository", label: "MC Repository", icon: UsersRound },
-  { to: "/ec-repository", label: "EC Repository", icon: Vote },
-  { to: "/bye-law-repository", label: "Bye-Law Repository", icon: BookOpenCheck },
-  { to: "/mc-handbook", label: "MC Handbook", icon: BookOpen },
   { to: "/reports", label: "Reports", icon: FileBarChart },
 ] as const;
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
-  return <nav className="flex flex-col gap-1">{NAV.map((item) => <Link key={item.to} to={item.to} onClick={onNavigate} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" activeProps={{ className: "bg-sidebar-primary/12 text-sidebar-primary font-semibold" }}><item.icon className="size-[18px] shrink-0" />{item.label}</Link>)}<div className="mt-3 border-t border-border/60 pt-3"><div className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Admin</div><Link to="/admin" onClick={onNavigate} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-sidebar-foreground/75 hover:bg-sidebar-accent" activeProps={{ className: "bg-sidebar-primary/12 text-sidebar-primary font-semibold" }}><Shield className="size-[18px] shrink-0" />Admin</Link><Link to="/admin-settings" onClick={onNavigate} className="flex items-center gap-3 rounded-xl px-3 py-2.5 pl-10 text-sm text-sidebar-foreground/65 hover:bg-sidebar-accent" activeProps={{ className: "text-sidebar-primary font-semibold" }}><SettingsIcon className="size-4" />Settings</Link><Link to="/admin-user-rights" onClick={onNavigate} className="flex items-center gap-3 rounded-xl px-3 py-2.5 pl-10 text-sm text-sidebar-foreground/65 hover:bg-sidebar-accent" activeProps={{ className: "text-sidebar-primary font-semibold" }}><ShieldCheck className="size-4" />User Rights</Link></div></nav>;
+  return <nav className="flex flex-col gap-1">
+    {NAV.map((item) => <div key={item.to}>
+      <Link to={item.to} onClick={onNavigate} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" activeProps={{ className: "bg-sidebar-primary/12 text-sidebar-primary font-semibold" }}>
+        <item.icon className="size-[18px] shrink-0" />{item.label}
+      </Link>
+      {"group" in item && item.group ? <div className="ml-3 mt-0.5 border-l border-border/60 pl-2">
+        {item.group.map((child) => <Link key={child.to} to={child.to} onClick={onNavigate} className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-sidebar-foreground/65 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" activeProps={{ className: "bg-sidebar-primary/10 text-sidebar-primary font-semibold" }}>
+          <child.icon className="size-4 shrink-0" />{child.label}
+        </Link>)}
+      </div> : null}
+    </div>)}
+    <div className="mt-3 border-t border-border/60 pt-3"><div className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Admin</div><Link to="/admin" onClick={onNavigate} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-sidebar-foreground/75 hover:bg-sidebar-accent" activeProps={{ className: "bg-sidebar-primary/12 text-sidebar-primary font-semibold" }}><Shield className="size-[18px] shrink-0" />Admin</Link><Link to="/admin-settings" onClick={onNavigate} className="flex items-center gap-3 rounded-xl px-3 py-2.5 pl-10 text-sm text-sidebar-foreground/65 hover:bg-sidebar-accent" activeProps={{ className: "text-sidebar-primary font-semibold" }}><SettingsIcon className="size-4" />Settings</Link><Link to="/admin-user-rights" onClick={onNavigate} className="flex items-center gap-3 rounded-xl px-3 py-2.5 pl-10 text-sm text-sidebar-foreground/65 hover:bg-sidebar-accent" activeProps={{ className: "text-sidebar-primary font-semibold" }}><ShieldCheck className="size-4" />User Rights</Link></div>
+  </nav>;
 }
 function Brand(){return <div className="flex items-center gap-3 px-2 py-1"><span className="grid size-10 place-items-center rounded-xl bg-primary/12 text-primary"><Building2 className="size-5"/></span><span className="leading-tight"><span className="block text-sm font-semibold text-foreground">Indus Anantya Apartment</span><span className="block text-xs text-muted-foreground">Facility Operations</span></span></div>}
 export function AppShell({title,description,actions,children}:{title:string;description?:string;actions?:React.ReactNode;children:React.ReactNode}){
