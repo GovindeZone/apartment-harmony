@@ -86,9 +86,9 @@ function Dashboard() {
       </div>
 
       <section>
-        <div className="mb-4 rounded-xl border border-blue-900 bg-blue-900 px-5 py-3 shadow-sm">
-          <h2 className="text-base font-semibold tracking-tight text-white">Facility Management</h2>
-          <p className="mt-0.5 text-xs text-blue-100">Staff attendance and facility task monitoring</p>
+        <div className="mb-4 rounded-xl border border-orange-700 bg-orange-600 px-5 py-3 shadow-sm">
+          <h2 className="text-base font-semibold tracking-tight text-black">Facility Management</h2>
+          <p className="mt-0.5 text-xs text-black/80">Staff attendance and facility task monitoring</p>
         </div>
 
         <div className="grid gap-4 xl:grid-cols-2">
@@ -145,8 +145,8 @@ function Dashboard() {
 
       <section className="mt-8">
         <div className="mb-4 rounded-xl border border-blue-900 bg-blue-900 px-5 py-3 shadow-sm">
-          <h2 className="text-base font-semibold tracking-tight text-white">Resident Management</h2>
-          <p className="mt-0.5 text-xs text-blue-100">Resident, occupancy and visitor information</p>
+          <h2 className="text-base font-semibold tracking-tight text-black">Resident Management</h2>
+          <p className="mt-0.5 text-xs text-black/80">Resident, occupancy and visitor information</p>
         </div>
 
         <div className="grid gap-4 lg:grid-cols-2">
