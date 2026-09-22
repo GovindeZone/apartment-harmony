@@ -19,7 +19,9 @@ export type Resident = {
   resident_type: string;
   occupant_type: string;
   phone: string | null;
+  phone_country_code?: string | null;
   whatsapp: string | null;
+  whatsapp_country_code?: string | null;
   email: string | null;
   move_in_date: string | null;
   move_out_date: string | null;

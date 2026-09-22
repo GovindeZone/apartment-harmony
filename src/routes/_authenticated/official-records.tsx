@@ -52,7 +52,7 @@ function OfficialRecordsPage() {
       }
       if (file && recordId) {
         const safe = file.name.replace(/[^\w.\-]/g, "_");
-        const path = \`\${recordId}/\${Date.now()}-\${safe}\`;
+        const path = `${recordId}/${Date.now()}-${safe}`;
         const up = await supabase.storage.from("official-records").upload(path, file, { contentType: file.type, upsert: false });
         if (up.error) throw new Error(up.error.message);
         const { error } = await supabase.from("official_records").update({
@@ -96,10 +96,10 @@ function OfficialRecordsPage() {
               <TableCell>{r.document_description ?? "—"}</TableCell>
               <TableCell>{r.document_type}</TableCell>
               <TableCell>{r.additional_remarks ?? "—"}</TableCell>
-              <TableCell>{r.document_path ? <Button variant="ghost" size="sm" className="gap-1" onClick={() => void openDoc(r.document_path!)}><FileText className="size-4" /> View</Button> : "—"}</TableCell>
+              <TableCell>{r.document_path ? <Button variant="ghost" size="sm" className="gap-1" onClick={() => void openDoc(r.document_path)}><FileText className="size-4" /> View</Button> : "—"}</TableCell>
               <TableCell className="text-right whitespace-nowrap">
                 <Button variant="ghost" size="icon" onClick={() => setEditing(r)}><Pencil className="size-4" /></Button>
-                <Button variant="ghost" size="icon" className="text-destructive" onClick={() => { if (confirm(\`Delete \${r.document_name}?\`)) remove.mutate(r.id); }}><Trash2 className="size-4" /></Button>
+                <Button variant="ghost" size="icon" className="text-destructive" onClick={() => { if (confirm(`Delete ${r.document_name}?`)) remove.mutate(r.id); }}><Trash2 className="size-4" /></Button>
               </TableCell>
             </TableRow>
           ))}</TableBody></Table></div>
@@ -147,7 +147,7 @@ function RecordDialog({ record, open, pending, onClose, onSave }: {
           <input ref={ref} className="hidden" type="file" accept="application/pdf,image/jpeg,.pdf,.jpg,.jpeg" onChange={e => setFile(e.target.files?.[0])} />
           <Button type="button" variant="outline" className="gap-2" onClick={() => ref.current?.click()}><Upload className="size-4" /> Choose PDF / JPEG</Button>
           <span className="text-sm text-muted-foreground">{file?.name ?? record?.document_file_name ?? "No document selected"}</span>
-          {record?.document_path ? <Button type="button" variant="ghost" size="sm" className="gap-1" onClick={() => void openDoc(record.document_path!)}><ExternalLink className="size-4" /> View current</Button> : null}
+          {record?.document_path ? <Button type="button" variant="ghost" size="sm" className="gap-1" onClick={() => void openDoc(record.document_path)}><ExternalLink className="size-4" /> View current</Button> : null}
         </div>
         <p className="text-xs text-muted-foreground">Only PDF and JPEG documents are accepted.</p>
       </div>
