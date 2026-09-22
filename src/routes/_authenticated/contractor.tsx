@@ -108,12 +108,13 @@ function ContractorPage() {
           </div>
         )}
       </SectionCard>
-      <ContractorFormDialog key={editing?.id ?? "new"} open={editing !== undefined} record={editing ?? null} pending={save.isPending} onClose={() => setEditing(undefined)} onSave={(payload) => save.mutate({ id: editing?.id, payload })} />
+      <ContractorFormDialog key={editing?.id ?? "new"} open={editing !== undefined} record={editing ?? null} pending={save.isPending} onClose={() => setEditing(undefined)} onSave={(payload) => save.mutate(editing?.id ? { id: editing.id, payload } : { payload })} />
     </AppShell>
   );
 }
 
-async function openDocument(path: string) {
+async function openDocument(path: string | null) {
+  if (!path) return;
   const { data, error } = await supabase.storage.from("contractor-documents").createSignedUrl(path, 120);
   if (error || !data) { toast.error(error?.message ?? "Could not open contract document"); return; }
   window.open(data.signedUrl, "_blank", "noopener");

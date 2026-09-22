@@ -427,7 +427,7 @@ function StaffPage() {
         contractors={contractors.data ?? []}
         pending={save.isPending}
         onClose={() => setEditing(undefined)}
-        onSave={(payload) => save.mutate({ id: editing?.id, payload })}
+        onSave={(payload) => save.mutate(editing?.id ? { id: editing.id, payload } : { payload })}
       />
 
       <Dialog open={!!selected} onOpenChange={(v) => !v && setSelected(null)}>
@@ -496,7 +496,7 @@ function StaffDocuments({ staffId }: { staffId: string }) {
 
   async function open(path: string) {
     const { data, error } = await supabase.storage.from("staff-documents").createSignedUrl(path, 120);
-    if (error || !data) return toast.error(error?.message ?? "Could not open document");
+    if (error || !data) { toast.error(error?.message ?? "Could not open document"); return; }
     window.open(data.signedUrl, "_blank", "noopener");
   }
 
@@ -504,7 +504,7 @@ function StaffDocuments({ staffId }: { staffId: string }) {
     if (!confirm("Delete this document?")) return;
     await supabase.storage.from("staff-documents").remove([path]);
     const { error } = await supabase.from("staff_documents").delete().eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Document deleted");
     qc.invalidateQueries({ queryKey: ["staff_documents", staffId] });
   }
@@ -631,7 +631,7 @@ function StaffFormDialog({
           <DialogTitle>{record ? `Edit ${record.full_name}` : "Add staff member"}</DialogTitle>
         </DialogHeader>
         <form className="grid gap-4 sm:grid-cols-2" onSubmit={onSubmit}>
-          <Field name="full_name" label="Full name" required defaultValue={record?.full_name} />
+          <Field name="full_name" label="Full name" required defaultValue={record?.full_name ?? ""} />
           <div className="space-y-2"><Label htmlFor="phone">Phone number <span className="text-destructive">*</span></Label><div className="flex gap-2"><select name="phone_country_code" defaultValue={record?.phone_country_code ?? "+91"} className="h-9 w-24 rounded-md border border-input bg-background px-2 text-sm"><option>+91</option><option>+1</option><option>+44</option><option>+65</option><option>+971</option></select><Input id="phone" name="phone" required inputMode="numeric" maxLength={10} pattern="[0-9]{10}" defaultValue={record?.phone ?? ""} /></div></div>
           <div className="space-y-2">
             <Label htmlFor="staff_type">Staff type</Label>

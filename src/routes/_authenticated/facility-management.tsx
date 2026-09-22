@@ -130,7 +130,7 @@ function FacilityManagementPage() {
         )}
       </SectionCard>
 
-      <TaskDialog open={editing !== undefined} task={editing ?? null} staff={staff.data ?? []} pending={save.isPending} onClose={() => setEditing(undefined)} onSave={(payload) => save.mutate({ id: editing?.id, payload })} />
+      <TaskDialog open={editing !== undefined} task={editing ?? null} staff={staff.data ?? []} pending={save.isPending} onClose={() => setEditing(undefined)} onSave={(payload) => save.mutate(editing?.id ? { id: editing.id, payload } : { payload })} />
     </AppShell>
   );
 }

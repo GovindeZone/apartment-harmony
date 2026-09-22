@@ -106,12 +106,13 @@ function OfficialRecordsPage() {
         )}
       </SectionCard>
       <RecordDialog key={editing?.id ?? "new"} record={editing ?? null} open={editing !== undefined} pending={save.isPending}
-        onClose={() => setEditing(undefined)} onSave={(payload, file) => save.mutate({ id: editing?.id, payload, file })} />
+        onClose={() => setEditing(undefined)} onSave={(payload, file) => save.mutate({ ...(editing?.id ? { id: editing.id } : {}), payload, ...(file ? { file } : {}) })} />
     </AppShell>
   );
 }
 
-async function openDoc(path: string) {
+async function openDoc(path: string | null) {
+  if (!path) return;
   const { data, error } = await supabase.storage.from("official-records").createSignedUrl(path, 120);
   if (error || !data) { toast.error(error?.message ?? "Unable to open document"); return; }
   window.open(data.signedUrl, "_blank", "noopener");
