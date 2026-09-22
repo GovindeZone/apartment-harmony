@@ -26,6 +26,7 @@ const MC_TASKS: MCTask[] = [
   { id: "mc-4", task: "Review pending Help Desk Tickets", frequency: "Weekly", options: ["Completed", "Partially Completed"] },
   { id: "mc-5", task: "Renewal of Contracts (if any)", frequency: "Monthly", options: ["Done", "Not Necessary"] },
   { id: "mc-6", task: "Renewal of Association Registration", frequency: "Yearly", options: ["Done", "Not Necessary"] },
+  { id: "mc-7", task: "Update Holiday list", frequency: "Yearly", options: ["Done", "Not Necessary"] },
 ];
 
 function periodKey(date: Date, frequency: FMTask["frequency"] | MCTask["frequency"]) {
