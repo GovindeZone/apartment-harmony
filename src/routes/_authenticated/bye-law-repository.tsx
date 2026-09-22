@@ -140,7 +140,7 @@ function ByeLawRepositoryPage() {
         open={editing !== undefined}
         pending={save.isPending}
         onClose={() => setEditing(undefined)}
-        onSave={(payload) => save.mutate({ id: editing?.id, payload })}
+        onSave={(payload) => save.mutate(editing?.id ? { id: editing.id, payload } : { payload })}
       />
     </AppShell>
   );

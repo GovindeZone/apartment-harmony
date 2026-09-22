@@ -72,7 +72,7 @@ const localDate = (date = new Date()) => {
 };
 
 const monthBounds = (month: string) => {
-  const [year, monthNumber] = month.split("-").map(Number);
+  const [year = new Date().getFullYear(), monthNumber = new Date().getMonth() + 1] = month.split("-").map(Number);
   const start = new Date(year, monthNumber - 1, 1);
   const end = new Date(year, monthNumber, 0);
   return { start: localDate(start), end: localDate(end) };
