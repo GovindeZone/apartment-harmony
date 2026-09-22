@@ -79,16 +79,16 @@ function Dashboard() {
 
   return (
     <AppShell title="Dashboard" description={new Date().toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long", year: "numeric" })}>
-      <div className="mb-6 rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent px-5 py-4 shadow-sm">
-        <h2 className="text-lg font-semibold tracking-tight text-primary">
+      <div className="mb-6 rounded-2xl border border-orange-900 bg-orange-800 px-5 py-4 shadow-sm">
+        <h2 className="text-lg font-semibold tracking-tight text-white">
           Community Status as of {communityStatusDate}
         </h2>
       </div>
 
       <section>
-        <div className="mb-4 rounded-xl border border-slate-300 bg-slate-100 px-5 py-3 dark:border-slate-700 dark:bg-slate-900/70">
-          <h2 className="text-base font-semibold tracking-tight text-slate-900 dark:text-slate-100">Facility Management</h2>
-          <p className="mt-0.5 text-xs text-slate-700 dark:text-slate-300">Staff attendance and facility task monitoring</p>
+        <div className="mb-4 rounded-xl border border-blue-900 bg-blue-900 px-5 py-3 shadow-sm">
+          <h2 className="text-base font-semibold tracking-tight text-white">Facility Management</h2>
+          <p className="mt-0.5 text-xs text-blue-100">Staff attendance and facility task monitoring</p>
         </div>
 
         <div className="grid gap-4 xl:grid-cols-2">
@@ -145,8 +145,8 @@ function Dashboard() {
 
       <section className="mt-8">
         <div className="mb-4 rounded-xl border border-slate-300 bg-slate-100 px-5 py-3 dark:border-slate-700 dark:bg-slate-900/70">
-          <h2 className="text-base font-semibold tracking-tight text-slate-900 dark:text-slate-100">Resident Management</h2>
-          <p className="mt-0.5 text-xs text-slate-700 dark:text-slate-300">Resident, occupancy and visitor information</p>
+          <h2 className="text-base font-semibold tracking-tight text-white">Resident Management</h2>
+          <p className="mt-0.5 text-xs text-blue-100">Resident, occupancy and visitor information</p>
         </div>
 
         <div className="grid gap-4 lg:grid-cols-2">
