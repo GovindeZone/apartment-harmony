@@ -17,7 +17,7 @@ export const Route = createFileRoute("/_authenticated/user-management")({
   },
 });
 
-type Profile = { id: string; full_name: string | null; email: string | null; created_at: string; is_active?: boolean };
+type Profile = { id: string; full_name: string | null; email: string | null; created_at: string; is_active?: boolean; role?: string | null };
 
 function UserManagementPage() {
   const [users, setUsers] = useState<Profile[]>([]);
@@ -25,9 +25,9 @@ function UserManagementPage() {
 
   async function loadUsers() {
     setLoading(true);
-    const { data, error } = await supabase.from("profiles").select("id,full_name,email,created_at").order("created_at", { ascending: false });
+    const { data, error } = await supabase.from("profiles").select("id,full_name,email,created_at,user_metadata").order("created_at", { ascending: false });
     if (error) toast.error(error.message);
-    setUsers((data ?? []) as Profile[]);
+    setUsers((data ?? []).map((u: any) => ({ ...u, role: u.user_metadata?.role ?? "Committee Member" })) as Profile[]);
     setLoading(false);
   }
 
@@ -50,13 +50,13 @@ function UserManagementPage() {
     <SectionCard title="Users" description="Only administrators can access this page.">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead><tr className="border-b text-left"><th className="p-3">Name</th><th className="p-3">Email</th><th className="p-3">Status</th><th className="p-3">Created</th><th className="p-3 text-right">Actions</th></tr></thead>
+          <thead><tr className="border-b text-left"><th className="p-3">Name</th><th className="p-3">Email</th><th className="p-3">Role</th><th className="p-3">Status</th><th className="p-3">Created</th><th className="p-3 text-right">Actions</th></tr></thead>
           <tbody>
-            {loading ? <tr><td colSpan={5} className="p-6 text-center text-muted-foreground">Loading users…</td></tr> :
+            {loading ? <tr><td colSpan={6} className="p-6 text-center text-muted-foreground">Loading users…</td></tr> :
               users.map(user => <tr key={user.id} className="border-b last:border-0">
                 <td className="p-3 font-medium">{user.full_name || "—"}</td>
                 <td className="p-3">{user.email || "—"}</td>
-                <td className="p-3"><span className={"rounded-full px-2 py-1 text-xs font-medium " + ((user.is_active ?? true) ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800")}>{(user.is_active ?? true) ? "Active" : "Disabled"}</span></td>
+                <td className="p-3">{user.role || "Committee Member"}</td><td className="p-3"><span className={"rounded-full px-2 py-1 text-xs font-medium " + ((user.is_active ?? true) ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800")}>{(user.is_active ?? true) ? "Active" : "Disabled"}</span></td>
                 <td className="p-3">{new Date(user.created_at).toLocaleDateString("en-US")}</td>
                 <td className="p-3"><div className="flex justify-end gap-2">
                   <Button size="sm" variant="outline" onClick={() => void toggleActive(user)}><UserX className="mr-1 size-4"/>{user.is_active ? "Disable" : "Enable"}</Button>
