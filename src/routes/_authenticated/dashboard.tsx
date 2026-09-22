@@ -68,7 +68,7 @@ function Dashboard() {
 
   const taskRowsWithAge = taskRows.map((task) => ({ ...task, ageDays: taskAge(task) }));
 
-  const visitorSummary = [{ label: "Visitor", owner: 0, family: 0, bachelor: 0 }];
+  const visitorSummary: [{ label: string; owner: number; family: number; bachelor: number }] = [{ label: "Visitor", owner: 0, family: 0, bachelor: 0 }];
   gateRows.filter((entry) => entry.entry_time.slice(0, 10) === date && entry.category !== "resident").forEach((entry) => {
     const category = `${entry.category} ${entry.purpose ?? ""}`.toLowerCase();
     if (category.includes("bachelor")) visitorSummary[0].bachelor += 1;

@@ -80,6 +80,8 @@ export type Staff = {
   department: string;
   phone: string | null;
   whatsapp: string | null;
+  phone_country_code: string;
+  whatsapp_country_code: string;
   shift: string;
   join_date: string | null;
   relieving_date: string | null;
