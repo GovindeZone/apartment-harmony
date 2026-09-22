@@ -19,7 +19,7 @@ const NAV = [
     { to: "/staff", label: "Staff", icon: Users },
     { to: "/official-records", label: "Official Records", icon: FileText },
         { to: "/contractor", label: "Contractor", icon: Building2 },
-    { to: "/check-list", label: "MC Checklist", icon: ListChecks },
+    { to: "/checklist-master", label: "Check list master", icon: ListChecks },
     { to: "/holiday-list", label: "Holiday List", icon: CalendarCheck },
     { to: "/residents", label: "Residents", icon: Home },
   ]},
@@ -28,6 +28,10 @@ const NAV = [
     { to: "/ec-repository", label: "EC Repository", icon: Vote },
     { to: "/bye-law-repository", label: "Bye-Law Repository", icon: BookOpenCheck },
     { to: "/mc-handbook", label: "MC Handbook", icon: BookOpen },
+  ]},
+  { to: "/checklists", label: "Checklists", icon: ListChecks, group: [
+    { to: "/check-list?tab=fm", label: "FM Checklist", icon: ListChecks },
+    { to: "/check-list?tab=mc", label: "MC Checklist", icon: ListChecks },
   ]},
   { to: "/reports", label: "Reports", icon: FileBarChart },
 ] as const;
