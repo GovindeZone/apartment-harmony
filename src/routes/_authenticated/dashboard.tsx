@@ -91,7 +91,7 @@ function Dashboard() {
           <p className="mt-0.5 text-xs text-sky-700/80 dark:text-sky-200/70">Staff attendance and facility task monitoring</p>
         </div>
 
-        <div className="grid gap-4">
+        <div className="grid gap-4 xl:grid-cols-2">
         <SectionCard className="border-sky-200/80 bg-sky-50/40 dark:border-sky-900/70 dark:bg-sky-950/20" title="Staff attendance by department" description="Present, absent and total active staff today">
           <div className="overflow-x-auto"><table className="w-full text-sm"><thead className="bg-sky-100/70 dark:bg-sky-900/30"><tr className="border-b border-sky-200/70 text-left text-sky-900 dark:border-sky-800 dark:text-sky-100"><th className="px-4 py-3">Department</th><th className="px-4 py-3 text-right">Present</th><th className="px-4 py-3 text-right">Absent</th><th className="px-4 py-3 text-right">No. of staff</th></tr></thead><tbody>{departmentSummary.map((row) => <tr key={row.department} className="border-b border-border last:border-0"><td className="px-4 py-3 font-medium">{row.department}</td><td className="px-4 py-3 text-right">{row.present}</td><td className="px-4 py-3 text-right">{row.absent}</td><td className="px-4 py-3 text-right">{row.total}</td></tr>)}</tbody></table></div>
         </SectionCard>
