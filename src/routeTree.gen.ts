@@ -12,23 +12,26 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin-settings'
+import { Route as AuthenticatedAdminUserRightsRouteImport } from './routes/_authenticated/admin-user-rights'
+import { Route as AuthenticatedAssetManagementRouteImport } from './routes/_authenticated/asset-management'
+import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authenticated/attendance'
+import { Route as AuthenticatedByeLawRepositoryRouteImport } from './routes/_authenticated/bye-law-repository'
+import { Route as AuthenticatedCheckListRouteImport } from './routes/_authenticated/check-list'
+import { Route as AuthenticatedContractorRouteImport } from './routes/_authenticated/contractor'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedEcRepositoryRouteImport } from './routes/_authenticated/ec-repository'
+import { Route as AuthenticatedFacilityManagementRouteImport } from './routes/_authenticated/facility-management'
 import { Route as AuthenticatedHelpdeskRouteImport } from './routes/_authenticated/helpdesk'
+import { Route as AuthenticatedMcHandbookRouteImport } from './routes/_authenticated/mc-handbook'
+import { Route as AuthenticatedMcRepositoryRouteImport } from './routes/_authenticated/mc-repository'
+import { Route as AuthenticatedOfficialRecordsRouteImport } from './routes/_authenticated/official-records'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedResidentsRouteImport } from './routes/_authenticated/residents'
 import { Route as AuthenticatedSecurityRouteImport } from './routes/_authenticated/security'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated/staff'
-import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authenticated/attendance'
-import { Route as AuthenticatedFacilityManagementRouteImport } from './routes/_authenticated/facility-management'
-import { Route as AuthenticatedContractorRouteImport } from './routes/_authenticated/contractor'
-import { Route as AuthenticatedOfficialRecordsRouteImport } from './routes/_authenticated/official-records'
-import { Route as AuthenticatedMcRepositoryRouteImport } from './routes/_authenticated/mc-repository'
-import { Route as AuthenticatedEcRepositoryRouteImport } from './routes/_authenticated/ec-repository'
-import { Route as AuthenticatedByeLawRepositoryRouteImport } from './routes/_authenticated/bye-law-repository'
-import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
-import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin-settings'
-import { Route as AuthenticatedAdminUserRightsRouteImport } from './routes/_authenticated/admin-user-rights'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -44,16 +47,89 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminSettingsRoute =
+  AuthenticatedAdminSettingsRouteImport.update({
+    id: '/admin-settings',
+    path: '/admin-settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminUserRightsRoute =
+  AuthenticatedAdminUserRightsRouteImport.update({
+    id: '/admin-user-rights',
+    path: '/admin-user-rights',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAssetManagementRoute =
+  AuthenticatedAssetManagementRouteImport.update({
+    id: '/asset-management',
+    path: '/asset-management',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAttendanceRoute = AuthenticatedAttendanceRouteImport.update({
+  id: '/attendance',
+  path: '/attendance',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedByeLawRepositoryRoute =
+  AuthenticatedByeLawRepositoryRouteImport.update({
+    id: '/bye-law-repository',
+    path: '/bye-law-repository',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCheckListRoute = AuthenticatedCheckListRouteImport.update({
+  id: '/check-list',
+  path: '/check-list',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedContractorRoute = AuthenticatedContractorRouteImport.update({
+  id: '/contractor',
+  path: '/contractor',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedEcRepositoryRoute =
+  AuthenticatedEcRepositoryRouteImport.update({
+    id: '/ec-repository',
+    path: '/ec-repository',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedFacilityManagementRoute =
+  AuthenticatedFacilityManagementRouteImport.update({
+    id: '/facility-management',
+    path: '/facility-management',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedHelpdeskRoute = AuthenticatedHelpdeskRouteImport.update({
   id: '/helpdesk',
   path: '/helpdesk',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMcHandbookRoute = AuthenticatedMcHandbookRouteImport.update({
+  id: '/mc-handbook',
+  path: '/mc-handbook',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMcRepositoryRoute =
+  AuthenticatedMcRepositoryRouteImport.update({
+    id: '/mc-repository',
+    path: '/mc-repository',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedOfficialRecordsRoute =
+  AuthenticatedOfficialRecordsRouteImport.update({
+    id: '/official-records',
+    path: '/official-records',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
@@ -75,167 +151,159 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedStaffRoute = AuthenticatedStaffRouteImport.update({
-  id: '/staff', path: '/staff', getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedAttendanceRoute = AuthenticatedAttendanceRouteImport.update({
-  id: '/attendance', path: '/attendance', getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedFacilityManagementRoute = AuthenticatedFacilityManagementRouteImport.update({
-  id: '/facility-management', path: '/facility-management', getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedContractorRoute = AuthenticatedContractorRouteImport.update({
-  id: '/contractor', path: '/contractor', getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedOfficialRecordsRoute = AuthenticatedOfficialRecordsRouteImport.update({
-  id: '/official-records', path: '/official-records', getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedMcRepositoryRoute = AuthenticatedMcRepositoryRouteImport.update({
-  id: '/mc-repository', path: '/mc-repository', getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedEcRepositoryRoute = AuthenticatedEcRepositoryRouteImport.update({
-  id: '/ec-repository', path: '/ec-repository', getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedByeLawRepositoryRoute = AuthenticatedByeLawRepositoryRouteImport.update({
-  id: '/bye-law-repository', path: '/bye-law-repository', getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
-  id: '/admin', path: '/admin', getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedAdminSettingsRoute = AuthenticatedAdminSettingsRouteImport.update({
-  id: '/admin/settings', path: '/admin/settings', getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedAdminUserRightsRoute = AuthenticatedAdminUserRightsRouteImport.update({
-  id: '/admin/user-rights', path: '/admin/user-rights', getParentRoute: () => AuthenticatedRouteRoute,
+  id: '/staff',
+  path: '/staff',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/admin-settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin-user-rights': typeof AuthenticatedAdminUserRightsRoute
+  '/asset-management': typeof AuthenticatedAssetManagementRoute
+  '/attendance': typeof AuthenticatedAttendanceRoute
+  '/bye-law-repository': typeof AuthenticatedByeLawRepositoryRoute
+  '/check-list': typeof AuthenticatedCheckListRoute
+  '/contractor': typeof AuthenticatedContractorRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/ec-repository': typeof AuthenticatedEcRepositoryRoute
+  '/facility-management': typeof AuthenticatedFacilityManagementRoute
   '/helpdesk': typeof AuthenticatedHelpdeskRoute
+  '/mc-handbook': typeof AuthenticatedMcHandbookRoute
+  '/mc-repository': typeof AuthenticatedMcRepositoryRoute
+  '/official-records': typeof AuthenticatedOfficialRecordsRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/residents': typeof AuthenticatedResidentsRoute
   '/security': typeof AuthenticatedSecurityRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/staff': typeof AuthenticatedStaffRoute
-  '/attendance': typeof AuthenticatedAttendanceRoute
-  '/facility-management': typeof AuthenticatedFacilityManagementRoute
-  '/contractor': typeof AuthenticatedContractorRoute
-  '/official-records': typeof AuthenticatedOfficialRecordsRoute
-  '/mc-repository': typeof AuthenticatedMcRepositoryRoute
-  '/ec-repository': typeof AuthenticatedEcRepositoryRoute
-  '/bye-law-repository': typeof AuthenticatedByeLawRepositoryRoute
-  '/admin': typeof AuthenticatedAdminRoute
-  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
-  '/admin/user-rights': typeof AuthenticatedAdminUserRightsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/admin-settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin-user-rights': typeof AuthenticatedAdminUserRightsRoute
+  '/asset-management': typeof AuthenticatedAssetManagementRoute
+  '/attendance': typeof AuthenticatedAttendanceRoute
+  '/bye-law-repository': typeof AuthenticatedByeLawRepositoryRoute
+  '/check-list': typeof AuthenticatedCheckListRoute
+  '/contractor': typeof AuthenticatedContractorRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/ec-repository': typeof AuthenticatedEcRepositoryRoute
+  '/facility-management': typeof AuthenticatedFacilityManagementRoute
   '/helpdesk': typeof AuthenticatedHelpdeskRoute
+  '/mc-handbook': typeof AuthenticatedMcHandbookRoute
+  '/mc-repository': typeof AuthenticatedMcRepositoryRoute
+  '/official-records': typeof AuthenticatedOfficialRecordsRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/residents': typeof AuthenticatedResidentsRoute
   '/security': typeof AuthenticatedSecurityRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/staff': typeof AuthenticatedStaffRoute
-  '/attendance': typeof AuthenticatedAttendanceRoute
-  '/facility-management': typeof AuthenticatedFacilityManagementRoute
-  '/contractor': typeof AuthenticatedContractorRoute
-  '/official-records': typeof AuthenticatedOfficialRecordsRoute
-  '/mc-repository': typeof AuthenticatedMcRepositoryRoute
-  '/ec-repository': typeof AuthenticatedEcRepositoryRoute
-  '/admin': typeof AuthenticatedAdminRoute
-  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
-  '/admin/user-rights': typeof AuthenticatedAdminUserRightsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/admin-settings': typeof AuthenticatedAdminSettingsRoute
+  '/_authenticated/admin-user-rights': typeof AuthenticatedAdminUserRightsRoute
+  '/_authenticated/asset-management': typeof AuthenticatedAssetManagementRoute
+  '/_authenticated/attendance': typeof AuthenticatedAttendanceRoute
+  '/_authenticated/bye-law-repository': typeof AuthenticatedByeLawRepositoryRoute
+  '/_authenticated/check-list': typeof AuthenticatedCheckListRoute
+  '/_authenticated/contractor': typeof AuthenticatedContractorRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/ec-repository': typeof AuthenticatedEcRepositoryRoute
+  '/_authenticated/facility-management': typeof AuthenticatedFacilityManagementRoute
   '/_authenticated/helpdesk': typeof AuthenticatedHelpdeskRoute
+  '/_authenticated/mc-handbook': typeof AuthenticatedMcHandbookRoute
+  '/_authenticated/mc-repository': typeof AuthenticatedMcRepositoryRoute
+  '/_authenticated/official-records': typeof AuthenticatedOfficialRecordsRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
   '/_authenticated/residents': typeof AuthenticatedResidentsRoute
   '/_authenticated/security': typeof AuthenticatedSecurityRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/staff': typeof AuthenticatedStaffRoute
-  '/_authenticated/attendance': typeof AuthenticatedAttendanceRoute
-  '/_authenticated/facility-management': typeof AuthenticatedFacilityManagementRoute
-  '/_authenticated/contractor': typeof AuthenticatedContractorRoute
-  '/_authenticated/official-records': typeof AuthenticatedOfficialRecordsRoute
-  '/_authenticated/mc-repository': typeof AuthenticatedMcRepositoryRoute
-  '/_authenticated/ec-repository': typeof AuthenticatedEcRepositoryRoute
-  '/_authenticated/bye-law-repository': typeof AuthenticatedByeLawRepositoryRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRoute
-  '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
-  '/_authenticated/admin/user-rights': typeof AuthenticatedAdminUserRightsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/auth'
+    | '/admin'
+    | '/admin-settings'
+    | '/admin-user-rights'
+    | '/asset-management'
+    | '/attendance'
+    | '/bye-law-repository'
+    | '/check-list'
+    | '/contractor'
     | '/dashboard'
+    | '/ec-repository'
+    | '/facility-management'
     | '/helpdesk'
+    | '/mc-handbook'
+    | '/mc-repository'
+    | '/official-records'
     | '/reports'
     | '/residents'
     | '/security'
     | '/settings'
     | '/staff'
-    | '/attendance'
-    | '/facility-management'
-    | '/contractor'
-    | '/official-records'
-    | '/mc-repository'
-    | '/ec-repository'
-    | '/bye-law-repository'
-    | '/admin'
-    | '/admin/settings'
-    | '/admin/user-rights'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/admin'
+    | '/admin-settings'
+    | '/admin-user-rights'
+    | '/asset-management'
+    | '/attendance'
+    | '/bye-law-repository'
+    | '/check-list'
+    | '/contractor'
     | '/dashboard'
+    | '/ec-repository'
+    | '/facility-management'
     | '/helpdesk'
+    | '/mc-handbook'
+    | '/mc-repository'
+    | '/official-records'
     | '/reports'
     | '/residents'
     | '/security'
     | '/settings'
     | '/staff'
-    | '/attendance'
-    | '/facility-management'
-    | '/contractor'
-    | '/official-records'
-    | '/mc-repository'
-    | '/ec-repository'
-    | '/admin'
-    | '/admin/settings'
-    | '/admin/user-rights'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/admin'
+    | '/_authenticated/admin-settings'
+    | '/_authenticated/admin-user-rights'
+    | '/_authenticated/asset-management'
+    | '/_authenticated/attendance'
+    | '/_authenticated/bye-law-repository'
+    | '/_authenticated/check-list'
+    | '/_authenticated/contractor'
     | '/_authenticated/dashboard'
+    | '/_authenticated/ec-repository'
+    | '/_authenticated/facility-management'
     | '/_authenticated/helpdesk'
+    | '/_authenticated/mc-handbook'
+    | '/_authenticated/mc-repository'
+    | '/_authenticated/official-records'
     | '/_authenticated/reports'
     | '/_authenticated/residents'
     | '/_authenticated/security'
     | '/_authenticated/settings'
     | '/_authenticated/staff'
-    | '/_authenticated/attendance'
-    | '/_authenticated/facility-management'
-    | '/_authenticated/contractor'
-    | '/_authenticated/official-records'
-    | '/_authenticated/mc-repository'
-    | '/_authenticated/ec-repository'
-    | '/_authenticated/bye-law-repository'
-    | '/_authenticated/admin'
-    | '/_authenticated/admin/settings'
-    | '/_authenticated/admin/user-rights'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -267,6 +335,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin-settings': {
+      id: '/_authenticated/admin-settings'
+      path: '/admin-settings'
+      fullPath: '/admin-settings'
+      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin-user-rights': {
+      id: '/_authenticated/admin-user-rights'
+      path: '/admin-user-rights'
+      fullPath: '/admin-user-rights'
+      preLoaderRoute: typeof AuthenticatedAdminUserRightsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/asset-management': {
+      id: '/_authenticated/asset-management'
+      path: '/asset-management'
+      fullPath: '/asset-management'
+      preLoaderRoute: typeof AuthenticatedAssetManagementRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/attendance': {
+      id: '/_authenticated/attendance'
+      path: '/attendance'
+      fullPath: '/attendance'
+      preLoaderRoute: typeof AuthenticatedAttendanceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/bye-law-repository': {
+      id: '/_authenticated/bye-law-repository'
+      path: '/bye-law-repository'
+      fullPath: '/bye-law-repository'
+      preLoaderRoute: typeof AuthenticatedByeLawRepositoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/check-list': {
+      id: '/_authenticated/check-list'
+      path: '/check-list'
+      fullPath: '/check-list'
+      preLoaderRoute: typeof AuthenticatedCheckListRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/contractor': {
+      id: '/_authenticated/contractor'
+      path: '/contractor'
+      fullPath: '/contractor'
+      preLoaderRoute: typeof AuthenticatedContractorRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -274,11 +398,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/ec-repository': {
+      id: '/_authenticated/ec-repository'
+      path: '/ec-repository'
+      fullPath: '/ec-repository'
+      preLoaderRoute: typeof AuthenticatedEcRepositoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/facility-management': {
+      id: '/_authenticated/facility-management'
+      path: '/facility-management'
+      fullPath: '/facility-management'
+      preLoaderRoute: typeof AuthenticatedFacilityManagementRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/helpdesk': {
       id: '/_authenticated/helpdesk'
       path: '/helpdesk'
       fullPath: '/helpdesk'
       preLoaderRoute: typeof AuthenticatedHelpdeskRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/mc-handbook': {
+      id: '/_authenticated/mc-handbook'
+      path: '/mc-handbook'
+      fullPath: '/mc-handbook'
+      preLoaderRoute: typeof AuthenticatedMcHandbookRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/mc-repository': {
+      id: '/_authenticated/mc-repository'
+      path: '/mc-repository'
+      fullPath: '/mc-repository'
+      preLoaderRoute: typeof AuthenticatedMcRepositoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/official-records': {
+      id: '/_authenticated/official-records'
+      path: '/official-records'
+      fullPath: '/official-records'
+      preLoaderRoute: typeof AuthenticatedOfficialRecordsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/reports': {
@@ -309,58 +468,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/staff': { id: '/_authenticated/staff'; path: '/staff'; fullPath: '/staff'; preLoaderRoute: typeof AuthenticatedStaffRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-    '/_authenticated/attendance': { id: '/_authenticated/attendance'; path: '/attendance'; fullPath: '/attendance'; preLoaderRoute: typeof AuthenticatedAttendanceRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-    '/_authenticated/facility-management': { id: '/_authenticated/facility-management'; path: '/facility-management'; fullPath: '/facility-management'; preLoaderRoute: typeof AuthenticatedFacilityManagementRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-    '/_authenticated/contractor': { id: '/_authenticated/contractor'; path: '/contractor'; fullPath: '/contractor'; preLoaderRoute: typeof AuthenticatedContractorRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-    '/_authenticated/official-records': { id: '/_authenticated/official-records'; path: '/official-records'; fullPath: '/official-records'; preLoaderRoute: typeof AuthenticatedOfficialRecordsRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-    '/_authenticated/mc-repository': { id: '/_authenticated/mc-repository'; path: '/mc-repository'; fullPath: '/mc-repository'; preLoaderRoute: typeof AuthenticatedMcRepositoryRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-    '/_authenticated/ec-repository': { id: '/_authenticated/ec-repository'; path: '/ec-repository'; fullPath: '/ec-repository'; preLoaderRoute: typeof AuthenticatedEcRepositoryRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-    '/_authenticated/bye-law-repository': { id: '/_authenticated/bye-law-repository'; path: '/bye-law-repository'; fullPath: '/bye-law-repository'; preLoaderRoute: typeof AuthenticatedByeLawRepositoryRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-    '/_authenticated/admin': { id: '/_authenticated/admin'; path: '/admin'; fullPath: '/admin'; preLoaderRoute: typeof AuthenticatedAdminRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-    '/_authenticated/admin/settings': { id: '/_authenticated/admin/settings'; path: '/admin/settings'; fullPath: '/admin/settings'; preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
-    '/_authenticated/admin/user-rights': { id: '/_authenticated/admin/user-rights'; path: '/admin/user-rights'; fullPath: '/admin/user-rights'; preLoaderRoute: typeof AuthenticatedAdminUserRightsRouteImport; parentRoute: typeof AuthenticatedRouteRoute }
+    '/_authenticated/staff': {
+      id: '/_authenticated/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof AuthenticatedStaffRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
+  AuthenticatedAdminUserRightsRoute: typeof AuthenticatedAdminUserRightsRoute
+  AuthenticatedAssetManagementRoute: typeof AuthenticatedAssetManagementRoute
+  AuthenticatedAttendanceRoute: typeof AuthenticatedAttendanceRoute
+  AuthenticatedByeLawRepositoryRoute: typeof AuthenticatedByeLawRepositoryRoute
+  AuthenticatedCheckListRoute: typeof AuthenticatedCheckListRoute
+  AuthenticatedContractorRoute: typeof AuthenticatedContractorRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedEcRepositoryRoute: typeof AuthenticatedEcRepositoryRoute
+  AuthenticatedFacilityManagementRoute: typeof AuthenticatedFacilityManagementRoute
   AuthenticatedHelpdeskRoute: typeof AuthenticatedHelpdeskRoute
+  AuthenticatedMcHandbookRoute: typeof AuthenticatedMcHandbookRoute
+  AuthenticatedMcRepositoryRoute: typeof AuthenticatedMcRepositoryRoute
+  AuthenticatedOfficialRecordsRoute: typeof AuthenticatedOfficialRecordsRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
   AuthenticatedResidentsRoute: typeof AuthenticatedResidentsRoute
   AuthenticatedSecurityRoute: typeof AuthenticatedSecurityRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedStaffRoute: typeof AuthenticatedStaffRoute
-  AuthenticatedAttendanceRoute: typeof AuthenticatedAttendanceRoute
-  AuthenticatedFacilityManagementRoute: typeof AuthenticatedFacilityManagementRoute
-  AuthenticatedContractorRoute: typeof AuthenticatedContractorRoute
-  AuthenticatedOfficialRecordsRoute: typeof AuthenticatedOfficialRecordsRoute
-  AuthenticatedMcRepositoryRoute: typeof AuthenticatedMcRepositoryRoute
-  AuthenticatedEcRepositoryRoute: typeof AuthenticatedEcRepositoryRoute
-  AuthenticatedByeLawRepositoryRoute: typeof AuthenticatedByeLawRepositoryRoute
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
-  AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
-  AuthenticatedAdminUserRightsRoute: typeof AuthenticatedAdminUserRightsRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
+  AuthenticatedAdminUserRightsRoute: AuthenticatedAdminUserRightsRoute,
+  AuthenticatedAssetManagementRoute: AuthenticatedAssetManagementRoute,
+  AuthenticatedAttendanceRoute: AuthenticatedAttendanceRoute,
+  AuthenticatedByeLawRepositoryRoute: AuthenticatedByeLawRepositoryRoute,
+  AuthenticatedCheckListRoute: AuthenticatedCheckListRoute,
+  AuthenticatedContractorRoute: AuthenticatedContractorRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedEcRepositoryRoute: AuthenticatedEcRepositoryRoute,
+  AuthenticatedFacilityManagementRoute: AuthenticatedFacilityManagementRoute,
   AuthenticatedHelpdeskRoute: AuthenticatedHelpdeskRoute,
+  AuthenticatedMcHandbookRoute: AuthenticatedMcHandbookRoute,
+  AuthenticatedMcRepositoryRoute: AuthenticatedMcRepositoryRoute,
+  AuthenticatedOfficialRecordsRoute: AuthenticatedOfficialRecordsRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRoute,
   AuthenticatedResidentsRoute: AuthenticatedResidentsRoute,
   AuthenticatedSecurityRoute: AuthenticatedSecurityRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedStaffRoute: AuthenticatedStaffRoute,
-  AuthenticatedAttendanceRoute: AuthenticatedAttendanceRoute,
-  AuthenticatedFacilityManagementRoute: AuthenticatedFacilityManagementRoute,
-  AuthenticatedContractorRoute: AuthenticatedContractorRoute,
-  AuthenticatedOfficialRecordsRoute: AuthenticatedOfficialRecordsRoute,
-  AuthenticatedMcRepositoryRoute: AuthenticatedMcRepositoryRoute,
-  AuthenticatedEcRepositoryRoute: AuthenticatedEcRepositoryRoute,
-  AuthenticatedByeLawRepositoryRoute: AuthenticatedByeLawRepositoryRoute,
-  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
-  AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
-  AuthenticatedAdminUserRightsRoute: AuthenticatedAdminUserRightsRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

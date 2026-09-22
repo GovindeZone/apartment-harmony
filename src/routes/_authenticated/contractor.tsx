@@ -96,11 +96,11 @@ function ContractorPage() {
                   <TableCell>{c.registration_number ?? "—"}</TableCell>
                   <TableCell>{c.phone1 ?? c.phone2 ?? c.phone3 ?? "—"}</TableCell>
                   <TableCell className="whitespace-nowrap">{c.contract_start_date ?? "—"} → {c.contract_end_date ?? "—"}</TableCell>
-                  <TableCell>{c.contract_amount == null ? "—" : \`₹\${Number(c.contract_amount).toLocaleString("en-IN")}\`}</TableCell>
-                  <TableCell>{c.contract_document_path ? <Button variant="ghost" size="sm" className="gap-1" onClick={() => void openDocument(c.contract_document_path!)}><FileText className="size-4" /> View</Button> : "—"}</TableCell>
+                  <TableCell>{c.contract_amount == null ? "—" : `₹${Number(c.contract_amount).toLocaleString("en-IN")}`}</TableCell>
+                  <TableCell>{c.contract_document_path ? <Button variant="ghost" size="sm" className="gap-1" onClick={() => void openDocument(c.contract_document_path)}><FileText className="size-4" /> View</Button> : "—"}</TableCell>
                   <TableCell className="whitespace-nowrap text-right">
                     <Button variant="ghost" size="icon" aria-label="Edit" onClick={() => setEditing(c)}><Pencil className="size-4" /></Button>
-                    <Button variant="ghost" size="icon" aria-label="Delete" className="text-destructive hover:text-destructive" onClick={() => { if (confirm(\`Delete \${c.company_name}? Staff linked to this contractor will no longer have a contractor company.\`)) remove.mutate(c.id); }}><Trash2 className="size-4" /></Button>
+                    <Button variant="ghost" size="icon" aria-label="Delete" className="text-destructive hover:text-destructive" onClick={() => { if (confirm(`Delete ${c.company_name}? Staff linked to this contractor will no longer have a contractor company.`)) remove.mutate(c.id); }}><Trash2 className="size-4" /></Button>
                   </TableCell>
                 </TableRow>
               ))}</TableBody>
@@ -157,7 +157,7 @@ function ContractorFormDialog({ open, record, pending, onClose, onSave }: {
     if (!record) { toast.error("Save the contractor first, then upload the contract document."); return; }
     setUploading(true);
     try {
-      const path = \`\${record.id}/\${Date.now()}-\${file.name.replace(/[^\w.\-]/g, "_")}\`;
+      const path = `${record.id}/${Date.now()}-${file.name.replace(/[^\w.\-]/g, "_")}`;
       const up = await supabase.storage.from("contractor-documents").upload(path, file);
       if (up.error) throw new Error(up.error.message);
       setDocumentPath(path);
@@ -170,7 +170,7 @@ function ContractorFormDialog({ open, record, pending, onClose, onSave }: {
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-3xl">
-        <DialogHeader><DialogTitle>{record ? \`Edit \${record.company_name}\` : "Add contractor company"}</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle>{record ? `Edit ${record.company_name}` : "Add contractor company"}</DialogTitle></DialogHeader>
         <form className="grid gap-4 sm:grid-cols-2" onSubmit={onSubmit}>
           <Field name="company_name" label="Company name" required defaultValue={record?.company_name ?? ""} />
           <Field name="proprietor_owner_name" label="Proprietor / Owner Name" defaultValue={record?.proprietor_owner_name ?? ""} />

@@ -164,7 +164,25 @@ function Dashboard() {
         </div>
 
         <div className="grid gap-4 lg:grid-cols-2">
-          <SectionCard className="border-emerald-200/80 bg-emerald-50/40 dark:border-emerald-900/70 dark:bg-emerald-950/20" title="Flat occupancy" description="Current flat status"> description="Owners and tenant categories"><div className="h-80 p-4"><ResponsiveContainer width="100%" height="100%"><BarChart data={residentChart}><CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} /><XAxis dataKey="category" tickLine={false} axisLine={false} fontSize={12} /><YAxis tickLine={false} axisLine={false} allowDecimals={false} fontSize={12} /><Tooltip /><Bar dataKey="count" name="Residents" fill="var(--chart-1)" radius={[6, 6, 0, 0]} /></BarChart></ResponsiveContainer></div></SectionCard></div>
+          <SectionCard
+            className="border-violet-200/80 bg-violet-50/40 dark:border-violet-900/70 dark:bg-violet-950/20"
+            title="Resident mix"
+            description="Owners and tenant categories"
+          >
+            <div className="h-80 p-4">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={residentChart}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                  <XAxis dataKey="category" tickLine={false} axisLine={false} fontSize={12} />
+                  <YAxis tickLine={false} axisLine={false} allowDecimals={false} fontSize={12} />
+                  <Tooltip />
+                  <Bar dataKey="count" name="Residents" fill="var(--chart-1)" radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </SectionCard>
+        </div>
+      </section>
     </AppShell>
   );
 }

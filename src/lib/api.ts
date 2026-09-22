@@ -19,7 +19,9 @@ export type Resident = {
   resident_type: string;
   occupant_type: string;
   phone: string | null;
+  phone_country_code?: string | null;
   whatsapp: string | null;
+  whatsapp_country_code?: string | null;
   email: string | null;
   move_in_date: string | null;
   move_out_date: string | null;
@@ -118,7 +120,7 @@ export type Attendance = {
   staff_id: string;
   attendance_date: string;
   status: string;
-  shift: string | null;
+  shift?: string | null;
   check_in: string | null;
   check_out: string | null;
   staff?: { full_name: string; employee_code: string; department: string } | null;
@@ -190,7 +192,9 @@ async function unwrap<T>(p: PromiseLike<{ data: T | null; error: { message: stri
   return (data ?? []) as T;
 }
 
-const table = supabase.from.bind(supabase);
+// Some application tables are newer than the generated client schema snapshot.
+// Keep query results typed at the API boundary until that snapshot refreshes.
+const table = (name: string) => (supabase as unknown as { from: (tableName: string) => any }).from(name);
 
 export const flatsQuery = queryOptions({
   queryKey: ["flats"],
