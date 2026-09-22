@@ -32,6 +32,7 @@ import { Route as AuthenticatedResidentsRouteImport } from './routes/_authentica
 import { Route as AuthenticatedSecurityRouteImport } from './routes/_authenticated/security'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated/staff'
+import { Route as AuthenticatedUserManagementRouteImport } from './routes/_authenticated/user-management'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -155,8 +156,15 @@ const AuthenticatedStaffRoute = AuthenticatedStaffRouteImport.update({
   path: '/staff',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedUserManagementRoute = AuthenticatedUserManagementRouteImport.update({
+  id: '/user-management',
+  path: '/user-management',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
+  '/user-management': typeof AuthenticatedUserManagementRoute
+
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -179,6 +187,7 @@ export interface FileRoutesByFullPath {
   '/security': typeof AuthenticatedSecurityRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/staff': typeof AuthenticatedStaffRoute
+  '/user-management': typeof AuthenticatedUserManagementRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
