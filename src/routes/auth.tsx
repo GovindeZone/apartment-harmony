@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
 
@@ -37,6 +38,7 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [role, setRole] = useState("Committee Member");
   const [rememberLogin, setRememberLogin] = useState(false);
   const [forgotMode, setForgotMode] = useState(false);
   const [resetMode, setResetMode] = useState(false);
@@ -169,7 +171,7 @@ function AuthPage() {
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/dashboard`,
-        data: { full_name: fullName },
+        data: { full_name: fullName, role },
       },
     });
     setLoading(false);
@@ -177,7 +179,7 @@ function AuthPage() {
       toast.error(error.message);
       return;
     }
-    toast.success("Your account has been created. A confirmation email has been sent to your registered email address. Please confirm your email. An administrator will review and approve your access before you use the apartment system.");
+    toast.success(`Your account has been created as a ${role}. A confirmation email has been sent to your registered email address. Please confirm your email. An administrator will review and approve your access before you use the apartment system.");
   }
 
   return (
@@ -368,6 +370,16 @@ function AuthPage() {
                         onChange={(e) => setFullName(e.target.value)}
                         placeholder="Priya Menon"
                       />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="role">Role</Label>
+                      <Select value={role} onValueChange={setRole}>
+                        <SelectTrigger id="role"><SelectValue placeholder="Select role" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Committee Member">Committee Member</SelectItem>
+                          <SelectItem value="Facility Manager">Facility Manager</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email2">Email</Label>
