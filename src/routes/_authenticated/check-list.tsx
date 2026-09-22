@@ -48,6 +48,8 @@ function CheckListPage() {
   const selectedDate = useMemo(() => new Date(`${date}T12:00:00`), [date]);
 
   useEffect(() => {
+    const requestedTab = new URLSearchParams(window.location.search).get("tab");
+    if (requestedTab === "fm" || requestedTab === "mc") setTab(requestedTab);
     try {
       setFmChecked(JSON.parse(localStorage.getItem("indus_anantya_fm_checklist") || "{}"));
       setMcChoices(JSON.parse(localStorage.getItem("indus_anantya_mc_checklist") || "{}"));
