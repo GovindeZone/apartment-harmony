@@ -192,7 +192,9 @@ async function unwrap<T>(p: PromiseLike<{ data: T | null; error: { message: stri
   return (data ?? []) as T;
 }
 
-const table = supabase.from.bind(supabase);
+// Some application tables are newer than the generated client schema snapshot.
+// Keep query results typed at the API boundary until that snapshot refreshes.
+const table = (name: string) => (supabase as unknown as { from: (tableName: string) => any }).from(name);
 
 export const flatsQuery = queryOptions({
   queryKey: ["flats"],
