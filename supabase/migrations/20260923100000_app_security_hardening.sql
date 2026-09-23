@@ -128,21 +128,12 @@ end $$;
 -- Assets are intentionally immutable: no authenticated delete path and a
 -- database-level guard prevents accidental deletion even if a future policy
 -- is added.
-do $$
-begin
-  if to_regclass('public.asset_master') is not null then
-    revoke delete on public.asset_master from anon, authenticated;
-    execute 'drop trigger if exists prevent_asset_delete on public.asset_master';
-    execute 'create trigger prevent_asset_delete before delete on public.asset_master for each row execute function public.prevent_asset_delete()';
-  end if;
-end $$;
-
 create or replace function public.prevent_asset_delete()
 returns trigger
 language plpgsql
 security definer
 set search_path = ''
-as $$
+as $
 begin
   insert into public.app_audit_log (
     actor_user_id, action, table_name, record_id, old_data, metadata
@@ -153,9 +144,18 @@ begin
   );
   raise exception 'Asset records cannot be deleted. Disable or update the asset instead.';
 end;
-$$;
+$;
 
 revoke execute on function public.prevent_asset_delete() from public, anon, authenticated;
+
+do $
+begin
+  if to_regclass('public.asset_master') is not null then
+    revoke delete on public.asset_master from anon, authenticated;
+    execute 'drop trigger if exists prevent_asset_delete on public.asset_master';
+    execute 'create trigger prevent_asset_delete before delete on public.asset_master for each row execute function public.prevent_asset_delete()';
+  end if;
+end $;
 
 -- Audit/status indexes.
 create index if not exists app_audit_log_created_at_idx on public.app_audit_log(created_at desc);
