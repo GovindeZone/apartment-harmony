@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useRouter } from "@tanstack/react-router";
 import { LayoutDashboard, Users, ShieldCheck, MessageSquare, Home, FileBarChart, Settings as SettingsIcon, Menu, LogOut, Building2, Shield, CalendarCheck, FileText, UsersRound, Vote, ClipboardList, BookOpenCheck, Boxes, BookOpen, ListChecks } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -79,6 +79,23 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
 function Brand(){return <div className="flex items-center gap-3 px-2 py-1"><span className="grid size-10 place-items-center rounded-xl bg-primary/12 text-primary"><Building2 className="size-5"/></span><span className="leading-tight"><span className="block text-sm font-semibold text-foreground">Indus Anantya Apartment</span><span className="block text-xs text-muted-foreground">Facility Operations</span></span></div>}
 export function AppShell({title,description,actions,children}:{title:string;description?:string;actions?:React.ReactNode;children:React.ReactNode}){
  const [open,setOpen]=useState(false); const router=useRouter();
+ const lastActivity=useRef(Date.now());
+ useEffect(() => {
+   const events = ["pointerdown","keydown","mousemove","scroll","touchstart"];
+   const mark = () => { lastActivity.current = Date.now(); };
+   events.forEach((event) => window.addEventListener(event, mark, { passive: true }));
+   const timer = window.setInterval(async () => {
+     if (Date.now() - lastActivity.current >= 30 * 60 * 1000) {
+       window.clearInterval(timer);
+       await supabase.auth.signOut();
+       router.navigate({ to: "/auth" });
+     }
+   }, 60 * 1000);
+   return () => {
+     window.clearInterval(timer);
+     events.forEach((event) => window.removeEventListener(event, mark));
+   };
+ }, [router]);
  async function signOut(){if(!window.confirm("Are you sure you want to log out?"))return;await supabase.auth.signOut();router.navigate({to:"/auth"});}
  return <div className="min-h-screen bg-background"><aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-border bg-sidebar p-4 lg:flex"><div className="flex min-h-0 flex-1 flex-col gap-6 overflow-auto pr-1 scrollbar-thin"><div className="flex flex-col gap-6"><Brand/><NavLinks/></div></aside><div className="lg:pl-64"><header className="sticky top-0 z-20 flex flex-wrap items-center gap-3 border-b border-border bg-background/85 px-4 py-3 backdrop-blur md:px-6"><Sheet open={open} onOpenChange={setOpen}><SheetTrigger asChild><Button variant="outline" size="icon" className="lg:hidden"><Menu className="size-5"/><span className="sr-only">Open navigation</span></Button></SheetTrigger><SheetContent side="left" className="w-72 bg-sidebar p-4"><SheetTitle className="sr-only">Navigation</SheetTitle><div className="flex h-full flex-col justify-between"><div className="flex flex-col gap-6 pt-6"><Brand/><NavLinks onNavigate={()=>setOpen(false)}/></div></div></SheetContent></Sheet><div className="min-w-0 flex-1"><h1 className="truncate text-lg font-semibold tracking-tight text-foreground md:text-xl">{title}</h1>{description?<p className="truncate text-xs text-muted-foreground md:text-sm">{description}</p>:null}</div>{actions?<div className="flex items-center gap-2">{actions}</div>:null}<div className="ml-auto"><Button variant="ghost" size="sm" className="gap-2" onClick={signOut}><LogOut className="size-[18px]"/>Sign out</Button></div></header><main className={cn("mx-auto w-full max-w-[1400px] px-4 py-6 md:px-6 md:py-8")}>{children}</main></div></div>;
 }
