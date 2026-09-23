@@ -20,6 +20,7 @@ const NAV = [
     { to: "/official-records", label: "Official Records", icon: FileText },
         { to: "/contractor", label: "Contractor", icon: Building2 },
     { to: "/checklist-master", label: "Check list master", icon: ListChecks },
+    { to: "/integration-master", label: "Integration Master", icon: SettingsIcon },
     { to: "/holiday-list", label: "Holiday List", icon: CalendarCheck },
     { to: "/residents", label: "Residents", icon: Home },
   ]},
