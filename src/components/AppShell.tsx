@@ -29,14 +29,14 @@ const NAV = [
     { to: "/mc-handbook", label: "MC Handbook", icon: BookOpen },
   ]},
   { to: "/checklists", label: "Checklists", icon: ListChecks, group: [
-    { to: "/check-list?tab=fm", label: "FM Checklist", icon: ListChecks },
-    { to: "/check-list?tab=mc", label: "MC Checklist", icon: ListChecks },
-    { to: "/check-list?tab=security", label: "Security Checklist", icon: ShieldCheck },
-    { to: "/check-list?tab=electrical", label: "Electrical Checklist", icon: SettingsIcon },
-    { to: "/check-list?tab=stp", label: "STP Checklist", icon: ListChecks },
-    { to: "/check-list?tab=plumbing", label: "Plumbing Checklist", icon: ListChecks },
-    { to: "/check-list?tab=housekeeping", label: "House Keeping Checklist", icon: Home },
-    { to: "/check-list?tab=garden", label: "Garden Checklist", icon: ListChecks },
+    { to: "/check-list", tab: "fm", label: "FM Checklist", icon: ListChecks },
+    { to: "/check-list", tab: "mc", label: "MC Checklist", icon: ListChecks },
+    { to: "/check-list", tab: "security", label: "Security Checklist", icon: ShieldCheck },
+    { to: "/check-list", tab: "electrical", label: "Electrical Checklist", icon: SettingsIcon },
+    { to: "/check-list", tab: "stp", label: "STP Checklist", icon: ListChecks },
+    { to: "/check-list", tab: "plumbing", label: "Plumbing Checklist", icon: ListChecks },
+    { to: "/check-list", tab: "housekeeping", label: "House Keeping Checklist", icon: Home },
+    { to: "/check-list", tab: "garden", label: "Garden Checklist", icon: ListChecks },
   ]},
   { to: "/reports", label: "Reports", icon: FileBarChart },
 ] as const;
@@ -50,7 +50,9 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
             <item.icon className="size-[18px] shrink-0" />{item.label}
           </div>
           <div className="ml-3 mt-0.5 border-l border-border/60 pl-2">
-            {item.group.map((child) => <Link key={child.to + child.label} to={child.to} onClick={onNavigate} className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-sidebar-foreground/65 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" activeProps={{ className: "bg-sidebar-primary/10 text-sidebar-primary font-semibold" }}>
+            {item.group.map((child) => "tab" in child ? <Link key={child.tab} to="/check-list" search={{ tab: child.tab }} onClick={onNavigate} className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-sidebar-foreground/65 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" activeProps={{ className: "bg-sidebar-primary/10 text-sidebar-primary font-semibold" }}>
+              <child.icon className="size-4 shrink-0" />{child.label}
+            </Link> : <Link key={child.to + child.label} to={child.to} onClick={onNavigate} className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-sidebar-foreground/65 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" activeProps={{ className: "bg-sidebar-primary/10 text-sidebar-primary font-semibold" }}>
               <child.icon className="size-4 shrink-0" />{child.label}
             </Link>)}
           </div>

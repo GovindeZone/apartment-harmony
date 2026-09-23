@@ -20,12 +20,13 @@ import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authentic
 import { Route as AuthenticatedByeLawRepositoryRouteImport } from './routes/_authenticated/bye-law-repository'
 import { Route as AuthenticatedCheckListRouteImport } from './routes/_authenticated/check-list'
 import { Route as AuthenticatedChecklistMasterRouteImport } from './routes/_authenticated/checklist-master'
-import { Route as AuthenticatedIntegrationMasterRouteImport } from './routes/_authenticated/integration-master'
 import { Route as AuthenticatedContractorRouteImport } from './routes/_authenticated/contractor'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedEcRepositoryRouteImport } from './routes/_authenticated/ec-repository'
 import { Route as AuthenticatedFacilityManagementRouteImport } from './routes/_authenticated/facility-management'
 import { Route as AuthenticatedHelpdeskRouteImport } from './routes/_authenticated/helpdesk'
+import { Route as AuthenticatedHolidayListRouteImport } from './routes/_authenticated/holiday-list'
+import { Route as AuthenticatedIntegrationMasterRouteImport } from './routes/_authenticated/integration-master'
 import { Route as AuthenticatedMcHandbookRouteImport } from './routes/_authenticated/mc-handbook'
 import { Route as AuthenticatedMcRepositoryRouteImport } from './routes/_authenticated/mc-repository'
 import { Route as AuthenticatedOfficialRecordsRouteImport } from './routes/_authenticated/official-records'
@@ -89,12 +90,12 @@ const AuthenticatedCheckListRoute = AuthenticatedCheckListRouteImport.update({
   path: '/check-list',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedChecklistMasterRoute = AuthenticatedChecklistMasterRouteImport.update({
-  id: '/checklist-master', path: '/checklist-master', getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedIntegrationMasterRoute = AuthenticatedIntegrationMasterRouteImport.update({
-  id: '/integration-master', path: '/integration-master', getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
+const AuthenticatedChecklistMasterRoute =
+  AuthenticatedChecklistMasterRouteImport.update({
+    id: '/checklist-master',
+    path: '/checklist-master',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedContractorRoute = AuthenticatedContractorRouteImport.update({
   id: '/contractor',
   path: '/contractor',
@@ -122,6 +123,18 @@ const AuthenticatedHelpdeskRoute = AuthenticatedHelpdeskRouteImport.update({
   path: '/helpdesk',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedHolidayListRoute =
+  AuthenticatedHolidayListRouteImport.update({
+    id: '/holiday-list',
+    path: '/holiday-list',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedIntegrationMasterRoute =
+  AuthenticatedIntegrationMasterRouteImport.update({
+    id: '/integration-master',
+    path: '/integration-master',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedMcHandbookRoute = AuthenticatedMcHandbookRouteImport.update({
   id: '/mc-handbook',
   path: '/mc-handbook',
@@ -182,12 +195,13 @@ export interface FileRoutesByFullPath {
   '/bye-law-repository': typeof AuthenticatedByeLawRepositoryRoute
   '/check-list': typeof AuthenticatedCheckListRoute
   '/checklist-master': typeof AuthenticatedChecklistMasterRoute
-  '/integration-master': typeof AuthenticatedIntegrationMasterRoute
   '/contractor': typeof AuthenticatedContractorRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/ec-repository': typeof AuthenticatedEcRepositoryRoute
   '/facility-management': typeof AuthenticatedFacilityManagementRoute
   '/helpdesk': typeof AuthenticatedHelpdeskRoute
+  '/holiday-list': typeof AuthenticatedHolidayListRoute
+  '/integration-master': typeof AuthenticatedIntegrationMasterRoute
   '/mc-handbook': typeof AuthenticatedMcHandbookRoute
   '/mc-repository': typeof AuthenticatedMcRepositoryRoute
   '/official-records': typeof AuthenticatedOfficialRecordsRoute
@@ -208,11 +222,14 @@ export interface FileRoutesByTo {
   '/attendance': typeof AuthenticatedAttendanceRoute
   '/bye-law-repository': typeof AuthenticatedByeLawRepositoryRoute
   '/check-list': typeof AuthenticatedCheckListRoute
+  '/checklist-master': typeof AuthenticatedChecklistMasterRoute
   '/contractor': typeof AuthenticatedContractorRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/ec-repository': typeof AuthenticatedEcRepositoryRoute
   '/facility-management': typeof AuthenticatedFacilityManagementRoute
   '/helpdesk': typeof AuthenticatedHelpdeskRoute
+  '/holiday-list': typeof AuthenticatedHolidayListRoute
+  '/integration-master': typeof AuthenticatedIntegrationMasterRoute
   '/mc-handbook': typeof AuthenticatedMcHandbookRoute
   '/mc-repository': typeof AuthenticatedMcRepositoryRoute
   '/official-records': typeof AuthenticatedOfficialRecordsRoute
@@ -236,12 +253,13 @@ export interface FileRoutesById {
   '/_authenticated/bye-law-repository': typeof AuthenticatedByeLawRepositoryRoute
   '/_authenticated/check-list': typeof AuthenticatedCheckListRoute
   '/_authenticated/checklist-master': typeof AuthenticatedChecklistMasterRoute
-  '/_authenticated/integration-master': typeof AuthenticatedIntegrationMasterRoute
   '/_authenticated/contractor': typeof AuthenticatedContractorRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/ec-repository': typeof AuthenticatedEcRepositoryRoute
   '/_authenticated/facility-management': typeof AuthenticatedFacilityManagementRoute
   '/_authenticated/helpdesk': typeof AuthenticatedHelpdeskRoute
+  '/_authenticated/holiday-list': typeof AuthenticatedHolidayListRoute
+  '/_authenticated/integration-master': typeof AuthenticatedIntegrationMasterRoute
   '/_authenticated/mc-handbook': typeof AuthenticatedMcHandbookRoute
   '/_authenticated/mc-repository': typeof AuthenticatedMcRepositoryRoute
   '/_authenticated/official-records': typeof AuthenticatedOfficialRecordsRoute
@@ -264,11 +282,14 @@ export interface FileRouteTypes {
     | '/attendance'
     | '/bye-law-repository'
     | '/check-list'
+    | '/checklist-master'
     | '/contractor'
     | '/dashboard'
     | '/ec-repository'
     | '/facility-management'
     | '/helpdesk'
+    | '/holiday-list'
+    | '/integration-master'
     | '/mc-handbook'
     | '/mc-repository'
     | '/official-records'
@@ -289,11 +310,14 @@ export interface FileRouteTypes {
     | '/attendance'
     | '/bye-law-repository'
     | '/check-list'
+    | '/checklist-master'
     | '/contractor'
     | '/dashboard'
     | '/ec-repository'
     | '/facility-management'
     | '/helpdesk'
+    | '/holiday-list'
+    | '/integration-master'
     | '/mc-handbook'
     | '/mc-repository'
     | '/official-records'
@@ -315,11 +339,14 @@ export interface FileRouteTypes {
     | '/_authenticated/attendance'
     | '/_authenticated/bye-law-repository'
     | '/_authenticated/check-list'
+    | '/_authenticated/checklist-master'
     | '/_authenticated/contractor'
     | '/_authenticated/dashboard'
     | '/_authenticated/ec-repository'
     | '/_authenticated/facility-management'
     | '/_authenticated/helpdesk'
+    | '/_authenticated/holiday-list'
+    | '/_authenticated/integration-master'
     | '/_authenticated/mc-handbook'
     | '/_authenticated/mc-repository'
     | '/_authenticated/official-records'
@@ -402,17 +429,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedByeLawRepositoryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/checklist-master': {
-      id: '/_authenticated/checklist-master', path: '/checklist-master', fullPath: '/checklist-master', preLoaderRoute: typeof AuthenticatedChecklistMasterRouteImport, parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/integration-master': {
-      id: '/_authenticated/integration-master', path: '/integration-master', fullPath: '/integration-master', preLoaderRoute: typeof AuthenticatedIntegrationMasterRouteImport, parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/check-list': {
       id: '/_authenticated/check-list'
       path: '/check-list'
       fullPath: '/check-list'
       preLoaderRoute: typeof AuthenticatedCheckListRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/checklist-master': {
+      id: '/_authenticated/checklist-master'
+      path: '/checklist-master'
+      fullPath: '/checklist-master'
+      preLoaderRoute: typeof AuthenticatedChecklistMasterRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/contractor': {
@@ -448,6 +476,20 @@ declare module '@tanstack/react-router' {
       path: '/helpdesk'
       fullPath: '/helpdesk'
       preLoaderRoute: typeof AuthenticatedHelpdeskRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/holiday-list': {
+      id: '/_authenticated/holiday-list'
+      path: '/holiday-list'
+      fullPath: '/holiday-list'
+      preLoaderRoute: typeof AuthenticatedHolidayListRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/integration-master': {
+      id: '/_authenticated/integration-master'
+      path: '/integration-master'
+      fullPath: '/integration-master'
+      preLoaderRoute: typeof AuthenticatedIntegrationMasterRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/mc-handbook': {
@@ -525,12 +567,13 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedByeLawRepositoryRoute: typeof AuthenticatedByeLawRepositoryRoute
   AuthenticatedCheckListRoute: typeof AuthenticatedCheckListRoute
   AuthenticatedChecklistMasterRoute: typeof AuthenticatedChecklistMasterRoute
-  AuthenticatedIntegrationMasterRoute: typeof AuthenticatedIntegrationMasterRoute
   AuthenticatedContractorRoute: typeof AuthenticatedContractorRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedEcRepositoryRoute: typeof AuthenticatedEcRepositoryRoute
   AuthenticatedFacilityManagementRoute: typeof AuthenticatedFacilityManagementRoute
   AuthenticatedHelpdeskRoute: typeof AuthenticatedHelpdeskRoute
+  AuthenticatedHolidayListRoute: typeof AuthenticatedHolidayListRoute
+  AuthenticatedIntegrationMasterRoute: typeof AuthenticatedIntegrationMasterRoute
   AuthenticatedMcHandbookRoute: typeof AuthenticatedMcHandbookRoute
   AuthenticatedMcRepositoryRoute: typeof AuthenticatedMcRepositoryRoute
   AuthenticatedOfficialRecordsRoute: typeof AuthenticatedOfficialRecordsRoute
@@ -551,12 +594,13 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedByeLawRepositoryRoute: AuthenticatedByeLawRepositoryRoute,
   AuthenticatedCheckListRoute: AuthenticatedCheckListRoute,
   AuthenticatedChecklistMasterRoute: AuthenticatedChecklistMasterRoute,
-  AuthenticatedIntegrationMasterRoute: AuthenticatedIntegrationMasterRoute,
   AuthenticatedContractorRoute: AuthenticatedContractorRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedEcRepositoryRoute: AuthenticatedEcRepositoryRoute,
   AuthenticatedFacilityManagementRoute: AuthenticatedFacilityManagementRoute,
   AuthenticatedHelpdeskRoute: AuthenticatedHelpdeskRoute,
+  AuthenticatedHolidayListRoute: AuthenticatedHolidayListRoute,
+  AuthenticatedIntegrationMasterRoute: AuthenticatedIntegrationMasterRoute,
   AuthenticatedMcHandbookRoute: AuthenticatedMcHandbookRoute,
   AuthenticatedMcRepositoryRoute: AuthenticatedMcRepositoryRoute,
   AuthenticatedOfficialRecordsRoute: AuthenticatedOfficialRecordsRoute,
