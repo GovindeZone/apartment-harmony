@@ -27,6 +27,17 @@ function IntegrationMasterPage() {
           <div className="rounded-lg bg-muted p-3 text-sm">Connection settings are shown here as a configuration template. Credentials should be stored securely and should not be hard-coded in the application.</div>
         </CardContent>
       </Card>
+      <Card>
+        <CardHeader><CardTitle>Biometric Integration</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground">Configure the separate biometric attendance machine/application used for staff attendance maintenance.</p>
+          <div className="space-y-2"><Label>Biometric Machine / Application Name</Label><Input placeholder="Enter device or application name" /></div>
+          <div className="space-y-2"><Label>Device / Server IP Address</Label><Input placeholder="e.g. 192.168.1.100" /></div>
+          <div className="space-y-2"><Label>API / Integration URL</Label><Input placeholder="https://..." /></div>
+          <div className="space-y-2"><Label>API Key / Token</Label><Input type="password" placeholder="Enter securely" /></div>
+          <div className="rounded-lg bg-muted p-3 text-sm">Use this section for the biometric system connection details. Actual synchronization can be enabled once the biometric vendor's API, protocol, or database connection details are available.</div>
+        </CardContent>
+      </Card>
     </div>
   </AppShell>;
 }
