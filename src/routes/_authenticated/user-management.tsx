@@ -34,12 +34,6 @@ function UserManagementPage() {
   useEffect(() => { void loadUsers(); }, []);
 
   async function toggleActive(user: Profile) {
-    const { error } = await supabase.from("profiles").update({ is_active: !(user.is_active ?? true) } as never).eq("id", user.id);
-    if (error) toast.error(error.message);
-    else { toast.success((user.is_active ?? true) ? "User disabled." : "User enabled."); void loadUsers(); }
-  }
-
-  async function toggleActive(user: Profile) {
     const nextActive = !(user.is_active ?? true);
     const action = nextActive ? "re-enable" : "disable";
     if (!window.confirm(`Are you sure you want to ${action} ${user.full_name || user.email || "this user"}?`)) return;
@@ -52,7 +46,7 @@ function UserManagementPage() {
     <SectionCard title="Users" description="Only administrators can access this page.">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead><tr className="border-b text-left"><th className="p-3">Name</th><th className="p-3">Email</th><th className="p-3">Role</th><th className="p-3">Status</th><th className="p-3">Created</th><th className="p-3 text-right">Status</th></tr></thead>
+          <thead><tr className="border-b text-left"><th className="p-3">Name</th><th className="p-3">Email</th><th className="p-3">Role</th><th className="p-3">Status</th><th className="p-3">Created</th><th className="p-3 text-right">Actions</th></tr></thead>
           <tbody>
             {loading ? <tr><td colSpan={6} className="p-6 text-center text-muted-foreground">Loading users…</td></tr> :
               users.map(user => <tr key={user.id} className="border-b last:border-0">
