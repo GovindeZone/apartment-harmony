@@ -46,7 +46,8 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
           </div>
         </div>;
       }
-      return <Link key={item.to} to={item.to} onClick={onNavigate} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" activeProps={{ className: "bg-sidebar-primary/12 text-sidebar-primary font-semibold" }}>
+      const destination = item.to === "/dashboard" ? "/dashboard" : "/reports";
+      return <Link key={item.to} to={destination} onClick={onNavigate} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" activeProps={{ className: "bg-sidebar-primary/12 text-sidebar-primary font-semibold" }}>
         <item.icon className="size-[18px] shrink-0" />{item.label}
       </Link>;
     })}
