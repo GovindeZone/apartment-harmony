@@ -84,7 +84,12 @@ begin
 
   action_name := case TG_OP
     when 'INSERT' then 'CREATE'
-    when 'UPDATE' then 'UPDATE'
+    when 'UPDATE' then
+      case
+        when TG_TABLE_NAME = 'profiles' and (old_json->>'is_active') = 'true' and (new_json->>'is_active') = 'false' then 'DISABLE'
+        when TG_TABLE_NAME = 'profiles' and (old_json->>'is_active') = 'false' and (new_json->>'is_active') = 'true' then 'ENABLE'
+        else 'UPDATE'
+      end
     when 'DELETE' then 'DELETE_ATTEMPT'
   end;
 
@@ -111,6 +116,7 @@ begin
     'asset_master',
     'checklist_master',
     'user_tab_permissions',
+    'user_roles',
     'profiles'
   ]
   loop
