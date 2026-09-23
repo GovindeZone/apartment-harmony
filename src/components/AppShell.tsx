@@ -31,6 +31,12 @@ const NAV = [
   { to: "/checklists", label: "Checklists", icon: ListChecks, group: [
     { to: "/check-list?tab=fm", label: "FM Checklist", icon: ListChecks },
     { to: "/check-list?tab=mc", label: "MC Checklist", icon: ListChecks },
+    { to: "/check-list?tab=security", label: "Security Checklist", icon: ShieldCheck },
+    { to: "/check-list?tab=electrical", label: "Electrical Checklist", icon: SettingsIcon },
+    { to: "/check-list?tab=stp", label: "STP Checklist", icon: ListChecks },
+    { to: "/check-list?tab=plumbing", label: "Plumbing Checklist", icon: ListChecks },
+    { to: "/check-list?tab=housekeeping", label: "House Keeping Checklist", icon: Home },
+    { to: "/check-list?tab=garden", label: "Garden Checklist", icon: ListChecks },
   ]},
   { to: "/reports", label: "Reports", icon: FileBarChart },
 ] as const;
