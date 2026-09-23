@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin-settings'
 import { Route as AuthenticatedAdminUserRightsRouteImport } from './routes/_authenticated/admin-user-rights'
+import { Route as AuthenticatedAuditLogRouteImport } from './routes/_authenticated/audit-log'
 import { Route as AuthenticatedAssetManagementRouteImport } from './routes/_authenticated/asset-management'
 import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authenticated/attendance'
 import { Route as AuthenticatedByeLawRepositoryRouteImport } from './routes/_authenticated/bye-law-repository'
@@ -68,6 +69,11 @@ const AuthenticatedAdminUserRightsRoute =
     path: '/admin-user-rights',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAuditLogRoute = AuthenticatedAuditLogRouteImport.update({
+  id: '/audit-log',
+  path: '/audit-log',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAssetManagementRoute =
   AuthenticatedAssetManagementRouteImport.update({
     id: '/asset-management',
@@ -190,6 +196,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRoute
   '/admin-settings': typeof AuthenticatedAdminSettingsRoute
   '/admin-user-rights': typeof AuthenticatedAdminUserRightsRoute
+  '/audit-log': typeof AuthenticatedAuditLogRoute
   '/asset-management': typeof AuthenticatedAssetManagementRoute
   '/attendance': typeof AuthenticatedAttendanceRoute
   '/bye-law-repository': typeof AuthenticatedByeLawRepositoryRoute
@@ -248,6 +255,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/admin-settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin-user-rights': typeof AuthenticatedAdminUserRightsRoute
+  '/_authenticated/audit-log': typeof AuthenticatedAuditLogRoute
   '/_authenticated/asset-management': typeof AuthenticatedAssetManagementRoute
   '/_authenticated/attendance': typeof AuthenticatedAttendanceRoute
   '/_authenticated/bye-law-repository': typeof AuthenticatedByeLawRepositoryRoute
@@ -278,6 +286,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/admin-settings'
     | '/admin-user-rights'
+    | '/audit-log'
     | '/asset-management'
     | '/attendance'
     | '/bye-law-repository'
@@ -335,6 +344,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/admin-settings'
     | '/_authenticated/admin-user-rights'
+    | '/_authenticated/audit-log'
     | '/_authenticated/asset-management'
     | '/_authenticated/attendance'
     | '/_authenticated/bye-law-repository'
@@ -406,6 +416,13 @@ declare module '@tanstack/react-router' {
       path: '/admin-user-rights'
       fullPath: '/admin-user-rights'
       preLoaderRoute: typeof AuthenticatedAdminUserRightsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/audit-log': {
+      id: '/_authenticated/audit-log'
+      path: '/audit-log'
+      fullPath: '/audit-log'
+      preLoaderRoute: typeof AuthenticatedAuditLogRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/asset-management': {
@@ -562,6 +579,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminUserRightsRoute: typeof AuthenticatedAdminUserRightsRoute
+  AuthenticatedAuditLogRoute: typeof AuthenticatedAuditLogRoute
   AuthenticatedAssetManagementRoute: typeof AuthenticatedAssetManagementRoute
   AuthenticatedAttendanceRoute: typeof AuthenticatedAttendanceRoute
   AuthenticatedByeLawRepositoryRoute: typeof AuthenticatedByeLawRepositoryRoute
@@ -589,6 +607,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminUserRightsRoute: AuthenticatedAdminUserRightsRoute,
+  AuthenticatedAuditLogRoute: AuthenticatedAuditLogRoute,
   AuthenticatedAssetManagementRoute: AuthenticatedAssetManagementRoute,
   AuthenticatedAttendanceRoute: AuthenticatedAttendanceRoute,
   AuthenticatedByeLawRepositoryRoute: AuthenticatedByeLawRepositoryRoute,
