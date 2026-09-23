@@ -34,9 +34,11 @@ const NAV = [
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   return <nav className="flex flex-col gap-1">
     {NAV.map((item) => <div key={item.to}>
-      <Link to={item.to} onClick={onNavigate} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" activeProps={{ className: "bg-sidebar-primary/12 text-sidebar-primary font-semibold" }}>
+      {"group" in item && item.group ? <div className="flex items-center gap-3 px-3 py-2.5 text-sm font-semibold text-sidebar-foreground">
         <item.icon className="size-[18px] shrink-0" />{item.label}
-      </Link>
+      </div> : <Link to={item.to} onClick={onNavigate} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-sidebar-foreground/75 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" activeProps={{ className: "bg-sidebar-primary/12 text-sidebar-primary font-semibold" }}>
+        <item.icon className="size-[18px] shrink-0" />{item.label}
+      </Link>}
       {"group" in item && item.group ? <div className="ml-3 mt-0.5 border-l border-border/60 pl-2">
         {item.group.map((child) => <Link key={child.to + child.label} to={child.to} onClick={onNavigate} className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-sidebar-foreground/65 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" activeProps={{ className: "bg-sidebar-primary/10 text-sidebar-primary font-semibold" }}>
           <child.icon className="size-4 shrink-0" />{child.label}
