@@ -19,6 +19,8 @@ import { Route as AuthenticatedAssetManagementRouteImport } from './routes/_auth
 import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authenticated/attendance'
 import { Route as AuthenticatedByeLawRepositoryRouteImport } from './routes/_authenticated/bye-law-repository'
 import { Route as AuthenticatedCheckListRouteImport } from './routes/_authenticated/check-list'
+import { Route as AuthenticatedChecklistMasterRouteImport } from './routes/_authenticated/checklist-master'
+import { Route as AuthenticatedIntegrationMasterRouteImport } from './routes/_authenticated/integration-master'
 import { Route as AuthenticatedContractorRouteImport } from './routes/_authenticated/contractor'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedEcRepositoryRouteImport } from './routes/_authenticated/ec-repository'
@@ -86,6 +88,12 @@ const AuthenticatedCheckListRoute = AuthenticatedCheckListRouteImport.update({
   id: '/check-list',
   path: '/check-list',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedChecklistMasterRoute = AuthenticatedChecklistMasterRouteImport.update({
+  id: '/checklist-master', path: '/checklist-master', getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedIntegrationMasterRoute = AuthenticatedIntegrationMasterRouteImport.update({
+  id: '/integration-master', path: '/integration-master', getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedContractorRoute = AuthenticatedContractorRouteImport.update({
   id: '/contractor',
@@ -173,6 +181,8 @@ export interface FileRoutesByFullPath {
   '/attendance': typeof AuthenticatedAttendanceRoute
   '/bye-law-repository': typeof AuthenticatedByeLawRepositoryRoute
   '/check-list': typeof AuthenticatedCheckListRoute
+  '/checklist-master': typeof AuthenticatedChecklistMasterRoute
+  '/integration-master': typeof AuthenticatedIntegrationMasterRoute
   '/contractor': typeof AuthenticatedContractorRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/ec-repository': typeof AuthenticatedEcRepositoryRoute
@@ -225,6 +235,8 @@ export interface FileRoutesById {
   '/_authenticated/attendance': typeof AuthenticatedAttendanceRoute
   '/_authenticated/bye-law-repository': typeof AuthenticatedByeLawRepositoryRoute
   '/_authenticated/check-list': typeof AuthenticatedCheckListRoute
+  '/_authenticated/checklist-master': typeof AuthenticatedChecklistMasterRoute
+  '/_authenticated/integration-master': typeof AuthenticatedIntegrationMasterRoute
   '/_authenticated/contractor': typeof AuthenticatedContractorRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/ec-repository': typeof AuthenticatedEcRepositoryRoute
@@ -390,6 +402,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedByeLawRepositoryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/checklist-master': {
+      id: '/_authenticated/checklist-master', path: '/checklist-master', fullPath: '/checklist-master', preLoaderRoute: typeof AuthenticatedChecklistMasterRouteImport, parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/integration-master': {
+      id: '/_authenticated/integration-master', path: '/integration-master', fullPath: '/integration-master', preLoaderRoute: typeof AuthenticatedIntegrationMasterRouteImport, parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/check-list': {
       id: '/_authenticated/check-list'
       path: '/check-list'
@@ -506,6 +524,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAttendanceRoute: typeof AuthenticatedAttendanceRoute
   AuthenticatedByeLawRepositoryRoute: typeof AuthenticatedByeLawRepositoryRoute
   AuthenticatedCheckListRoute: typeof AuthenticatedCheckListRoute
+  AuthenticatedChecklistMasterRoute: typeof AuthenticatedChecklistMasterRoute
+  AuthenticatedIntegrationMasterRoute: typeof AuthenticatedIntegrationMasterRoute
   AuthenticatedContractorRoute: typeof AuthenticatedContractorRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedEcRepositoryRoute: typeof AuthenticatedEcRepositoryRoute
@@ -530,6 +550,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAttendanceRoute: AuthenticatedAttendanceRoute,
   AuthenticatedByeLawRepositoryRoute: AuthenticatedByeLawRepositoryRoute,
   AuthenticatedCheckListRoute: AuthenticatedCheckListRoute,
+  AuthenticatedChecklistMasterRoute: AuthenticatedChecklistMasterRoute,
+  AuthenticatedIntegrationMasterRoute: AuthenticatedIntegrationMasterRoute,
   AuthenticatedContractorRoute: AuthenticatedContractorRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedEcRepositoryRoute: AuthenticatedEcRepositoryRoute,
