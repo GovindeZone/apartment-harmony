@@ -77,6 +77,19 @@ function AuthPage() {
       return;
     }
 
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("is_active")
+      .eq("id", (await supabase.auth.getUser()).data.user?.id ?? "")
+      .maybeSingle();
+
+    if (profile?.is_active === false) {
+      await supabase.auth.signOut();
+      setLoading(false);
+      toast.error("Your account is disabled. Please contact an administrator.");
+      return;
+    }
+
     if (rememberLogin) {
       window.localStorage.setItem(REMEMBERED_EMAIL_KEY, email);
       // Let the browser's password manager securely retain the password when supported.
