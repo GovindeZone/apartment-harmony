@@ -12,15 +12,13 @@ const NAV = [
     { to: "/attendance", label: "Attendance", icon: CalendarCheck },
     { to: "/security", label: "Security", icon: ShieldCheck },
     { to: "/asset-management", label: "Asset Management", icon: Boxes },
-    { to: "/check-list", label: "FM Checklist", icon: ListChecks },
     { to: "/helpdesk", label: "Help Desk", icon: MessageSquare },
   ]},
   { to: "/mc-master", label: "MC Master", icon: UsersRound, group: [
     { to: "/staff", label: "Staff", icon: Users },
     { to: "/official-records", label: "Official Records", icon: FileText },
         { to: "/contractor", label: "Contractor", icon: Building2 },
-    { to: "/checklist-master", label: "Check list master", icon: ListChecks },
-    { to: "/integration-master", label: "Integration Master", icon: SettingsIcon },
+    { to: "/checklist-master", label: "Checklist Master", icon: ListChecks },
     { to: "/holiday-list", label: "Holiday List", icon: CalendarCheck },
     { to: "/residents", label: "Residents", icon: Home },
   ]},
@@ -57,7 +55,7 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
         <item.icon className="size-[18px] shrink-0" />{item.label}
       </Link>;
     })}
-    <div className="mt-3 border-t border-border/60 pt-3"><div className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Admin</div><Link to="/admin" onClick={onNavigate} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-sidebar-foreground/75 hover:bg-sidebar-accent" activeProps={{ className: "bg-sidebar-primary/12 text-sidebar-primary font-semibold" }}><Shield className="size-[18px] shrink-0" />Admin</Link><Link to="/admin-settings" onClick={onNavigate} className="flex items-center gap-3 rounded-xl px-3 py-2.5 pl-10 text-sm text-sidebar-foreground/65 hover:bg-sidebar-accent" activeProps={{ className: "text-sidebar-primary font-semibold" }}><SettingsIcon className="size-4" />Settings</Link><Link to="/user-management" onClick={onNavigate} className="flex items-center gap-3 rounded-xl px-3 py-2.5 pl-10 text-sm text-sidebar-foreground/65 hover:bg-sidebar-accent" activeProps={{ className: "text-sidebar-primary font-semibold" }}><Users className="size-4" />User Management</Link><Link to="/admin-user-rights" onClick={onNavigate} className="flex items-center gap-3 rounded-xl px-3 py-2.5 pl-10 text-sm text-sidebar-foreground/65 hover:bg-sidebar-accent" activeProps={{ className: "text-sidebar-primary font-semibold" }}><ShieldCheck className="size-4" />User Rights</Link></div>
+    <div className="mt-3 border-t border-border/60 pt-3"><div className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Admin</div><Link to="/admin" onClick={onNavigate} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-sidebar-foreground/75 hover:bg-sidebar-accent" activeProps={{ className: "bg-sidebar-primary/12 text-sidebar-primary font-semibold" }}><Shield className="size-[18px] shrink-0" />Admin</Link><Link to="/integration-master" onClick={onNavigate} className="flex items-center gap-3 rounded-xl px-3 py-2.5 pl-10 text-sm text-sidebar-foreground/65 hover:bg-sidebar-accent" activeProps={{ className: "text-sidebar-primary font-semibold" }}><SettingsIcon className="size-4" />App Integration</Link><Link to="/admin-settings" onClick={onNavigate} className="flex items-center gap-3 rounded-xl px-3 py-2.5 pl-10 text-sm text-sidebar-foreground/65 hover:bg-sidebar-accent" activeProps={{ className: "text-sidebar-primary font-semibold" }}><SettingsIcon className="size-4" />Settings</Link><Link to="/user-management" onClick={onNavigate} className="flex items-center gap-3 rounded-xl px-3 py-2.5 pl-10 text-sm text-sidebar-foreground/65 hover:bg-sidebar-accent" activeProps={{ className: "text-sidebar-primary font-semibold" }}><Users className="size-4" />User Management</Link><Link to="/admin-user-rights" onClick={onNavigate} className="flex items-center gap-3 rounded-xl px-3 py-2.5 pl-10 text-sm text-sidebar-foreground/65 hover:bg-sidebar-accent" activeProps={{ className: "text-sidebar-primary font-semibold" }}><ShieldCheck className="size-4" />User Rights</Link></div>
   </nav>;
 }
 function Brand(){return <div className="flex items-center gap-3 px-2 py-1"><span className="grid size-10 place-items-center rounded-xl bg-primary/12 text-primary"><Building2 className="size-5"/></span><span className="leading-tight"><span className="block text-sm font-semibold text-foreground">Indus Anantya Apartment</span><span className="block text-xs text-muted-foreground">Facility Operations</span></span></div>}
