@@ -34,14 +34,18 @@ function UserManagementPage() {
   useEffect(() => { void loadUsers(); }, []);
 
   async function toggleActive(user: Profile) {
-    const { error } = await supabase.from("profiles").update({ is_active: !(user.is_active ?? true) }).eq("id", user.id);
+    const { error } = await supabase.from("profiles").update({ is_active: !(user.is_active ?? true) } as never).eq("id", user.id);
     if (error) toast.error(error.message);
     else { toast.success((user.is_active ?? true) ? "User disabled." : "User enabled."); void loadUsers(); }
   }
 
   async function deleteUser(user: Profile) {
     if (!window.confirm("Delete " + (user.full_name || user.email || "this user") + " permanently? This action cannot be undone.")) return;
-    const { error } = await supabase.rpc("admin_delete_user", { target_user_id: user.id });
+    const callRpc = supabase.rpc as unknown as (
+      functionName: string,
+      args: Record<string, unknown>,
+    ) => PromiseLike<{ error: { message: string } | null }>;
+    const { error } = await callRpc("admin_delete_user", { target_user_id: user.id });
     if (error) toast.error(error.message);
     else { toast.success("User deleted."); void loadUsers(); }
   }
