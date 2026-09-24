@@ -30,12 +30,20 @@ function AuditLogPage() {
 
   useEffect(() => {
     (async () => {
-      const { data, error } = await supabase
-        .from("app_audit_log")
+      const auditTable = (supabase as unknown as {
+        from: (name: "app_audit_log") => {
+          select: (columns: string) => {
+            order: (column: string, options: { ascending: boolean }) => {
+              limit: (count: number) => Promise<{ data: AuditRow[] | null; error: { message: string } | null }>;
+            };
+          };
+        };
+      }).from("app_audit_log");
+      const { data, error } = await auditTable
         .select("id,action,table_name,record_id,actor_user_id,created_at")
         .order("created_at", { ascending: false })
         .limit(200);
-      if (!error) setRows((data ?? []) as AuditRow[]);
+      if (!error) setRows(data ?? []);
       setLoading(false);
     })();
   }, []);

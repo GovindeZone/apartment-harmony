@@ -12,7 +12,7 @@ type ChecklistTask = { id: string; task: string; frequency: "Daily" | "Weekly" |
 
 export const Route = createFileRoute("/_authenticated/check-list")({
   validateSearch: (search: Record<string, unknown>) => ({
-    tab: checklistTabs.includes(search.tab as ChecklistTabKey) ? search.tab as ChecklistTabKey : "fm",
+    tab: checklistTabs.includes(search["tab"] as ChecklistTabKey) ? search["tab"] as ChecklistTabKey : "fm",
   }),
   component: CheckListPage,
 });
@@ -40,7 +40,7 @@ const MC_TASKS: MCTask[] = [
   { id: "mc-7", task: "Update Holiday list", frequency: "Yearly", options: ["Done", "Not Necessary"] },
 ];
 
-function periodKey(date: Date, frequency: FMTask["frequency"] | MCTask["frequency"]) {
+function periodKey(date: Date, frequency: ChecklistTask["frequency"]) {
   const year = date.getFullYear();
   if (frequency === "Daily") return `${year}-${date.getMonth() + 1}-${date.getDate()}`;
   if (frequency === "Weekly") {
@@ -48,6 +48,8 @@ function periodKey(date: Date, frequency: FMTask["frequency"] | MCTask["frequenc
     return `${start.getFullYear()}-${start.getMonth() + 1}-${start.getDate()}`;
   }
   if (frequency === "Monthly") return `${year}-${date.getMonth() + 1}`;
+  if (frequency === "Quarterly") return `${year}-Q${Math.floor(date.getMonth() / 3) + 1}`;
+  if (frequency === "Half-Yearly") return `${year}-H${date.getMonth() < 6 ? 1 : 2}`;
   return `${year}`;
 }
 
