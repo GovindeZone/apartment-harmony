@@ -13,7 +13,6 @@ import { toast } from "sonner";
 const REMEMBERED_EMAIL_KEY = "indus_anantya_remembered_email";
 
 export const Route = createFileRoute("/auth")({
-  ssr: false,
   head: () => ({
     meta: [
       { title: "Team Sign In — Indus Anantya Apartment" },
@@ -77,8 +76,16 @@ function AuthPage() {
       return;
     }
 
-    const { data: profile } = await supabase
-      .from("profiles")
+    const profilesTable = (supabase as unknown as {
+      from: (name: "profiles") => {
+        select: (columns: "is_active") => {
+          eq: (column: "id", value: string) => {
+            maybeSingle: () => Promise<{ data: { is_active: boolean } | null }>;
+          };
+        };
+      };
+    }).from("profiles");
+    const { data: profile } = await profilesTable
       .select("is_active")
       .eq("id", (await supabase.auth.getUser()).data.user?.id ?? "")
       .maybeSingle();
