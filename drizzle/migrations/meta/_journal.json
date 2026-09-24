@@ -8,6 +8,13 @@
       "when": 1790039607034,
       "tag": "0000_align_admin_modules_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790211926485,
+      "tag": "0001_add_profile_account_status",
+      "breakpoints": true
     }
   ]
 }
