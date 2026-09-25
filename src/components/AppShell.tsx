@@ -28,7 +28,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
-const NAV = [
+export const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   {
     to: "/facility-management",
