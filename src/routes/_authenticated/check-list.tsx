@@ -56,62 +56,45 @@ function periodKey(date: Date, frequency: ChecklistTask["frequency"]) {
 function CheckListPage() {
   const searchTab = Route.useSearch({ select: (search) => search.tab });
   const tabMap: Record<ChecklistTabKey, ChecklistDepartment> = { fm: "FM", mc: "MC", security: "Security", electrical: "Electrical", stp: "STP", plumbing: "Plumbing", housekeeping: "House Keeping", garden: "Garden" };
-  const [tab, setTab] = useState<ChecklistDepartment>(() => tabMap[searchTab]);
+  const department = tabMap[searchTab];
   const [masterTasks, setMasterTasks] = useState<ChecklistTask[]>([]);
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
-  const [fmChecked, setFmChecked] = useState<FMState>({});
-  const [mcChoices, setMcChoices] = useState<MCState>({});
+  const [checked, setChecked] = useState<Record<string, boolean>>({});
   const [submitted, setSubmitted] = useState<Record<string, boolean>>({});
   const selectedDate = useMemo(() => new Date(`${date}T12:00:00`), [date]);
 
   useEffect(() => {
-    setTab(tabMap[searchTab]);
     try {
-      setFmChecked(JSON.parse(localStorage.getItem("indus_anantya_fm_checklist") || "{}"));
-      setMcChoices(JSON.parse(localStorage.getItem("indus_anantya_mc_checklist") || "{}"));
-      setSubmitted(JSON.parse(localStorage.getItem("indus_anantya_checklist_submissions") || "{}"));
-    } catch { /* use empty state */ }
+      setChecked(JSON.parse(localStorage.getItem(`indus_anantya_${searchTab}_checklist`) || "{}"));
+      setSubmitted(JSON.parse(localStorage.getItem(`indus_anantya_${searchTab}_checklist_submissions`) || "{}"));
+    } catch { setChecked({}); setSubmitted({}); }
   }, [searchTab]);
 
   useEffect(() => {
     const checklistTable = (supabase as unknown as { from: (name: string) => any }).from("checklist_master");
-    void checklistTable.select("*").eq("active", true).eq("department", tab).order("task").then(({ data }: { data: ChecklistTask[] | null }) => setMasterTasks(data ?? []));
-  }, [tab]);
+    void checklistTable.select("*").eq("active", true).eq("department", department).order("task").then(({ data }: { data: ChecklistTask[] | null }) => setMasterTasks(data ?? []));
+  }, [department]);
 
-  const fmKey = (task: FMTask) => `${task.id}:${periodKey(selectedDate, task.frequency)}`;
-  const mcKey = (task: MCTask) => `${task.id}:${periodKey(selectedDate, task.frequency)}`;
-  const save = (key: string, value: unknown, storage: "fm" | "mc") => {
-    if (storage === "fm") {
-      const next = { ...fmChecked, [key]: value as boolean };
-      setFmChecked(next); localStorage.setItem("indus_anantya_fm_checklist", JSON.stringify(next));
-    } else {
-      const next = { ...mcChoices, [key]: value as string };
-      setMcChoices(next); localStorage.setItem("indus_anantya_mc_checklist", JSON.stringify(next));
-    }
+  const save = (key: string, value: boolean) => {
+    const next = { ...checked, [key]: value };
+    setChecked(next); localStorage.setItem(`indus_anantya_${searchTab}_checklist`, JSON.stringify(next));
   };
   const submit = () => {
-    const keys = displayTasks.map((task) => `${task.id}:${periodKey(selectedDate, task.frequency)}`);
-    const next = { ...submitted }; keys.forEach((key) => { next[key] = true; });
-    setSubmitted(next); localStorage.setItem("indus_anantya_checklist_submissions", JSON.stringify(next));
+    const next = { ...submitted };
+    masterTasks.forEach((task) => { next[`${task.id}:${periodKey(selectedDate, task.frequency)}`] = true; });
+    setSubmitted(next); localStorage.setItem(`indus_anantya_${searchTab}_checklist_submissions`, JSON.stringify(next));
   };
-  const isSubmitted = (key: string) => !!submitted[key];
-  const displayTasks = masterTasks;
 
-  return <AppShell title="Checklists" description="Track facility and Management Committee checklist activities">
+  return <AppShell title={`${department} Checklist`} description={`Track ${department} checklist activities`}>
     <div className="space-y-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex gap-2 rounded-xl bg-muted p-1">
-          <Button variant={tab === "FM" ? "default" : "ghost"} onClick={() => setTab("FM")}>FM Checklist</Button>
-          <Button variant={tab === "MC" ? "default" : "ghost"} onClick={() => setTab("MC")}>MC Checklist</Button>
-        </div>
-        <label className="flex items-center gap-2 text-sm font-medium">Period date <input className="rounded-lg border bg-background px-3 py-2" type="date" value={date} onChange={(e) => setDate(e.target.value)} /></label>
-      </div>
+      <div className="flex flex-wrap items-center justify-end gap-3"><label className="flex items-center gap-2 text-sm font-medium">Period date <input className="rounded-lg border bg-background px-3 py-2" type="date" value={date} onChange={(e) => setDate(e.target.value)} /></label></div>
       <div className="rounded-2xl border bg-card p-4 shadow-sm">
-        <div className="mb-4"><h2 className="text-lg font-semibold">{tab} Checklist</h2><p className="text-sm text-muted-foreground">Only active checklist items configured for this department are shown.</p></div>
-        <div className="overflow-x-auto"><table className="w-full min-w-[760px] text-sm"><thead><tr className="border-b text-left"><th className="p-3">Task</th>{tab === "FM" ? <th className="p-3">Frequency</th> : <th className="p-3">Applicable period</th>}<th className="p-3">Status / action</th></tr></thead><tbody>
-{displayTasks.map((task) => { const key = `${task.id}:${periodKey(selectedDate, task.frequency)}`; return <tr className="border-b last:border-0" key={task.id}><td className="p-3 font-medium">{task.task}</td><td className="p-3">{task.frequency}</td><td className="p-3"><label className="flex items-center gap-3"><Checkbox checked={!!fmChecked[key]} onCheckedChange={(v) => save(key, !!v, "fm")} disabled={isSubmitted(key)} /><span className={isSubmitted(key) ? "text-emerald-600" : "text-amber-600"}>{isSubmitted(key) ? "Submitted" : fmChecked[key] ? "Ready to submit" : "Pending"}</span></label></td></tr>; })}
+        <div className="mb-4"><h2 className="text-lg font-semibold">{department} Checklist</h2><p className="text-sm text-muted-foreground">Only active checklist items configured for this department are shown.</p></div>
+        <div className="overflow-x-auto"><table className="w-full min-w-[760px] text-sm"><thead><tr className="border-b text-left"><th className="p-3">Task</th><th className="p-3">Frequency</th><th className="p-3">Status / action</th></tr></thead><tbody>
+          {masterTasks.map((task) => { const key = `${task.id}:${periodKey(selectedDate, task.frequency)}`; const done = !!checked[key]; const isDone = !!submitted[key]; return <tr className="border-b last:border-0" key={task.id}><td className="p-3 font-medium">{task.task}</td><td className="p-3">{task.frequency}</td><td className="p-3"><label className="flex items-center gap-3"><Checkbox checked={done} onCheckedChange={(v) => save(key, !!v)} disabled={isDone} /><span className={isDone ? "text-emerald-600" : done ? "text-amber-600" : "text-muted-foreground"}>{isDone ? "Submitted" : done ? "Ready to submit" : "Pending"}</span></label></td></tr>; })}
         </tbody></table></div>
-        <div className="mt-5 flex items-center justify-between gap-3"><p className="text-xs text-muted-foreground">Items remain pending until submitted for the applicable period.</p><Button onClick={submit}>Submit checklist</Button></div>
+        {!masterTasks.length && <p className="mt-4 rounded-lg border border-dashed p-4 text-sm text-muted-foreground">No active checklist items are configured for {department}.</p>}
+        <div className="mt-5 flex items-center justify-between gap-3"><p className="text-xs text-muted-foreground">Items remain pending until submitted for the applicable period.</p><Button onClick={submit} disabled={!masterTasks.length}>Submit checklist</Button></div>
       </div>
     </div>
   </AppShell>;
