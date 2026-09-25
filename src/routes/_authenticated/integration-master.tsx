@@ -36,6 +36,23 @@ type BackupConfig = {
   last_backup_file_name: string | null;
 };
 
+type BackupConfigurationTable = {
+  select: (columns: "*") => {
+    limit: (count: number) => {
+      maybeSingle: () => Promise<{ data: BackupConfig | null; error: { message: string } | null }>;
+    };
+  };
+  update: (values: Partial<BackupConfig>) => {
+    eq: (column: "id", value: string) => Promise<{ error: { message: string } | null }>;
+  };
+};
+
+function backupConfigurationTable() {
+  return (supabase as unknown as {
+    from: (name: "backup_configuration") => BackupConfigurationTable;
+  }).from("backup_configuration");
+}
+
 function IntegrationMasterPage() {
   const [config, setConfig] = useState<BackupConfig | null>(null);
   const [loading, setLoading] = useState(true);
@@ -43,9 +60,9 @@ function IntegrationMasterPage() {
 
   async function loadBackupConfig() {
     setLoading(true);
-    const { data, error } = await supabase.from("backup_configuration").select("*").limit(1).maybeSingle();
+    const { data, error } = await backupConfigurationTable().select("*").limit(1).maybeSingle();
     if (error) toast.error(error.message);
-    setConfig(data as BackupConfig | null);
+    setConfig(data);
     setLoading(false);
   }
 
@@ -59,7 +76,7 @@ function IntegrationMasterPage() {
       return;
     }
     setSaving(true);
-    const { error } = await supabase.from("backup_configuration").update({
+    const { error } = await backupConfigurationTable().update({
       enabled: config.enabled,
       frequency: "monthly",
       day_of_month: Math.min(28, Math.max(1, Number(config.day_of_month) || 1)),
