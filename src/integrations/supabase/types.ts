@@ -19,6 +19,7 @@ export type Database = {
           address: string | null
           blocks: string[]
           city: string | null
+          floors: string[]
           gates: string[]
           helpdesk_whatsapp: string | null
           id: string
@@ -34,6 +35,7 @@ export type Database = {
           address?: string | null
           blocks?: string[]
           city?: string | null
+          floors?: string[]
           gates?: string[]
           helpdesk_whatsapp?: string | null
           id?: string
@@ -49,6 +51,7 @@ export type Database = {
           address?: string | null
           blocks?: string[]
           city?: string | null
+          floors?: string[]
           gates?: string[]
           helpdesk_whatsapp?: string | null
           id?: string
@@ -91,6 +94,36 @@ export type Database = {
           effective_date?: string | null
           gb_approved_date?: string | null
           id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      checklist_master: {
+        Row: {
+          active: boolean
+          created_at: string
+          department: string
+          frequency: string
+          id: string
+          task: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          department: string
+          frequency: string
+          id?: string
+          task: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          department?: string
+          frequency?: string
+          id?: string
+          task?: string
           updated_at?: string
         }
         Relationships: []
