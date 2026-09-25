@@ -20,7 +20,7 @@ export const Route = createFileRoute("/_authenticated/reports")({
     if (!user) throw redirect({ to: "/auth" });
     const { data: admin } = await supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle();
     if (admin) return;
-    const { data: permission } = await supabase.from("user_tab_permissions").select("can_view").eq("user_id", user.id).eq("tab_key", "reports").maybeSingle();
+    const { data: permission } = await supabase.from("user_tab_permissions").select("can_view").eq("user_id", user.id).eq("tab_key", "/reports").maybeSingle();
     if (!permission?.can_view) throw redirect({ to: "/dashboard" });
   },
   component: ReportsPage,
