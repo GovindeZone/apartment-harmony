@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { Save } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell, NAV } from "@/components/AppShell";
@@ -27,7 +27,7 @@ function UserRightsPage(){
   </SectionCard>
   {selected&&<SectionCard title="Application Rights" description="Any main or sub tab added to the application navigation can be represented here. Delete permission has been removed.">
    <div className="overflow-x-auto"><table className="w-full min-w-[720px] text-sm"><thead><tr className="border-b text-left"><th className="p-3">Application tab</th><th className="p-3">View</th><th className="p-3">Create</th><th className="p-3">Edit</th></tr></thead><tbody>
-    {grouped.map(g=><React.Fragment key={g.main.key}><tr className="border-b bg-muted/40"><td className="p-3 font-semibold">{g.main.label}</td>{(["can_view","can_create","can_edit"] as const).map(k=><td key={k} className="p-3"><input type="checkbox" checked={!!perms[g.main.key]?.[k]} onChange={e=>setPerms(x=>({...x,[g.main.key]:{...x[g.main.key],[k]:e.target.checked}}))}/></td>)}</tr>{g.children.map(m=><tr key={m.key} className="border-b"><td className="p-3 pl-8 text-muted-foreground">↳ {m.label}</td>{(["can_view","can_create","can_edit"] as const).map(k=><td key={k} className="p-3"><input type="checkbox" checked={!!perms[m.key]?.[k]} onChange={e=>setPerms(x=>({...x,[m.key]:{...x[m.key],[k]:e.target.checked}}))}/></td>)}</tr>)}</React.Fragment>)}
+    {grouped.map(g=><Fragment key={g.main.key}><tr className="border-b bg-muted/40"><td className="p-3 font-semibold">{g.main.label}</td>{(["can_view","can_create","can_edit"] as const).map(k=><td key={k} className="p-3"><input type="checkbox" checked={!!perms[g.main.key]?.[k]} onChange={e=>setPerms(x=>({...x,[g.main.key]:{...x[g.main.key],[k]:e.target.checked}}))}/></td>)}</tr>{g.children.map(m=><tr key={m.key} className="border-b"><td className="p-3 pl-8 text-muted-foreground">↳ {m.label}</td>{(["can_view","can_create","can_edit"] as const).map(k=><td key={k} className="p-3"><input type="checkbox" checked={!!perms[m.key]?.[k]} onChange={e=>setPerms(x=>({...x,[m.key]:{...x[m.key],[k]:e.target.checked}}))}/></td>)}</tr>)}</Fragment>)}
    </tbody></table></div>
    <div className="mt-5 flex justify-end"><Button onClick={()=>void save()}><Save className="mr-2 size-4"/>Save User Rights</Button></div>
   </SectionCard>}
