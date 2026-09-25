@@ -15,6 +15,13 @@
       "when": 1790211926485,
       "tag": "0001_add_profile_account_status",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790303507013,
+      "tag": "0002_restore_checklist_and_apartment_floors",
+      "breakpoints": true
     }
   ]
 }
