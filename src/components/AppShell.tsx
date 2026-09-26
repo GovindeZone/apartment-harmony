@@ -117,7 +117,7 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
           );
         }
 
-        const destination = item.to === "/dashboard" ? "/dashboard" : "/reports";
+        const destination = item.to;
         return (
           <Link
             key={item.to}
