@@ -72,6 +72,7 @@ function StaffPage() {
   const [status, setStatus] = useState("all");
   const [editing, setEditing] = useState<Staff | null | undefined>(undefined); // undefined = closed, null = new
   const [selected, setSelected] = useState<Staff | null>(null);
+  const staffUploadRef = useRef<HTMLInputElement>(null);
 
   const departments = useMemo(
     () =>
@@ -180,6 +181,11 @@ function StaffPage() {
       }
     >
       <Tabs defaultValue="records">
+        <div className="mb-3 flex flex-wrap justify-end gap-2">
+          <Button variant="outline" onClick={() => downloadCsv("staff_template.csv", STAFF_TEMPLATE)}><FileText className="mr-2 size-4" />Download Excel/CSV Template</Button>
+          <Button variant="outline" onClick={() => staffUploadRef.current?.click()}><Upload className="mr-2 size-4" />Upload Excel/CSV</Button>
+          <input ref={staffUploadRef} type="file" accept=".csv,text/csv" className="hidden" onChange={(e) => { const file=e.target.files?.[0]; if(file) void importStaffCsv(file); e.currentTarget.value=""; }} />
+        </div>
         <TabsList>
           <TabsTrigger value="records">Records</TabsTrigger>
           <TabsTrigger value="attendance">Attendance</TabsTrigger>
