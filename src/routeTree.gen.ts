@@ -27,7 +27,7 @@ import { Route as AuthenticatedEcRepositoryRouteImport } from './routes/_authent
 import { Route as AuthenticatedFacilityManagementRouteImport } from './routes/_authenticated/facility-management'
 import { Route as AuthenticatedHelpdeskRouteImport } from './routes/_authenticated/helpdesk'
 import { Route as AuthenticatedHolidayListRouteImport } from './routes/_authenticated/holiday-list'
-import { Route as AuthenticatedIntegrationMasterRouteImport } from './routes/_authenticated/integration-master'
+import { Route as AuthenticatedIntegrationMasterRouteImport } from './routes/_authenticated/integration-master'\nimport { Route as AuthenticatedLetterHeadRouteImport } from './routes/_authenticated/letter-head'
 import { Route as AuthenticatedMcHandbookRouteImport } from './routes/_authenticated/mc-handbook'
 import { Route as AuthenticatedMcRepositoryRouteImport } from './routes/_authenticated/mc-repository'
 import { Route as AuthenticatedOfficialRecordsRouteImport } from './routes/_authenticated/official-records'
@@ -141,7 +141,7 @@ const AuthenticatedIntegrationMasterRoute =
     path: '/integration-master',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedMcHandbookRoute = AuthenticatedMcHandbookRouteImport.update({
+const AuthenticatedLetterHeadRoute = AuthenticatedLetterHeadRouteImport.update({\n  id: '/letter-head',\n  path: '/letter-head',\n  getParentRoute: () => AuthenticatedRouteRoute,\n} as any)\nconst AuthenticatedMcHandbookRoute = AuthenticatedMcHandbookRouteImport.update({
   id: '/mc-handbook',
   path: '/mc-handbook',
   getParentRoute: () => AuthenticatedRouteRoute,
