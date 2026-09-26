@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Home, KeyRound, Search, Users, Plus, Pencil } from "lucide-react";
+import { Home, KeyRound, Search, Users, Plus, Pencil, Upload, FileText, Trash2 } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { SectionCard, StatCard, StatusBadge, EmptyState } from "@/components/ui-bits";
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,7 @@ function ResidentsPage() {
   const [selected, setSelected] = useState<Resident | null>(null);
   const [editing, setEditing] = useState<Resident | null>(null);
   const [creating, setCreating] = useState(false);
+  const residentUploadRef = useRef<HTMLInputElement>(null);
 
   const blocks = useMemo(() => Array.from(new Set((flats.data ?? []).map(f => f.block))).sort(), [flats.data]);
   const zones = useMemo(() => Array.from(new Set((flats.data ?? []).map(f => f.zone))).sort(), [flats.data]);
@@ -48,7 +49,7 @@ function ResidentsPage() {
   const tenants = (residents.data ?? []).filter(r => r.resident_type === "tenant").length;
   const occupied = (flats.data ?? []).filter(f => f.status === "occupied").length;
 
-  function refresh() {
+  async function deleteAllResidents() {\n    if (!window.confirm("Delete all existing resident records? This cannot be undone.")) return;\n    const { error } = await supabase.from("residents").delete().not("id", "is", null);\n    if (error) { toast.error(error.message); return; }\n    toast.success("Existing resident records deleted.");\n    refresh();\n  }\n\n  async function importResidentsCsv(file: File) {\n    const rows = parseCsv(await file.text()); if (!rows.length) { toast.error("CSV has no data rows."); return; }\n    const flatByNo = new Map((flats.data ?? []).map(f => [f.flat_no.toLowerCase(), f])); let count=0;\n    for (const row of rows) {\n      const flat = flatByNo.get((row.flat_no || "").toLowerCase());\n      if (!flat) continue;\n      const payload={full_name:row.full_name,flat_id:flat.id,resident_type:row.resident_type||"owner",occupant_type:row.occupant_type||"family",phone:(row.phone||"").replace(/\\D/g,""),whatsapp:(row.whatsapp||"").replace(/\\D/g,""),email:row.email||"",move_in_date:row.move_in_date||null,move_out_date:row.move_out_date||null,status:row.status||"active"};\n      if (!payload.full_name) continue; const {error}=await supabase.from("residents").insert(payload as never); if(!error) count++;\n    }\n    toast.success(`${count} resident record(s) imported.`); refresh();\n  }\n\n  function refresh() {
     void qc.invalidateQueries({ queryKey: ["residents"] });
     void qc.invalidateQueries({ queryKey: ["flats"] });
   }
@@ -69,7 +70,7 @@ function ResidentsPage() {
         <Pick value={zone} onChange={setZone} options={["all", ...zones]} />
       </div>
 
-      <div className="mt-5 flex justify-end"><Button onClick={() => setCreating(true)}><Plus className="mr-2 size-4" />Create Resident</Button></div>
+      <div className="mt-5 flex flex-wrap justify-end gap-2"><Button variant="outline" onClick={deleteAllResidents}><Trash2 className="mr-2 size-4" />Delete Existing Residents</Button><Button variant="outline" onClick={() => downloadCsv("resident_template.csv", RESIDENT_TEMPLATE)}><FileText className="mr-2 size-4" />Download Excel/CSV Template</Button><Button variant="outline" onClick={() => residentUploadRef.current?.click()}><Upload className="mr-2 size-4" />Upload Excel/CSV</Button><input ref={residentUploadRef} type="file" accept=".csv,text/csv" className="hidden" onChange={e=>{const file=e.target.files?.[0];if(file)void importResidentsCsv(file);e.currentTarget.value="";}} /><Button onClick={() => setCreating(true)}><Plus className="mr-2 size-4" />Create Resident</Button></div>
 
       <Tabs defaultValue="residents" className="mt-4">
         <TabsList><TabsTrigger value="residents">Residents</TabsTrigger><TabsTrigger value="flats">Flat directory</TabsTrigger><TabsTrigger value="vehicles">Vehicles</TabsTrigger></TabsList>
