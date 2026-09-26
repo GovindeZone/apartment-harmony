@@ -71,6 +71,7 @@ export const NAV = [
     ],
   },
   { to: "/reports", label: "Reports", icon: FileBarChart },
+  { to: "/letter-head", label: "Letter Head", icon: FileText },
 ] as const;
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
