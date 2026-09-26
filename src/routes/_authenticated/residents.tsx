@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { familyQuery, flatsQuery, residentsQuery, vehiclesQuery, type Resident, type Flat } from "@/lib/api";
+import { familyQuery, flatsQuery, residentsQuery, settingsQuery, vehiclesQuery, type Resident, type Flat, type Settings } from "@/lib/api";
 
 export const Route = createFileRoute("/_authenticated/residents")({
   head: () => ({ meta: [{ title: "Residents — Indus Anantya Apartment" }, { name: "description", content: "Resident and flat directory with apartment structure and period of stay." }] }),
@@ -23,6 +23,7 @@ function ResidentsPage() {
   const residents = useQuery(residentsQuery);
   const flats = useQuery(flatsQuery);
   const vehicles = useQuery(vehiclesQuery);
+  const settings = useQuery(settingsQuery);
   const [q, setQ] = useState("");
   const [type, setType] = useState("all");
   const [block, setBlock] = useState("all");
@@ -86,7 +87,7 @@ function ResidentsPage() {
       </Tabs>
 
       <ResidentDialog resident={selected} onClose={() => setSelected(null)} />
-      <ResidentFormDialog resident={editing} open={creating || !!editing} flats={flats.data ?? []} onClose={() => { setCreating(false); setEditing(null); }} onSaved={() => { setCreating(false); setEditing(null); refresh(); }} />
+      <ResidentFormDialog resident={editing} open={creating || !!editing} flats={flats.data ?? []} settings={settings.data ?? null} onClose={() => { setCreating(false); setEditing(null); }} onSaved={() => { setCreating(false); setEditing(null); refresh(); }} />
     </AppShell>
   );
 }
@@ -99,20 +100,43 @@ function ResidentDialog({ resident, onClose }: { resident: Resident | null; onCl
   </div> : null}</DialogContent></Dialog>;
 }
 
-function ResidentFormDialog({ resident, open, flats, onClose, onSaved }: { resident: Resident | null; open: boolean; flats: Flat[]; onClose: () => void; onSaved: () => void }) {
+function ResidentFormDialog({ resident, open, flats, settings, onClose, onSaved }: { resident: Resident | null; open: boolean; flats: Flat[]; settings: Settings | null; onClose: () => void; onSaved: () => void }) {
   const [saving, setSaving] = useState(false);
   const selectedFlat = flats.find(f => f.id === resident?.flat_id);
   const [flatId, setFlatId] = useState(resident?.flat_id ?? "");
+  const [zone, setZone] = useState(selectedFlat?.zone ?? "");
+  const [block, setBlock] = useState(selectedFlat?.block ?? "");
+  const [floor, setFloor] = useState(selectedFlat ? String(selectedFlat.floor) : "");
   const [residentType, setResidentType] = useState(resident?.resident_type ?? "owner");
   const [occupantType, setOccupantType] = useState(resident?.occupant_type ?? "family");
 
-  useMemo(() => {
+  useEffect(() => {
+    const residentFlat = flats.find(f => f.id === resident?.flat_id);
     setFlatId(resident?.flat_id ?? "");
+    setZone(residentFlat?.zone ?? "");
+    setBlock(residentFlat?.block ?? "");
+    setFloor(residentFlat ? String(residentFlat.floor) : "");
     setResidentType(resident?.resident_type ?? "owner");
     setOccupantType(resident?.occupant_type ?? "family");
-  }, [resident]);
+  }, [flats, resident]);
 
   const currentFlat = flats.find(f => f.id === flatId) ?? selectedFlat;
+  const zones = Array.from(new Set([...(settings?.zones ?? []), ...flats.map(f => f.zone)])).sort();
+  const blocks = Array.from(new Set([...(settings?.blocks ?? []), ...flats.map(f => f.block)])).sort();
+  const floors = Array.from(new Set([...(settings?.floors ?? []), ...flats.map(f => String(f.floor))])).sort((a, b) => Number(a) - Number(b));
+  const matchingFlats = flats.filter(f => (!zone || f.zone === zone) && (!block || f.block === block) && (!floor || String(f.floor) === floor));
+
+  function updateStructure(kind: "zone" | "block" | "floor", value: string) {
+    if (kind === "zone") setZone(value);
+    if (kind === "block") setBlock(value);
+    if (kind === "floor") setFloor(value);
+    const flat = flats.find(f => f.id === flatId);
+    if (!flat) return;
+    const nextZone = kind === "zone" ? value : zone;
+    const nextBlock = kind === "block" ? value : block;
+    const nextFloor = kind === "floor" ? value : floor;
+    if (flat.zone !== nextZone || flat.block !== nextBlock || String(flat.floor) !== nextFloor) setFlatId("");
+  }
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -138,8 +162,11 @@ function ResidentFormDialog({ resident, open, flats, onClose, onSaved }: { resid
   return <Dialog open={open} onOpenChange={v => !v && onClose()}><DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-2xl"><DialogHeader><DialogTitle>{resident ? "Edit Resident" : "Create Resident"}</DialogTitle></DialogHeader>
     <form onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
       <div className="space-y-2 sm:col-span-2"><Label>Full name</Label><Input name="full_name" required defaultValue={resident?.full_name ?? ""} /></div>
-      <div className="space-y-2 sm:col-span-2"><Label>Flat</Label><select value={flatId} onChange={e => setFlatId(e.target.value)} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"><option value="">Select flat</option>{flats.map(f => <option key={f.id} value={f.id}>{f.flat_no} — {f.zone} / {f.block} / Floor {f.floor}</option>)}</select></div>
-      <div className="grid grid-cols-3 gap-2 sm:col-span-2 rounded-lg border bg-muted/30 p-3"><Info label="Zone" value={currentFlat?.zone ?? "—"} /><Info label="Block" value={currentFlat?.block ?? "—"} /><Info label="Floor" value={currentFlat ? String(currentFlat.floor) : "—"} /></div>
+      <div className="space-y-2"><Label>Zone</Label><select value={zone} onChange={e => updateStructure("zone", e.target.value)} required className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"><option value="">Select zone</option>{zones.map(item => <option key={item} value={item}>{item}</option>)}</select></div>
+      <div className="space-y-2"><Label>Block</Label><select value={block} onChange={e => updateStructure("block", e.target.value)} required className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"><option value="">Select block</option>{blocks.map(item => <option key={item} value={item}>{item}</option>)}</select></div>
+      <div className="space-y-2"><Label>Floor</Label><select value={floor} onChange={e => updateStructure("floor", e.target.value)} required className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"><option value="">Select floor</option>{floors.map(item => <option key={item} value={item}>{item}</option>)}</select></div>
+      <div className="space-y-2"><Label>Flat</Label><select value={flatId} onChange={e => setFlatId(e.target.value)} required className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"><option value="">Select flat</option>{matchingFlats.map(f => <option key={f.id} value={f.id}>{f.flat_no}</option>)}</select>{zone && block && floor && matchingFlats.length === 0 ? <p className="text-xs text-destructive">No flat is configured for this Zone, Block and Floor.</p> : null}</div>
+      {currentFlat ? <div className="grid grid-cols-3 gap-2 rounded-lg border bg-muted/30 p-3 sm:col-span-2"><Info label="Zone" value={currentFlat.zone} /><Info label="Block" value={currentFlat.block} /><Info label="Floor" value={String(currentFlat.floor)} /></div> : null}
       <div className="space-y-2"><Label>Resident type</Label><select value={residentType} onChange={e => setResidentType(e.target.value)} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"><option value="owner">Owner</option><option value="tenant">Tenant</option></select></div>
       <div className="space-y-2"><Label>Occupant type</Label><select value={occupantType} onChange={e => setOccupantType(e.target.value)} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"><option value="family">Family</option><option value="bachelors">Bachelors</option></select></div>
       <div className="space-y-2"><Label>Phone</Label><Input name="phone" maxLength={10} inputMode="numeric" defaultValue={resident?.phone ?? ""} /></div>
