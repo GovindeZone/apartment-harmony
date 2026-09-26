@@ -52,6 +52,7 @@ export const NAV = [
       { to: "/checklist-master", label: "Checklist Master", icon: ListChecks },
       { to: "/holiday-list", label: "Holiday List", icon: CalendarCheck },
       { to: "/residents", label: "Residents", icon: Home },
+      { to: "/task-management", label: "Task Management", icon: ClipboardList },
     ],
   },
   {
