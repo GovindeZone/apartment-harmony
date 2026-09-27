@@ -27,7 +27,8 @@ import { Route as AuthenticatedEcRepositoryRouteImport } from './routes/_authent
 import { Route as AuthenticatedFacilityManagementRouteImport } from './routes/_authenticated/facility-management'
 import { Route as AuthenticatedHelpdeskRouteImport } from './routes/_authenticated/helpdesk'
 import { Route as AuthenticatedHolidayListRouteImport } from './routes/_authenticated/holiday-list'
-import { Route as AuthenticatedIntegrationMasterRouteImport } from './routes/_authenticated/integration-master'\nimport { Route as AuthenticatedLetterHeadRouteImport } from './routes/_authenticated/letter-head'
+import { Route as AuthenticatedIntegrationMasterRouteImport } from './routes/_authenticated/integration-master'
+import { Route as AuthenticatedLetterHeadRouteImport } from './routes/_authenticated/letter-head'
 import { Route as AuthenticatedMcHandbookRouteImport } from './routes/_authenticated/mc-handbook'
 import { Route as AuthenticatedMcRepositoryRouteImport } from './routes/_authenticated/mc-repository'
 import { Route as AuthenticatedOfficialRecordsRouteImport } from './routes/_authenticated/official-records'
@@ -141,7 +142,12 @@ const AuthenticatedIntegrationMasterRoute =
     path: '/integration-master',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedLetterHeadRoute = AuthenticatedLetterHeadRouteImport.update({\n  id: '/letter-head',\n  path: '/letter-head',\n  getParentRoute: () => AuthenticatedRouteRoute,\n} as any)\nconst AuthenticatedMcHandbookRoute = AuthenticatedMcHandbookRouteImport.update({
+const AuthenticatedLetterHeadRoute = AuthenticatedLetterHeadRouteImport.update({
+  id: '/letter-head',
+  path: '/letter-head',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMcHandbookRoute = AuthenticatedMcHandbookRouteImport.update({
   id: '/mc-handbook',
   path: '/mc-handbook',
   getParentRoute: () => AuthenticatedRouteRoute,
@@ -209,6 +215,7 @@ export interface FileRoutesByFullPath {
   '/helpdesk': typeof AuthenticatedHelpdeskRoute
   '/holiday-list': typeof AuthenticatedHolidayListRoute
   '/integration-master': typeof AuthenticatedIntegrationMasterRoute
+  '/letter-head': typeof AuthenticatedLetterHeadRoute
   '/mc-handbook': typeof AuthenticatedMcHandbookRoute
   '/mc-repository': typeof AuthenticatedMcRepositoryRoute
   '/official-records': typeof AuthenticatedOfficialRecordsRoute
@@ -238,6 +245,7 @@ export interface FileRoutesByTo {
   '/helpdesk': typeof AuthenticatedHelpdeskRoute
   '/holiday-list': typeof AuthenticatedHolidayListRoute
   '/integration-master': typeof AuthenticatedIntegrationMasterRoute
+  '/letter-head': typeof AuthenticatedLetterHeadRoute
   '/mc-handbook': typeof AuthenticatedMcHandbookRoute
   '/mc-repository': typeof AuthenticatedMcRepositoryRoute
   '/official-records': typeof AuthenticatedOfficialRecordsRoute
@@ -269,6 +277,7 @@ export interface FileRoutesById {
   '/_authenticated/helpdesk': typeof AuthenticatedHelpdeskRoute
   '/_authenticated/holiday-list': typeof AuthenticatedHolidayListRoute
   '/_authenticated/integration-master': typeof AuthenticatedIntegrationMasterRoute
+  '/_authenticated/letter-head': typeof AuthenticatedLetterHeadRoute
   '/_authenticated/mc-handbook': typeof AuthenticatedMcHandbookRoute
   '/_authenticated/mc-repository': typeof AuthenticatedMcRepositoryRoute
   '/_authenticated/official-records': typeof AuthenticatedOfficialRecordsRoute
@@ -300,6 +309,7 @@ export interface FileRouteTypes {
     | '/helpdesk'
     | '/holiday-list'
     | '/integration-master'
+    | '/letter-head'
     | '/mc-handbook'
     | '/mc-repository'
     | '/official-records'
@@ -329,6 +339,7 @@ export interface FileRouteTypes {
     | '/helpdesk'
     | '/holiday-list'
     | '/integration-master'
+    | '/letter-head'
     | '/mc-handbook'
     | '/mc-repository'
     | '/official-records'
@@ -359,6 +370,7 @@ export interface FileRouteTypes {
     | '/_authenticated/helpdesk'
     | '/_authenticated/holiday-list'
     | '/_authenticated/integration-master'
+    | '/_authenticated/letter-head'
     | '/_authenticated/mc-handbook'
     | '/_authenticated/mc-repository'
     | '/_authenticated/official-records'
@@ -511,6 +523,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIntegrationMasterRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/letter-head': {
+      id: '/_authenticated/letter-head'
+      path: '/letter-head'
+      fullPath: '/letter-head'
+      preLoaderRoute: typeof AuthenticatedLetterHeadRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/mc-handbook': {
       id: '/_authenticated/mc-handbook'
       path: '/mc-handbook'
@@ -594,6 +613,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedHelpdeskRoute: typeof AuthenticatedHelpdeskRoute
   AuthenticatedHolidayListRoute: typeof AuthenticatedHolidayListRoute
   AuthenticatedIntegrationMasterRoute: typeof AuthenticatedIntegrationMasterRoute
+  AuthenticatedLetterHeadRoute: typeof AuthenticatedLetterHeadRoute
   AuthenticatedMcHandbookRoute: typeof AuthenticatedMcHandbookRoute
   AuthenticatedMcRepositoryRoute: typeof AuthenticatedMcRepositoryRoute
   AuthenticatedOfficialRecordsRoute: typeof AuthenticatedOfficialRecordsRoute
@@ -622,6 +642,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHelpdeskRoute: AuthenticatedHelpdeskRoute,
   AuthenticatedHolidayListRoute: AuthenticatedHolidayListRoute,
   AuthenticatedIntegrationMasterRoute: AuthenticatedIntegrationMasterRoute,
+  AuthenticatedLetterHeadRoute: AuthenticatedLetterHeadRoute,
   AuthenticatedMcHandbookRoute: AuthenticatedMcHandbookRoute,
   AuthenticatedMcRepositoryRoute: AuthenticatedMcRepositoryRoute,
   AuthenticatedOfficialRecordsRoute: AuthenticatedOfficialRecordsRoute,
