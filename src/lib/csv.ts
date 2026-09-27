@@ -10,6 +10,42 @@ export function downloadCsv(filename: string, headers: string[], rows: string[][
   URL.revokeObjectURL(url);
 }
 
+export function parseCsv(text: string): Record<string, string>[] {
+  const rows: string[][] = [];
+  let row: string[] = [];
+  let value = "";
+  let quoted = false;
+
+  for (let index = 0; index < text.length; index += 1) {
+    const character = text[index];
+    if (character === '"') {
+      if (quoted && text[index + 1] === '"') {
+        value += '"';
+        index += 1;
+      } else {
+        quoted = !quoted;
+      }
+    } else if (character === "," && !quoted) {
+      row.push(value.trim());
+      value = "";
+    } else if ((character === "\n" || character === "\r") && !quoted) {
+      if (character === "\r" && text[index + 1] === "\n") index += 1;
+      row.push(value.trim());
+      if (row.some(Boolean)) rows.push(row);
+      row = [];
+      value = "";
+    } else {
+      value += character;
+    }
+  }
+  row.push(value.trim());
+  if (row.some(Boolean)) rows.push(row);
+  const headerRow = rows.shift();
+  if (!headerRow) return [];
+  const headers = headerRow.map((header) => header.replace(/^\ufeff/, "").split(" ")[0] ?? header);
+  return rows.map((cells) => Object.fromEntries(headers.map((header, index) => [header, cells[index] ?? ""])));
+}
+
 export const IMPORT_TEMPLATES = {
   residents: {
     file: "residents-import-template.csv",
