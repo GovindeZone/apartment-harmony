@@ -40,6 +40,8 @@ export const Route = createFileRoute("/_authenticated/security")({
         property: "og:description",
         content: "Fast gate entry and exit logging for the community security team.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: SecurityPage,

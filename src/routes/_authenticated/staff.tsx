@@ -41,6 +41,7 @@ import {
   DEPARTMENTS,
   type Staff,
 } from "@/lib/api";
+import { downloadCsv, parseCsv } from "@/lib/csv";
 
 export const Route = createFileRoute("/_authenticated/staff")({
   head: () => ({
@@ -59,6 +60,7 @@ export const Route = createFileRoute("/_authenticated/staff")({
 
 const money = (n: number) => `₹${Number(n).toLocaleString("en-IN")}`;
 const SHIFTS = ["Morning", "Evening", "Night"];
+const STAFF_TEMPLATE = ["full_name", "phone", "department", "join_date", "aadhaar_number", "address", "reference_name", "reference_phone", "emergency_contact", "designation", "shift", "monthly_salary", "whatsapp", "employee_code", "status"];
 
 function StaffPage() {
   const qc = useQueryClient();
@@ -169,6 +171,44 @@ function StaffPage() {
       .filter((a) => a.attendance_date === todayStr)
       .map((a) => [a.staff_id, a.status]),
   );
+
+  async function importStaffCsv(file: File) {
+    try {
+      const rows = parseCsv(await file.text());
+      if (!rows.length) throw new Error("The CSV file has no staff rows.");
+      const payload = rows.map((row, index) => ({
+        employee_code: row["employee_code"] || `EMP-${Date.now().toString().slice(-6)}-${index + 1}`,
+        full_name: row["full_name"]?.trim() ?? "",
+        designation: row["designation"]?.trim() || row["department"]?.trim() || "Staff",
+        department: row["department"]?.trim() ?? "",
+        phone: row["phone"]?.replace(/\D/g, "") ?? "",
+        whatsapp: (row["whatsapp"] || row["phone"] || "").replace(/\D/g, ""),
+        phone_country_code: "+91",
+        whatsapp_country_code: "+91",
+        shift: row["shift"] || "Morning",
+        join_date: row["join_date"] || null,
+        relieving_date: null,
+        monthly_salary: Number(row["monthly_salary"] || 0),
+        status: row["status"] || "active",
+        address: row["address"]?.trim() ?? "",
+        aadhaar_number: row["aadhaar_number"]?.replace(/\D/g, "") ?? "",
+        reference_name: row["reference_name"]?.trim() ?? "",
+        reference_phone: row["reference_phone"]?.replace(/\D/g, "") ?? "",
+        emergency_contact: row["emergency_contact"]?.replace(/\D/g, "") ?? "",
+        staff_type: "Permanent",
+        contractor_id: null,
+      }));
+      if (payload.some((row) => !row.full_name || !row.department || !row.join_date || !row.address || !row.reference_name || !/^\d{10}$/.test(row.phone) || !/^\d{12}$/.test(row.aadhaar_number) || !/^\d{10}$/.test(row.reference_phone) || !/^\d{10}$/.test(row.emergency_contact))) {
+        throw new Error("Each row needs all mandatory fields with valid 10-digit phones and 12-digit Aadhaar.");
+      }
+      const { error } = await supabase.from("staff").insert(payload as never);
+      if (error) throw new Error(error.message);
+      toast.success(`${payload.length} staff record${payload.length === 1 ? "" : "s"} imported`);
+      qc.invalidateQueries({ queryKey: ["staff"] });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not import staff records");
+    }
+  }
 
   return (
     <AppShell

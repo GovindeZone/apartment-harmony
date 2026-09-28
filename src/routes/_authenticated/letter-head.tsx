@@ -9,18 +9,22 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Pencil, Printer, Trash2 } from "lucide-react";
 
-export const Route=createFileRoute("/_authenticated/letter-head")({component:LetterHeadPage});
+export const Route=createFileRoute("/_authenticated/letter-head")({
+ head:()=>({meta:[{title:"Letter Head — Indus Anantya Apartment"},{name:"description",content:"Create, save and print official apartment letters."},{property:"og:title",content:"Letter Head — Indus Anantya Apartment"},{property:"og:description",content:"Create, save and print official apartment letters."},{property:"og:type",content:"website"},{name:"twitter:card",content:"summary"}]}),
+ component:LetterHeadPage
+});
 
 type Letter={id:string;subject:string;letter_date:string;content:string;created_at:string;updated_at:string};
+const letterTable=()=> (supabase as unknown as {from:(name:string)=>any}).from("letter_heads");
 
 function LetterHeadPage(){
  const [letters,setLetters]=useState<Letter[]>([]),[editing,setEditing]=useState<Letter|null>(null),[subject,setSubject]=useState(""),[date,setDate]=useState(()=>new Date().toISOString().slice(0,10)),[content,setContent]=useState("");
- async function load(){const {data,error}=await supabase.from("letter_heads").select("*").order("letter_date",{ascending:false});if(error)toast.error(error.message);setLetters(data??[]);}
+ async function load(){const {data,error}=await letterTable().select("*").order("letter_date",{ascending:false});if(error)toast.error(error.message);setLetters((data??[]) as Letter[]);}
  useEffect(()=>{void load()},[]);
  function newLetter(){setEditing(null);setSubject("");setDate(new Date().toISOString().slice(0,10));setContent("");}
- async function save(){if(!subject.trim()||!content.trim()){toast.error("Subject and Content/Body are required.");return;}const payload={subject:subject.trim(),letter_date:date,content};const q=editing?supabase.from("letter_heads").update(payload).eq("id",editing.id):supabase.from("letter_heads").insert(payload);const {error}=await q;if(error)toast.error(error.message);else{toast.success("Letter saved.");newLetter();void load();}}
+ async function save(){if(!subject.trim()||!content.trim()){toast.error("Subject and Content/Body are required.");return;}const payload={subject:subject.trim(),letter_date:date,content};const q=editing?letterTable().update(payload).eq("id",editing.id):letterTable().insert(payload);const {error}=await q;if(error)toast.error(error.message);else{toast.success("Letter saved.");newLetter();void load();}}
  function edit(x:Letter){setEditing(x);setSubject(x.subject);setDate(x.letter_date);setContent(x.content);}
- async function remove(x:Letter){if(!window.confirm("Delete this letter?"))return;const {error}=await supabase.from("letter_heads").delete().eq("id",x.id);if(error)toast.error(error.message);else{toast.success("Letter deleted.");void load();}}
+ async function remove(x:Letter){if(!window.confirm("Delete this letter?"))return;const {error}=await letterTable().delete().eq("id",x.id);if(error)toast.error(error.message);else{toast.success("Letter deleted.");void load();}}
  async function printLetter(x:Letter){
  const {data:profile}=await supabase.from("apartment_settings").select("name,address,city").limit(1).maybeSingle();
  const w=window.open("","_blank","width=900,height=700");
