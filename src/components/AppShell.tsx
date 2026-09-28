@@ -42,7 +42,7 @@ export const NAV = [
     ],
   },
   {
-    to: "/mc-master",
+    to: "/mc-handbook",
     label: "MC Master",
     icon: UsersRound,
     group: [
