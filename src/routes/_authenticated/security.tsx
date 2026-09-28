@@ -1,11 +1,17 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { LogIn, LogOut, Search } from "lucide-react";
+import { LogIn, LogOut, Pencil, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { SectionCard, StatCard, StatusBadge, EmptyState } from "@/components/ui-bits";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -18,7 +24,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
-import { gateEntriesQuery } from "@/lib/api";
+import { gateEntriesQuery, type GateEntry } from "@/lib/api";
 
 export const Route = createFileRoute("/_authenticated/security")({
   head: () => ({
@@ -34,6 +40,8 @@ export const Route = createFileRoute("/_authenticated/security")({
         property: "og:description",
         content: "Fast gate entry and exit logging for the community security team.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: SecurityPage,
@@ -51,6 +59,7 @@ function SecurityPage() {
   const entries = useQuery(gateEntriesQuery);
   const [gate, setGate] = useState<string>(GATES[0]);
   const [q, setQ] = useState("");
+  const [editing, setEditing] = useState<GateEntry | null>(null);
 
   const rows = useMemo(() => {
     const needle = q.trim().toLowerCase();
@@ -96,6 +105,37 @@ function SecurityPage() {
     },
     onError: (e: Error) => toast.error(e.message),
   });
+
+  const update = useMutation({
+    mutationFn: async ({ id, payload }: { id: string; payload: Record<string, unknown> }) => {
+      const { error } = await supabase.from("gate_entries").update(payload as never).eq("id", id);
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => {
+      toast.success("Security record updated");
+      setEditing(null);
+      qc.invalidateQueries({ queryKey: ["gate_entries"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("gate_entries").delete().eq("id", id);
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => {
+      toast.success("Security record deleted");
+      qc.invalidateQueries({ queryKey: ["gate_entries"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  function deleteEntry(entry: GateEntry) {
+    if (window.confirm(`Delete the security record for ${entry.person_name}?`)) {
+      remove.mutate(entry.id);
+    }
+  }
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -221,17 +261,23 @@ function SecurityPage() {
                             <StatusBadge value={e.status} />
                           </TableCell>
                           <TableCell className="text-right">
-                            {e.status === "inside" ? (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => markExit.mutate(e.id)}
-                              >
-                                Mark exit
+                            <div className="flex items-center justify-end gap-1">
+                              {e.status === "inside" ? (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => markExit.mutate(e.id)}
+                                >
+                                  Mark exit
+                                </Button>
+                              ) : null}
+                              <Button size="icon" variant="ghost" onClick={() => setEditing(e)} aria-label={`Edit ${e.person_name}`}>
+                                <Pencil className="size-4" />
                               </Button>
-                            ) : (
-                              <span className="text-xs text-muted-foreground">Closed</span>
-                            )}
+                              <Button size="icon" variant="ghost" onClick={() => deleteEntry(e)} aria-label={`Delete ${e.person_name}`} disabled={remove.isPending}>
+                                <Trash2 className="size-4 text-destructive" />
+                              </Button>
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -243,8 +289,93 @@ function SecurityPage() {
           </TabsContent>
         ))}
       </Tabs>
+      <EditEntryDialog
+        entry={editing}
+        saving={update.isPending}
+        onClose={() => setEditing(null)}
+        onSave={(id, payload) => update.mutate({ id, payload })}
+      />
     </AppShell>
   );
+}
+
+function EditEntryDialog({
+  entry,
+  saving,
+  onClose,
+  onSave,
+}: {
+  entry: GateEntry | null;
+  saving: boolean;
+  onClose: () => void;
+  onSave: (id: string, payload: Record<string, unknown>) => void;
+}) {
+  function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!entry) return;
+    const data = new FormData(event.currentTarget);
+    const status = String(data.get("status") || "inside");
+    const exitValue = String(data.get("exit_time") || "");
+    onSave(entry.id, {
+      gate: String(data.get("gate")),
+      direction: String(data.get("direction")),
+      category: String(data.get("category")),
+      person_name: String(data.get("person_name")),
+      phone: String(data.get("phone") || "") || null,
+      flat_no: String(data.get("flat_no") || "") || null,
+      vehicle_no: String(data.get("vehicle_no") || "").toUpperCase() || null,
+      vehicle_type: String(data.get("vehicle_type") || "") || null,
+      purpose: String(data.get("purpose") || "") || null,
+      entry_time: new Date(String(data.get("entry_time"))).toISOString(),
+      exit_time: exitValue ? new Date(exitValue).toISOString() : null,
+      status,
+    });
+  }
+
+  const localDateTime = (value: string | null) => {
+    if (!value) return "";
+    const date = new Date(value);
+    const offset = date.getTimezoneOffset() * 60_000;
+    return new Date(date.getTime() - offset).toISOString().slice(0, 16);
+  };
+
+  return (
+    <Dialog open={Boolean(entry)} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Edit security record</DialogTitle>
+        </DialogHeader>
+        {entry ? (
+          <form onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
+            <EditPick name="gate" label="Gate" options={[...GATES]} initialValue={entry.gate} />
+            <EditPick name="category" label="Category" options={[...CATEGORIES]} initialValue={entry.category} />
+            <EditPick name="direction" label="Direction" options={["in", "out"]} initialValue={entry.direction} />
+            <EditPick name="status" label="Status" options={["inside", "exited"]} initialValue={entry.status} />
+            <EditField name="person_name" label="Person name" initialValue={entry.person_name} required />
+            <EditField name="flat_no" label="Flat no" initialValue={entry.flat_no ?? ""} />
+            <EditField name="phone" label="Phone" initialValue={entry.phone ?? ""} />
+            <EditField name="vehicle_no" label="Vehicle no" initialValue={entry.vehicle_no ?? ""} />
+            <EditPick name="vehicle_type" label="Vehicle type" options={["", "car", "bike", "auto", "truck", "cycle"]} initialValue={entry.vehicle_type ?? ""} />
+            <EditField name="purpose" label="Purpose" initialValue={entry.purpose ?? ""} />
+            <EditField name="entry_time" label="Entry time" type="datetime-local" initialValue={localDateTime(entry.entry_time)} required />
+            <EditField name="exit_time" label="Exit time" type="datetime-local" initialValue={localDateTime(entry.exit_time)} />
+            <div className="flex justify-end gap-2 sm:col-span-2">
+              <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
+              <Button type="submit" disabled={saving}>{saving ? "Saving…" : "Save changes"}</Button>
+            </div>
+          </form>
+        ) : null}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function EditField({ name, label, initialValue, type = "text", required }: { name: string; label: string; initialValue: string; type?: string; required?: boolean }) {
+  return <div className="space-y-2"><Label htmlFor={`edit-${name}`}>{label}</Label><Input id={`edit-${name}`} name={name} type={type} defaultValue={initialValue} required={required} className="h-11" /></div>;
+}
+
+function EditPick({ name, label, options, initialValue }: { name: string; label: string; options: string[]; initialValue: string }) {
+  return <div className="space-y-2"><Label htmlFor={`edit-${name}`}>{label}</Label><select id={`edit-${name}`} name={name} defaultValue={initialValue} className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm capitalize">{options.map((option) => <option key={option} value={option}>{option || "—"}</option>)}</select></div>;
 }
 
 function Field({ name, label, required }: { name: string; label: string; required?: boolean }) {
