@@ -35,6 +35,7 @@ const today = () => new Date().toISOString().slice(0, 10);
 function AssetManagementPage() {
   const queryClient = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
+  const dialogFileRef = useRef<HTMLInputElement>(null);
   const [category, setCategory] = useState("");
   const [draftRows, setDraftRows] = useState<DraftRow[]>([]);
   const [editing, setEditing] = useState<AssetRecord | null>(null);
@@ -52,6 +53,11 @@ function AssetManagementPage() {
 
   const categories = useMemo(
     () => Array.from(new Set((records.data ?? []).map((record) => record.asset_category).filter(Boolean))).sort(),
+    [records.data],
+  );
+
+  const allColumns = useMemo(
+    () => Array.from(new Set((records.data ?? []).flatMap((record) => record.asset_data.columns))),
     [records.data],
   );
 
@@ -183,7 +189,9 @@ function AssetManagementPage() {
             <div className="mt-5 rounded-xl border border-primary/20 bg-primary/5 p-4">
               <div className="flex items-center gap-2 text-sm font-medium"><FileSpreadsheet className="size-4" />{draftRows.length} uploaded record{draftRows.length === 1 ? "" : "s"} ready to save</div>
               <p className="mt-1 text-xs text-muted-foreground">New records will be created as Active with today’s date. Existing records are edited individually below.</p>
-              <div className="mt-3 max-h-72 overflow-auto rounded-lg border bg-background"><AssetPreviewTable rows={draftRows} /></div>
+              <div className="mt-3 max-h-72 overflow-auto rounded-lg border bg-background">
+                <AssetPreviewTable rows={draftRows} editable onChange={setDraftRows} />
+              </div>
             </div>
           ) : null}
         </div>
@@ -201,7 +209,7 @@ function AssetManagementPage() {
             <table className="w-full min-w-[900px] text-sm">
               <thead><tr className="border-b border-border text-left text-muted-foreground">
                 <th className="px-4 py-3">Asset Category</th>
-                {records.data[0].asset_data.columns.map((column, index) => <th key={column + "-" + index} className="px-4 py-3 whitespace-nowrap">{column || "Column " + (index + 1)}</th>)}
+                {allColumns.map((column, index) => <th key={column + "-" + index} className="px-4 py-3 whitespace-nowrap">{column || "Column " + (index + 1)}</th>)}
                 <th className="px-4 py-3">Asset Status</th><th className="px-4 py-3">Asset Status Date</th><th className="px-4 py-3 text-right">Edit</th>
               </tr></thead>
               <tbody>{records.data.map((record) => (
@@ -218,17 +226,17 @@ function AssetManagementPage() {
         )}
       </SectionCard>
 
-      <AddAssetDialog open={showAdd} category={category} onCategoryChange={setCategory} pending={saveUploaded.isPending} onClose={() => setShowAdd(false)} onUpload={handleFile} fileRef={fileRef} rows={draftRows} onSave={() => saveUploaded.mutate()} />
+      <AddAssetDialog open={showAdd} category={category} categories={categories} onCategoryChange={setCategory} pending={saveUploaded.isPending} onClose={() => setShowAdd(false)} onUpload={handleFile} fileRef={dialogFileRef} rows={draftRows} onRowsChange={setDraftRows} onSave={() => saveUploaded.mutate()} />
       <EditAssetDialog record={editing} pending={updateRecord.isPending} onClose={() => setEditing(null)} onSave={(payload) => updateRecord.mutate(payload)} />
     </AppShell>
   );
 }
 
 function AddAssetDialog({
-  open, category, onCategoryChange, pending, onClose, onUpload, fileRef, rows, onSave,
+  open, category, categories, onCategoryChange, pending, onClose, onUpload, fileRef, rows, onRowsChange, onSave,
 }: {
-  open: boolean; category: string; onCategoryChange: (value: string) => void; pending: boolean; onClose: () => void;
-  onUpload: (file?: File) => void; fileRef: React.RefObject<HTMLInputElement | null>; rows: DraftRow[]; onSave: () => void;
+  open: boolean; category: string; categories: string[]; onCategoryChange: (value: string) => void; pending: boolean; onClose: () => void;
+  onUpload: (file?: File) => void; fileRef: React.RefObject<HTMLInputElement | null>; rows: DraftRow[]; onRowsChange: (rows: DraftRow[]) => void; onSave: () => void;
 }) {
   return (
     <Dialog open={open} onOpenChange={(value) => !value && onClose()}>
@@ -238,13 +246,13 @@ function AddAssetDialog({
           <div className="space-y-2">
             <Label>Asset Category</Label>
             <Input list="asset-category-options-dialog" placeholder="Select or enter Asset Category" value={category} onChange={(event) => onCategoryChange(event.target.value)} />
-            <datalist id="asset-category-options-dialog" />
+            <datalist id="asset-category-options-dialog">{categories.map((item) => <option key={item} value={item} />)}</datalist>
           </div>
           <div className="rounded-xl border border-dashed p-5">
             <input ref={fileRef} type="file" className="hidden" accept=".xlsx,.xls,.csv,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onChange={(event) => void onUpload(event.target.files?.[0])} />
             <div className="flex flex-wrap items-center gap-3"><Button type="button" variant="outline" className="gap-2" onClick={() => fileRef.current?.click()}><Upload className="size-4" />Upload Excel / CSV</Button><span className="text-xs text-muted-foreground">All uploaded columns are retained in their original order.</span></div>
           </div>
-          {rows.length ? <div className="overflow-auto rounded-lg border"><AssetPreviewTable rows={rows} /></div> : <div className="rounded-lg bg-muted/40 p-6 text-center text-sm text-muted-foreground">Upload a file to preview the asset records before saving.</div>}
+          {rows.length ? <div className="overflow-auto rounded-lg border"><AssetPreviewTable rows={rows} editable onChange={onRowsChange} /></div> : <div className="rounded-lg bg-muted/40 p-6 text-center text-sm text-muted-foreground">Upload a file to preview the asset records before saving.</div>}
         </div>
         <DialogFooter><Button type="button" variant="outline" onClick={onClose}>Cancel</Button><Button type="button" disabled={pending || !rows.length} onClick={onSave}>{pending ? "Saving…" : "Save Assets"}</Button></DialogFooter>
       </DialogContent>
@@ -252,8 +260,27 @@ function AddAssetDialog({
   );
 }
 
-function AssetPreviewTable({ rows }: { rows: DraftRow[] }) {
+function AssetPreviewTable({
+  rows,
+  editable = false,
+  onChange,
+}: {
+  rows: DraftRow[];
+  editable?: boolean;
+  onChange?: (rows: DraftRow[]) => void;
+}) {
   const columns = rows[0]?.columns ?? [];
+
+  function updateValue(rowIndex: number, columnIndex: number, value: string) {
+    if (!onChange) return;
+    onChange(rows.map((row, index) => {
+      if (index !== rowIndex) return row;
+      const values = [...row.values];
+      values[columnIndex] = value;
+      return { ...row, values };
+    }));
+  }
+
   return (
     <table className="w-full min-w-max text-sm">
       <thead><tr className="border-b border-border text-left text-muted-foreground">
@@ -261,7 +288,17 @@ function AssetPreviewTable({ rows }: { rows: DraftRow[] }) {
         <th className="px-3 py-2 whitespace-nowrap">Asset Status</th><th className="px-3 py-2 whitespace-nowrap">Asset Status Date</th>
       </tr></thead>
       <tbody>{rows.map((row, rowIndex) => <tr key={rowIndex} className="border-b border-border last:border-0">
-        {columns.map((_, index) => <td key={index} className="px-3 py-2 whitespace-nowrap">{displayValue(row.values[index])}</td>)}
+        {columns.map((_, columnIndex) => (
+          <td key={columnIndex} className="px-3 py-2">
+            {editable ? (
+              <Input
+                className="min-w-36"
+                value={displayValue(row.values[columnIndex]) === "—" ? "" : displayValue(row.values[columnIndex])}
+                onChange={(event) => updateValue(rowIndex, columnIndex, event.target.value)}
+              />
+            ) : displayValue(row.values[columnIndex])}
+          </td>
+        ))}
         <td className="px-3 py-2">Active</td><td className="px-3 py-2">{today()}</td>
       </tr>)}</tbody>
     </table>
