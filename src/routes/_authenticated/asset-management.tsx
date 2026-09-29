@@ -157,6 +157,7 @@ function AssetManagementPage() {
       toast.error(error instanceof Error ? error.message : "Unable to read the uploaded file.");
     } finally {
       if (fileRef.current) fileRef.current.value = "";
+      if (dialogFileRef.current) dialogFileRef.current.value = "";
     }
   }
 
@@ -215,7 +216,10 @@ function AssetManagementPage() {
               <tbody>{records.data.map((record) => (
                 <tr key={record.id} className="border-b border-border last:border-0">
                   <td className="px-4 py-3 font-medium whitespace-nowrap">{record.asset_category}</td>
-                  {record.asset_data.columns.map((_, index) => <td key={record.id + "-" + index} className="max-w-[220px] px-4 py-3 truncate">{displayValue(record.asset_data.values[index])}</td>)}
+                  {allColumns.map((column, index) => {
+                    const sourceIndex = record.asset_data.columns.indexOf(column);
+                    return <td key={record.id + "-" + index} className="max-w-[220px] px-4 py-3 truncate">{sourceIndex >= 0 ? displayValue(record.asset_data.values[sourceIndex]) : "—"}</td>;
+                  })}
                   <td className="px-4 py-3"><span className={record.asset_status === "Active" ? "rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700" : "rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground"}>{record.asset_status}</span></td>
                   <td className="px-4 py-3 whitespace-nowrap">{record.asset_status_date}</td>
                   <td className="px-4 py-3 text-right"><Button variant="ghost" size="icon" onClick={() => setEditing(record)} aria-label="Edit asset"><Pencil className="size-4" /></Button></td>
@@ -227,7 +231,7 @@ function AssetManagementPage() {
       </SectionCard>
 
       <AddAssetDialog open={showAdd} category={category} categories={categories} onCategoryChange={setCategory} pending={saveUploaded.isPending} onClose={() => setShowAdd(false)} onUpload={handleFile} fileRef={dialogFileRef} rows={draftRows} onRowsChange={setDraftRows} onSave={() => saveUploaded.mutate()} />
-      <EditAssetDialog record={editing} pending={updateRecord.isPending} onClose={() => setEditing(null)} onSave={(payload) => updateRecord.mutate(payload)} />
+      <EditAssetDialog key={editing?.id ?? "none"} record={editing} pending={updateRecord.isPending} onClose={() => setEditing(null)} onSave={(payload) => updateRecord.mutate(payload)} />
     </AppShell>
   );
 }
