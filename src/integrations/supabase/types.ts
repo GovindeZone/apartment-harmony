@@ -14,36 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      asset_records: {
-        Row: {
-          asset_category: string
-          asset_data: Json
-          asset_status: "Active" | "Retired"
-          asset_status_date: string
-          created_at: string
-          id: string
-          updated_at: string
-        }
-        Insert: {
-          asset_category: string
-          asset_data?: Json
-          asset_status?: "Active" | "Retired"
-          asset_status_date?: string
-          created_at?: string
-          id?: string
-          updated_at?: string
-        }
-        Update: {
-          asset_category?: string
-          asset_data?: Json
-          asset_status?: "Active" | "Retired"
-          asset_status_date?: string
-          created_at?: string
-          id?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       apartment_settings: {
         Row: {
           address: string | null
