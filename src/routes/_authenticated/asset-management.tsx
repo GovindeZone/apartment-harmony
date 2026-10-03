@@ -132,8 +132,10 @@ function AssetManagementPage() {
       const workbook = XLSX.read(await file.arrayBuffer(), { type: "array", raw: false });
       const sheetName = workbook.SheetNames[0];
       if (!sheetName) throw new Error("The uploaded file does not contain a worksheet.");
+      const worksheet = workbook.Sheets[sheetName];
+      if (!worksheet) throw new Error("The uploaded worksheet could not be read.");
 
-      const matrix = XLSX.utils.sheet_to_json<unknown[]>(workbook.Sheets[sheetName], {
+      const matrix = XLSX.utils.sheet_to_json<unknown[]>(worksheet, {
         header: 1,
         defval: "",
         raw: false,
@@ -321,6 +323,7 @@ function EditAssetDialog({
   const [values, setValues] = useState<unknown[]>(record?.asset_data.values ?? []);
 
   if (!record) return null;
+  const currentRecord = record;
 
   function setValue(index: number, value: string) {
     setValues((current) => {
@@ -332,9 +335,9 @@ function EditAssetDialog({
 
   function save() {
     onSave({
-      id: record.id,
+      id: currentRecord.id,
       assetCategory,
-      assetData: { columns: record.asset_data.columns, values },
+      assetData: { columns: currentRecord.asset_data.columns, values },
       assetStatus: status,
       assetStatusDate: statusDate,
     });
