@@ -2,6 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 
 export const Route = createFileRoute("/_authenticated/mc-handbook")({
+  head: () => ({ meta: [
+    { title: "MC Handbook — Indus Anantya Apartment" },
+    { name: "description", content: "Management Committee handbook and reference material." },
+    { property: "og:title", content: "MC Handbook — Indus Anantya Apartment" },
+    { property: "og:description", content: "Management Committee handbook and reference material." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: MCHandbookPage,
 });
 

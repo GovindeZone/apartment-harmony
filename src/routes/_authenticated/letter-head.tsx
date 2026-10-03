@@ -18,17 +18,17 @@ type Letter={id:string;subject:string;letter_date:string;content:string;created_
 const letterTable=()=> (supabase as unknown as {from:(name:string)=>any}).from("letter_heads");
 
 function LetterHeadPage(){
- const [letters,setLetters]=useState<Letter[]>([]),[editing,setEditing]=useState<Letter|null>(null),[subject,setSubject]=useState(""),[date,setDate]=useState(()=>new Date().toISOString().slice(0,10)),[content,setContent]=useState("");
+ const [letters,setLetters]=useState<Letter[]>([]),[editing,setEditing]=useState<Letter|null>(null),[subject,setSubject]=useState(""),[date,setDate]=useState(()=>new Date().toISOString().slice(0,10)),[content,setContent]=useState(""),[saving,setSaving]=useState(false);
  async function load(){const {data,error}=await letterTable().select("*").order("letter_date",{ascending:false});if(error)toast.error(error.message);setLetters((data??[]) as Letter[]);}
  useEffect(()=>{void load()},[]);
  function newLetter(){setEditing(null);setSubject("");setDate(new Date().toISOString().slice(0,10));setContent("");}
- async function save(){if(!subject.trim()||!content.trim()){toast.error("Subject and Content/Body are required.");return;}const payload={subject:subject.trim(),letter_date:date,content};const q=editing?letterTable().update(payload).eq("id",editing.id):letterTable().insert(payload);const {error}=await q;if(error)toast.error(error.message);else{toast.success("Letter saved.");newLetter();void load();}}
+ async function save(){if(!subject.trim()||!content.trim()){toast.error("Subject and Content/Body are required.");return;}setSaving(true);const payload={subject:subject.trim(),letter_date:date,content:content.trim()};const q=editing?letterTable().update(payload).eq("id",editing.id):letterTable().insert(payload);const {error}=await q;setSaving(false);if(error){toast.error(error.message);return;}toast.success("Letter saved.");newLetter();await load();}
  function edit(x:Letter){setEditing(x);setSubject(x.subject);setDate(x.letter_date);setContent(x.content);}
  async function remove(x:Letter){if(!window.confirm("Delete this letter?"))return;const {error}=await letterTable().delete().eq("id",x.id);if(error)toast.error(error.message);else{toast.success("Letter deleted.");void load();}}
  async function printLetter(x:Letter){
- const {data:profile}=await supabase.from("apartment_settings").select("name,address,city").limit(1).maybeSingle();
  const w=window.open("","_blank","width=900,height=700");
  if(!w){toast.error("Please allow pop-ups to print the letter.");return;}
+ const {data:profile}=await supabase.from("apartment_settings").select("name,address,city").limit(1).maybeSingle();
  const esc=(s:string)=>s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
  const companyName=profile?.name||"";
  const companyAddress=[profile?.address,profile?.city].filter(Boolean).join(", ");
@@ -36,7 +36,7 @@ function LetterHeadPage(){
 }
  return <AppShell title="Letter Head" description="Create, save, edit and print official apartment letters">
   <div className="grid gap-5 xl:grid-cols-[1fr_1fr]">
-   <SectionCard title={editing?"Edit Letter":"Create Letter"} description="Enter the letter subject, date and body."><div className="space-y-4"><div><label className="text-sm font-medium">Subject</label><Input value={subject} onChange={e=>setSubject(e.target.value)} placeholder="Enter subject"/></div><div><label className="text-sm font-medium">Date</label><Input type="date" value={date} onChange={e=>setDate(e.target.value)}/></div><div><label className="text-sm font-medium">Content / Body of Letter</label><Textarea className="min-h-[300px]" value={content} onChange={e=>setContent(e.target.value)} placeholder="Enter letter content..."/></div><div className="flex gap-2"><Button onClick={()=>void save()}>{editing?"Update Letter":"Save Letter"}</Button>{editing&&<Button variant="outline" onClick={newLetter}>Cancel</Button>}</div></div></SectionCard>
+   <SectionCard title={editing?"Edit Letter":"Create Letter"} description="Enter the letter subject, date and body."><div className="space-y-4"><div><label className="text-sm font-medium">Subject</label><Input value={subject} onChange={e=>setSubject(e.target.value)} placeholder="Enter subject"/></div><div><label className="text-sm font-medium">Date</label><Input type="date" value={date} onChange={e=>setDate(e.target.value)}/></div><div><label className="text-sm font-medium">Content / Body of Letter</label><Textarea className="min-h-[300px]" value={content} onChange={e=>setContent(e.target.value)} placeholder="Enter letter content..."/></div><div className="flex gap-2"><Button onClick={()=>void save()} disabled={saving}>{saving?"Saving…":editing?"Update Letter":"Save Letter"}</Button>{editing&&<Button variant="outline" onClick={newLetter}>Cancel</Button>}</div></div></SectionCard>
    <SectionCard title="Saved Letters" description="Edit, print or delete previously saved letters."><div className="space-y-3">{letters.map(x=><div key={x.id} className="rounded-lg border p-3"><div className="font-medium">{x.subject}</div><div className="text-xs text-muted-foreground">{x.letter_date}</div><div className="mt-2 flex gap-2"><Button size="sm" variant="outline" onClick={()=>edit(x)}><Pencil className="mr-1 size-4"/>Edit</Button><Button size="sm" variant="outline" onClick={()=>void printLetter(x)}><Printer className="mr-1 size-4"/>Print</Button><Button size="sm" variant="outline" onClick={()=>void remove(x)}><Trash2 className="mr-1 size-4"/>Delete</Button></div></div>)}{!letters.length&&<p className="text-sm text-muted-foreground">No letters saved yet.</p>}</div></SectionCard>
   </div>
  </AppShell>;
