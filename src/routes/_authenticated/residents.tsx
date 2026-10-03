@@ -69,6 +69,11 @@ function ResidentsPage() {
     void qc.invalidateQueries({ queryKey: ["vehicles"] });
   }
 
+  async function openResidentDialog(resident: Resident | "create") {
+    await Promise.all([settings.refetch(), flats.refetch()]);
+    setResidentDialog(resident);
+  }
+
   async function remove(table: "residents" | "flats" | "vehicles", id: string, label: string) {
     if (!window.confirm(`Delete ${label}? This cannot be undone.`)) return;
     const { error } = await supabase.from(table).delete().eq("id", id);
@@ -83,6 +88,10 @@ function ResidentsPage() {
     const payloads = rows.flatMap((row) => {
       const flat = flatByNumber.get((row["flat_no"] ?? "").toLowerCase());
       if (!flat || !row["full_name"]) return [];
+      const structureMatches = (!row["zone"] || row["zone"] === flat.zone)
+        && (!row["block"] || row["block"] === flat.block)
+        && (!row["floor"] || row["floor"] === String(flat.floor));
+      if (!structureMatches) return [];
       return [{ full_name: row["full_name"], flat_id: flat.id, resident_type: row["resident_type"] || "owner", occupant_type: row["occupant_type"] || "family", phone: (row["phone"] || "").replace(/\D/g, ""), whatsapp: (row["whatsapp"] || "").replace(/\D/g, ""), email: row["email"] || "", move_in_date: row["move_in_date"] || null, move_out_date: row["move_out_date"] || null, status: row["status"] || "active" }];
     });
     if (!payloads.length) { toast.error("No valid rows matched an existing flat."); return; }
@@ -140,8 +149,8 @@ function ResidentsPage() {
     <Tabs defaultValue="residents" className="mt-5">
       <TabsList><TabsTrigger value="residents">Residents</TabsTrigger><TabsTrigger value="flats">Flat directory</TabsTrigger><TabsTrigger value="vehicles">Vehicles</TabsTrigger></TabsList>
       <TabsContent value="residents" className="mt-4 space-y-3">
-        <Toolbar>{templateButton("residents")}<UploadButton inputRef={residentUploadRef} onFile={importResidents} /><Button onClick={() => setResidentDialog("create")}><Plus className="mr-2 size-4" />Create Resident</Button></Toolbar>
-        <SectionCard title={`${residentRows.length} residents`}>{residentRows.length ? <div className="overflow-x-auto"><table className="w-full min-w-[980px] text-sm"><thead><tr className="border-b text-left"><Th>Name</Th><Th>Flat</Th><Th>Zone / Block / Floor</Th><Th>Type</Th><Th>Occupant</Th><Th>Period of stay</Th><Th>Status</Th><Th right>Actions</Th></tr></thead><tbody>{residentRows.map((resident) => <tr key={resident.id} className="border-b last:border-0"><Td strong>{resident.full_name}</Td><Td>{resident.flats?.flat_no ?? "—"}</Td><Td>{resident.flats ? `${resident.flats.zone} / ${resident.flats.block} / ${resident.flats.floor}` : "—"}</Td><Td capitalize>{resident.resident_type}</Td><Td capitalize>{resident.occupant_type}</Td><Td>{resident.move_in_date ?? "—"} → {resident.move_out_date ?? "Present"}</Td><Td><StatusBadge value={resident.status} /></Td><ActionCell onView={() => setSelected(resident)} onEdit={() => setResidentDialog(resident)} onDelete={() => void remove("residents", resident.id, resident.full_name)} /></tr>)}</tbody></table></div> : <Empty />}</SectionCard>
+        <Toolbar>{templateButton("residents")}<UploadButton inputRef={residentUploadRef} onFile={importResidents} /><Button onClick={() => void openResidentDialog("create")}><Plus className="mr-2 size-4" />Create Resident</Button></Toolbar>
+        <SectionCard title={`${residentRows.length} residents`}>{residentRows.length ? <div className="overflow-x-auto"><table className="w-full min-w-[980px] text-sm"><thead><tr className="border-b text-left"><Th>Name</Th><Th>Flat</Th><Th>Zone / Block / Floor</Th><Th>Type</Th><Th>Occupant</Th><Th>Period of stay</Th><Th>Status</Th><Th right>Actions</Th></tr></thead><tbody>{residentRows.map((resident) => <tr key={resident.id} className="border-b last:border-0"><Td strong>{resident.full_name}</Td><Td>{resident.flats?.flat_no ?? "—"}</Td><Td>{resident.flats ? `${resident.flats.zone} / ${resident.flats.block} / ${resident.flats.floor}` : "—"}</Td><Td capitalize>{resident.resident_type}</Td><Td capitalize>{resident.occupant_type}</Td><Td>{resident.move_in_date ?? "—"} → {resident.move_out_date ?? "Present"}</Td><Td><StatusBadge value={resident.status} /></Td><ActionCell onView={() => setSelected(resident)} onEdit={() => void openResidentDialog(resident)} /></tr>)}</tbody></table></div> : <Empty />}</SectionCard>
       </TabsContent>
       <TabsContent value="flats" className="mt-4 space-y-3">
         <Toolbar>{templateButton("flats")}<UploadButton inputRef={flatUploadRef} onFile={importFlats} /><Button onClick={() => setFlatDialog("create")}><Plus className="mr-2 size-4" />Add Flat</Button></Toolbar>
@@ -173,9 +182,9 @@ function ResidentForm({ resident, open, flats, settings, onClose, onSaved }: { r
   const [floor, setFloor] = useState(selectedFlat ? String(selectedFlat.floor) : "");
   const [type, setType] = useState(resident?.resident_type ?? "owner");
   const [occupant, setOccupant] = useState(resident?.occupant_type ?? "family");
-  const zones = Array.from(new Set([...(settings?.zones ?? []), ...flats.map((flat) => flat.zone)])).sort();
-  const blocks = Array.from(new Set([...(settings?.blocks ?? []), ...flats.map((flat) => flat.block)])).sort();
-  const floors = Array.from(new Set([...(settings?.floors ?? []), ...flats.map((flat) => String(flat.floor))])).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+  const zones = [...(settings?.zones ?? [])].sort();
+  const blocks = [...(settings?.blocks ?? [])].sort();
+  const floors = [...(settings?.floors ?? [])].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
   const matching = flats.filter((flat) => (!zone || flat.zone === zone) && (!block || flat.block === block) && (!floor || String(flat.floor) === floor));
   function setStructure(kind: "zone" | "block" | "floor", value: string) {
     if (kind === "zone") setZone(value); else if (kind === "block") setBlock(value); else setFloor(value);
@@ -239,7 +248,7 @@ function FormField({ label, wide, children }: { label: string; wide?: boolean; c
 function FormActions({ saving, editing, onClose }: { saving: boolean; editing: boolean; onClose: () => void }) { return <div className="flex justify-end gap-2 sm:col-span-2"><Button type="button" variant="outline" onClick={onClose}>Cancel</Button><Button type="submit" disabled={saving}>{saving ? "Saving…" : editing ? "Save Changes" : "Create"}</Button></div>; }
 function UploadButton({ inputRef, onFile }: { inputRef: React.RefObject<HTMLInputElement | null>; onFile: (file: File) => Promise<void> }) { return <><Button variant="outline" onClick={() => inputRef.current?.click()}><Upload className="mr-2 size-4" />Import CSV</Button><input ref={inputRef} type="file" accept=".csv,text/csv" className="hidden" onChange={(event) => { const file = event.target.files?.[0]; if (file) void onFile(file); event.currentTarget.value = ""; }} /></>; }
 function Toolbar({ children }: { children: React.ReactNode }) { return <div className="flex flex-wrap justify-end gap-2">{children}</div>; }
-function ActionCell({ onView, onEdit, onDelete }: { onView?: () => void; onEdit: () => void; onDelete: () => void }) { return <Td right><div className="flex justify-end gap-1">{onView ? <Button size="sm" variant="outline" onClick={onView}>View</Button> : null}<Button size="icon" variant="ghost" onClick={onEdit} aria-label="Edit"><Pencil className="size-4" /></Button><Button size="icon" variant="ghost" onClick={onDelete} aria-label="Delete"><Trash2 className="size-4 text-destructive" /></Button></div></Td>; }
+function ActionCell({ onView, onEdit, onDelete }: { onView?: () => void; onEdit: () => void; onDelete?: () => void }) { return <Td right><div className="flex justify-end gap-1">{onView ? <Button size="sm" variant="outline" onClick={onView}>View</Button> : null}<Button size="icon" variant="ghost" onClick={onEdit} aria-label="Edit"><Pencil className="size-4" /></Button>{onDelete ? <Button size="icon" variant="ghost" onClick={onDelete} aria-label="Delete"><Trash2 className="size-4 text-destructive" /></Button> : null}</div></Td>; }
 function Th({ children, right }: { children: React.ReactNode; right?: boolean }) { return <th className={`p-3${right ? " text-right" : ""}`}>{children}</th>; }
 function Td({ children, strong, capitalize, right }: { children: React.ReactNode; strong?: boolean; capitalize?: boolean; right?: boolean }) { return <td className={`p-3${strong ? " font-medium" : ""}${capitalize ? " capitalize" : ""}${right ? " text-right" : ""}`}>{children}</td>; }
 function Empty() { return <div className="p-5"><EmptyState message="No records matched these filters." /></div>; }

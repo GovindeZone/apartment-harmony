@@ -6,8 +6,11 @@ export function downloadCsv(filename: string, headers: string[], rows: string[][
   const a = document.createElement("a");
   a.href = url;
   a.download = filename;
+  a.style.display = "none";
+  document.body.appendChild(a);
   a.click();
-  URL.revokeObjectURL(url);
+  a.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1_000);
 }
 
 export function parseCsv(text: string): Record<string, string>[] {
@@ -52,6 +55,9 @@ export const IMPORT_TEMPLATES = {
     headers: [
       "full_name",
       "flat_no",
+      "zone",
+      "block",
+      "floor",
       "resident_type (owner/tenant)",
       "occupant_type (family/bachelors)",
       "phone",
@@ -65,6 +71,9 @@ export const IMPORT_TEMPLATES = {
       [
         "Ramesh Kumar",
         "A-101",
+        "Zone 1",
+        "Block 1",
+        "1 Floor",
         "owner",
         "family",
         "+91 90000 00001",

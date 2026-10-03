@@ -51,6 +51,7 @@ export const NAV = [
       { to: "/contractor", label: "Contractor", icon: Building2 },
       { to: "/checklist-master", label: "Checklist Master", icon: ListChecks },
       { to: "/holiday-list", label: "Holiday List", icon: CalendarCheck },
+      { to: "/letter-head", label: "Letter Head", icon: FileText },
       { to: "/residents", label: "Residents", icon: Home },
       { to: "/facility-management", label: "Task Management", icon: ClipboardList },
     ],
@@ -71,7 +72,6 @@ export const NAV = [
     ],
   },
   { to: "/reports", label: "Reports", icon: FileBarChart },
-  { to: "/letter-head", label: "Letter Head", icon: FileText },
 ] as const;
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
