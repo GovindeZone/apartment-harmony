@@ -506,6 +506,33 @@ export type Database = {
           },
         ]
       }
+      letter_heads: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          letter_date: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          letter_date?: string
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          letter_date?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       mc_repository: {
         Row: {
           created_at: string
