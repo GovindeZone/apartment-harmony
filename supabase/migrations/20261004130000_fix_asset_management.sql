@@ -13,9 +13,9 @@ select setval(
     (select max(substring(asset_id from 5)::bigint)
      from public.asset_records
      where asset_id ~ '^AST-[0-9]+$'),
-    0
+    1
   ),
-  true
+  false
 );
 
 alter table public.asset_records
