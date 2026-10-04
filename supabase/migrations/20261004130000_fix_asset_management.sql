@@ -15,7 +15,7 @@ select setval(
      where asset_id ~ '^AST-[0-9]+$'),
     1
   ),
-  false
+  true
 );
 
 alter table public.asset_records
