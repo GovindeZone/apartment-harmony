@@ -198,7 +198,11 @@ function AssetManagementPage() {
   }
 
   function updateEdit(id: string, patch: Partial<EditRow>) {
-    setEditingRows((current) => ({ ...current, [id]: { ...current[id], ...patch } }));
+    setEditingRows((current) => {
+      const existing = current[id];
+      if (!existing) return current;
+      return { ...current, [id]: { ...existing, ...patch } };
+    });
   }
 
   function updateEditValue(id: string, index: number, value: string) {
