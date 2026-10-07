@@ -29,6 +29,13 @@
       "when": 1791021878310,
       "tag": "0003_create_letter_heads",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791362606645,
+      "tag": "0004_create_asset_records",
+      "breakpoints": true
     }
   ]
 }

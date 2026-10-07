@@ -65,6 +65,39 @@ export type Database = {
         }
         Relationships: []
       }
+      asset_records: {
+        Row: {
+          asset_category: string
+          asset_data: Json
+          asset_id: string
+          asset_status: string
+          asset_status_date: string
+          created_at: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          asset_category: string
+          asset_data?: Json
+          asset_id?: string
+          asset_status?: string
+          asset_status_date?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          asset_category?: string
+          asset_data?: Json
+          asset_id?: string
+          asset_status?: string
+          asset_status_date?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bye_law_repository: {
         Row: {
           bye_law_type: string
