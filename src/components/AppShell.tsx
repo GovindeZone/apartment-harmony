@@ -1,3 +1,4 @@
+import logoAsset from "@/assets/iafoa-logo.jpeg.asset.json";
 import { useEffect, useRef, useState } from "react";
 import { Link, useRouter } from "@tanstack/react-router";
 import {
@@ -187,8 +188,8 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
 function Brand() {
   return (
     <div className="flex items-center gap-3 px-2 py-1">
-      <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary/12 text-primary">
-        <Building2 className="size-5" />
+      <span className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-xl bg-card">
+        <img src={logoAsset.url} alt="IAFOA logo" className="size-full object-contain" />
       </span>
       <span className="min-w-0 leading-tight">
         <span className="block truncate text-sm font-semibold text-foreground">Indus Anantya Apartment</span>
