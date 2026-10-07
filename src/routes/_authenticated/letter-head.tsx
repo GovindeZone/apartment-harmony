@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import logoAsset from "@/assets/iafoa-logo.jpeg.asset.json";
 import { Pencil, Printer, Trash2 } from "lucide-react";
 
 export const Route=createFileRoute("/_authenticated/letter-head")({
@@ -32,7 +33,7 @@ function LetterHeadPage(){
  const esc=(s:string)=>s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
  const companyName=profile?.name||"";
  const companyAddress=[profile?.address,profile?.city].filter(Boolean).join(", ");
- w.document.write(`<!doctype html><html><head><title>${esc(x.subject)}</title><style>@page{size:A4;margin:18mm 20mm}body{font-family:Arial,sans-serif;color:#111;margin:0}.header{text-align:center;border-bottom:2px solid #222;padding-bottom:12px;margin-bottom:26px}.name{font-size:22px;font-weight:700}.addr{font-size:13px;margin-top:5px}.date{text-align:right;font-size:14px;margin-bottom:24px}.subject{font-weight:700;margin-bottom:20px}.body{white-space:pre-wrap;line-height:1.65;font-size:14px}</style></head><body><div class="header"><div class="name">${esc(companyName)}</div><div class="addr">${esc(companyAddress)}</div></div><div class="date">Date: ${esc(x.letter_date)}</div><div class="subject">Subject: ${esc(x.subject)}</div><div class="body">${esc(x.content)}</div><script>window.onload=()=>{window.focus();window.print();};</script></body></html>`);w.document.close();
+ w.document.write(`<!doctype html><html><head><title>${esc(x.subject)}</title><style>@page{size:A4;margin:18mm 20mm}body{font-family:Arial,sans-serif;color:#111;margin:0}.header{text-align:center;border-bottom:2px solid #222;padding-bottom:12px;margin-bottom:26px}.name{font-size:22px;font-weight:700}.addr{font-size:13px;margin-top:5px}.date{text-align:right;font-size:14px;margin-bottom:24px}.subject{font-weight:700;margin-bottom:20px}.body{white-space:pre-wrap;line-height:1.65;font-size:14px}</style></head><body><div class="header"><img src="${window.location.origin+logoAsset.url}" alt="Logo" style="height:90px;display:block;margin:0 auto 8px"/><div class="name">${esc(companyName)}</div><div class="addr">${esc(companyAddress)}</div></div><div class="date">Date: ${esc(x.letter_date)}</div><div class="subject">Subject: ${esc(x.subject)}</div><div class="body">${esc(x.content)}</div><script>window.onload=()=>{setTimeout(()=>{window.focus();window.print();},300);};</script></body></html>`);w.document.close();
 }
  return <AppShell title="Letter Head" description="Create, save, edit and print official apartment letters">
   <div className="grid gap-5 xl:grid-cols-[1fr_1fr]">

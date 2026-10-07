@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { Building2, KeyRound, ArrowLeft } from "lucide-react";
+import logoAsset from "@/assets/iafoa-logo.jpeg.asset.json";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -208,8 +209,8 @@ function AuthPage() {
     <div className="grid min-h-screen lg:grid-cols-2">
       <div className="hidden flex-col justify-between bg-sidebar p-10 lg:flex">
         <div className="flex items-center gap-3">
-          <span className="grid size-11 place-items-center rounded-xl bg-primary/12 text-primary">
-            <Building2 className="size-6" />
+          <span className="grid size-14 place-items-center overflow-hidden rounded-xl bg-card">
+            <img src={logoAsset.url} alt="IAFOA logo" className="size-full rounded-xl object-contain" />
           </span>
           <span className="text-base font-semibold">Indus Anantya Apartment</span>
         </div>
@@ -232,7 +233,7 @@ function AuthPage() {
               <div className="mb-6 flex flex-col items-center text-center">
                 <div className="mb-4 flex size-20 items-center justify-center overflow-hidden rounded-2xl border border-primary/15 bg-primary/5 p-2 shadow-sm">
                   <img
-                    src="/favicon.ico"
+                    src={logoAsset.url}
                     alt="Indus Anantya Apartment logo"
                     className="size-full object-contain"
                   />
