@@ -9,5 +9,6 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- Keep Letter Head inside the MC Master navigation group because it is an MC workflow.
+- Keep Letter Head inside the MC workflow navigation group because it is an MC workflow.
+- Use the shared NavGroup disclosure for main menu groups so desktop and mobile navigation have consistent accessible expand/collapse controls.
 - Keep the auth screen in one shared layout across devices and constrain dashboard grid children so wide tables scroll locally rather than widening the page.

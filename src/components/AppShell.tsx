@@ -1,5 +1,5 @@
 import logoAsset from "@/assets/iafoa-logo.jpeg.asset.json";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Link, useRouter } from "@tanstack/react-router";
 import {
   LayoutDashboard,
@@ -23,6 +23,7 @@ import {
   BookOpen,
   ListChecks,
   X,
+  ChevronDown,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -44,7 +45,7 @@ export const NAV = [
   },
   {
     to: "/mc-handbook",
-    label: "MC Master",
+    label: "MC Mangement",
     icon: UsersRound,
     group: [
       { to: "/staff", label: "Staff", icon: Users },
@@ -75,17 +76,39 @@ export const NAV = [
   { to: "/reports", label: "Reports", icon: FileBarChart },
 ] as const;
 
+function NavGroup({ label, icon: Icon, children }: {
+  label: string;
+  icon: typeof ClipboardList;
+  children: React.ReactNode;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const contentId = useId();
+  return (
+    <div>
+      <Button
+        type="button"
+        variant="ghost"
+        aria-expanded={expanded}
+        aria-controls={contentId}
+        onClick={() => setExpanded((value) => !value)}
+        className="h-auto min-h-11 w-full justify-start gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-semibold text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+      >
+        <Icon className="size-[18px] shrink-0" />
+        <span className="min-w-0 flex-1 whitespace-normal">{label}</span>
+        <ChevronDown className={cn("size-4 shrink-0 transition-transform motion-reduce:transition-none", expanded && "rotate-180")} />
+      </Button>
+      <div id={contentId} hidden={!expanded}>{children}</div>
+    </div>
+  );
+}
+
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <nav className="flex flex-col gap-1">
       {NAV.map((item) => {
         if ("group" in item && item.group) {
           return (
-            <div key={item.to}>
-              <div className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-sidebar-foreground">
-                <item.icon className="size-[18px] shrink-0" />
-                <span>{item.label}</span>
-              </div>
+            <NavGroup key={item.to} label={item.label} icon={item.icon}>
               <div className="ml-3 mt-0.5 border-l border-border/60 pl-2">
                 {item.group.map((child) =>
                   "tab" in child ? (
@@ -114,7 +137,7 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
                   ),
                 )}
               </div>
-            </div>
+            </NavGroup>
           );
         }
 
@@ -134,9 +157,7 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
       })}
 
       <div className="mt-3 border-t border-border/60 pt-3">
-        <div className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Admin
-        </div>
+        <NavGroup label="Admin Management" icon={Shield}>
         <Link
           to="/admin"
           onClick={onNavigate}
@@ -180,6 +201,7 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
             <BookOpen className="size-4" /><span>MC Handbook</span>
           </Link>
         </div>
+        </NavGroup>
       </div>
     </nav>
   );
