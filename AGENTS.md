@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Keep Letter Head inside the MC Master navigation group because it is an MC workflow.
+- Keep the auth screen in one shared layout across devices and constrain dashboard grid children so wide tables scroll locally rather than widening the page.

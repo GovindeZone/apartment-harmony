@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Building, Bell } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { AppShell } from "@/components/AppShell";
+import { Button } from "@/components/ui/button";
 import { SectionCard } from "@/components/ui-bits";
 import { attendanceQuery, facilityTasksQuery, flatsQuery, gateEntriesQuery, residentsQuery, staffQuery } from "@/lib/api";
 
@@ -12,6 +13,10 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
     meta: [
       { title: "Dashboard — Indus Anantya Apartment" },
       { name: "description", content: "Apartment residents, staff, occupancy and visitor summary." },
+      { property: "og:title", content: "Dashboard — Indus Anantya Apartment" },
+      { property: "og:description", content: "Apartment residents, staff, occupancy and visitor summary." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Dashboard,
@@ -113,28 +118,32 @@ function Dashboard() {
       </div>
 
       <div className="mb-5 flex w-full max-w-xl rounded-xl bg-muted/70 p-1">
-        <button
+        <Button
           type="button"
           onClick={() => setActiveTab("facility")}
-          className={`min-h-11 flex-1 rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
+          variant="ghost"
+          aria-pressed={activeTab === "facility"}
+          className={`h-auto min-h-11 min-w-0 flex-1 whitespace-normal rounded-lg px-2 py-2 text-sm font-semibold transition-colors ${
             activeTab === "facility"
               ? "bg-primary text-primary-foreground shadow-sm"
               : "text-muted-foreground hover:bg-background hover:text-foreground"
           }`}
         >
           Facility Dashboard
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={() => setActiveTab("mc")}
-          className={`min-h-11 flex-1 rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
+          variant="ghost"
+          aria-pressed={activeTab === "mc"}
+          className={`h-auto min-h-11 min-w-0 flex-1 whitespace-normal rounded-lg px-2 py-2 text-sm font-semibold transition-colors ${
             activeTab === "mc"
               ? "bg-primary text-primary-foreground shadow-sm"
               : "text-muted-foreground hover:bg-background hover:text-foreground"
           }`}
         >
           MC Dashboard
-        </button>
+        </Button>
       </div>
 
       {activeTab === "facility" ? (
@@ -144,14 +153,14 @@ function Dashboard() {
             <p className="mt-0.5 text-xs text-slate-200">Staff attendance and facility task monitoring</p>
           </div>
 
-          <div className="grid gap-4 xl:grid-cols-2">
+          <div className="grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-2 [&>*]:min-w-0">
             <SectionCard
               className="border-sky-200/80 bg-sky-50/40 dark:border-sky-900/70 dark:bg-sky-950/20"
               title="Staff attendance by department"
               description="Present, absent and total active staff today"
             >
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[520px] text-sm">
+                <table className="w-full text-xs sm:text-sm [&_th]:px-2 [&_td]:px-2 sm:[&_th]:px-4 sm:[&_td]:px-4">
                   <thead className="bg-sky-100/70 dark:bg-sky-900/30">
                     <tr className="border-b border-sky-200/70 text-left text-sky-900 dark:border-sky-800 dark:text-sky-100">
                       <th className="px-4 py-3">Department</th>
@@ -237,7 +246,7 @@ function Dashboard() {
             <p className="mt-0.5 text-xs text-slate-200">Resident, occupancy and visitor information</p>
           </div>
 
-          <div className="grid gap-4 lg:grid-cols-2">
+          <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-2 [&>*]:min-w-0">
             <SectionCard
               className="border-emerald-200/80 bg-emerald-50/40 dark:border-emerald-900/70 dark:bg-emerald-950/20"
               title="Flat occupancy"
@@ -334,11 +343,11 @@ function Dashboard() {
               title="Resident mix"
               description="Owners and tenant categories"
             >
-              <div className="h-80 p-4">
+               <div className="h-72 min-w-0 sm:h-80 sm:p-4">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={residentChart}>
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                    <XAxis dataKey="category" tickLine={false} axisLine={false} fontSize={12} />
+                    <XAxis dataKey="category" tickLine={false} axisLine={false} fontSize={11} interval={0} height={60} />
                     <YAxis tickLine={false} axisLine={false} allowDecimals={false} fontSize={12} />
                     <Tooltip />
                     <Bar dataKey="count" name="Residents" fill="var(--chart-1)" radius={[6, 6, 0, 0]} />
