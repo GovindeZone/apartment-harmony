@@ -6,7 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
@@ -23,6 +22,8 @@ export const Route = createFileRoute("/auth")({
           "Secure sign in for facility managers, admins, security and help desk staff of Indus Anantya Apartment.",
       },
       { property: "og:title", content: "Team Sign In — Indus Anantya Apartment" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       {
         property: "og:description",
         content: "Secure sign in for the Indus Anantya Apartment facility operations team.",
@@ -206,39 +207,19 @@ function AuthPage() {
   }
 
   return (
-    <div className="grid min-h-screen lg:grid-cols-2">
-      <div className="hidden flex-col justify-between bg-sidebar p-10 lg:flex">
-        <div className="flex items-center gap-3">
-          <span className="grid size-14 place-items-center overflow-hidden rounded-xl bg-card">
-            <img src={logoAsset.url} alt="IAFOA logo" className="size-full rounded-xl object-contain" />
-          </span>
-          <span className="text-base font-semibold">Indus Anantya Apartment</span>
-        </div>
-        <div className="max-w-md">
-          <h2 className="text-3xl font-semibold leading-tight tracking-tight text-foreground">
-            One command deck for staff, gates, residents and help desk.
-          </h2>
-          <p className="mt-4 text-sm text-muted-foreground">
-            Record a gate entry in seconds, track attendance and salaries, keep every resident
-            conversation on file.
-          </p>
-        </div>
-        <p className="text-xs text-muted-foreground">Authorised community team members only.</p>
-      </div>
-
-      <div className="flex items-center justify-center px-4 py-12">
-        <Card className="w-full max-w-md">
-          <CardContent className="p-6">
+    <div className="flex min-h-svh items-center justify-center bg-background px-4 py-6 sm:px-6 sm:py-10">
+      <div className="w-full max-w-md">
+          <div className="py-2 sm:py-6">
             {!resetMode && (
               <div className="mb-6 flex flex-col items-center text-center">
-                <div className="mb-4 flex size-20 items-center justify-center overflow-hidden rounded-2xl border border-primary/15 bg-primary/5 p-2 shadow-sm">
+                <div className="mb-4 flex h-24 w-48 items-center justify-center sm:h-28 sm:w-56">
                   <img
                     src={logoAsset.url}
                     alt="Indus Anantya Apartment logo"
                     className="size-full object-contain"
                   />
                 </div>
-                <h1 className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-4xl font-bold tracking-tight text-transparent">
+                <h1 className="text-3xl font-bold text-foreground sm:text-4xl">
                   Welcome
                 </h1>
                 <p className="mt-2 text-sm font-medium text-muted-foreground">
@@ -368,17 +349,23 @@ function AuthPage() {
                       <span>Remember my login on this device</span>
                     </label>
 
-                    <Button type="submit" className="w-full" disabled={loading}>
+                    <Button type="submit" className="min-h-11 w-full" disabled={loading}>
                       {loading ? "Signing in…" : "Sign in"}
                     </Button>
 
-                    <button
+                    <div className="space-y-2 text-center text-xs leading-relaxed text-muted-foreground">
+                      <p>One command deck for staff, gates, residents and help desk.</p>
+                      <p>Record a gate entry in seconds, track attendance and salaries, keep every resident conversation on file.</p>
+                    </div>
+
+                    <Button
                       type="button"
-                      className="w-full text-center text-sm font-medium text-primary hover:underline"
+                      variant="link"
+                      className="min-h-11 w-full text-center text-sm font-medium"
                       onClick={() => setForgotMode(true)}
                     >
                       Forgot password?
-                    </button>
+                    </Button>
                   </form>
                 </TabsContent>
 
@@ -433,8 +420,7 @@ function AuthPage() {
                 </TabsContent>
               </Tabs>
             )}
-          </CardContent>
-        </Card>
+          </div>
       </div>
     </div>
   );

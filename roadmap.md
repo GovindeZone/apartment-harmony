@@ -1,5 +1,9 @@
 # Roadmap
 
+- [ ] Align login and dashboard layouts for mobile and tablet
+- [ ] Place the requested small message below Sign in
+- [ ] Verify mobile navigation, both dashboard views, and login layout
+
 - [x] Repair malformed Residents page source
 - [x] Complete resident create/edit/delete
 - [x] Add flat create/edit/delete and CSV template/import
