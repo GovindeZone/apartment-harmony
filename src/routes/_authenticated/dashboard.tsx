@@ -103,20 +103,8 @@ function Dashboard() {
         </h2>
       </div>
 
-      <div className="mb-5 flex justify-end">
-        <div className="w-full rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 shadow-sm lg:w-[520px]">
-          <div className="flex items-center gap-3">
-            <Bell className="size-5 shrink-0 text-amber-700" />
-            <div className="min-w-0">
-              <h2 className="text-sm font-semibold text-amber-900">Notifications</h2>
-              <p className="text-xs text-amber-800">
-                Holiday, MC tenure, license and association renewal reminders will appear here.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      <div className="grid min-w-0 grid-cols-1 items-start gap-5 md:grid-cols-[minmax(0,1fr)_240px] xl:grid-cols-[minmax(0,1fr)_280px]">
+        <div className="min-w-0">
       <div className="mb-5 flex w-full max-w-xl rounded-xl bg-muted/70 p-1">
         <Button
           type="button"
@@ -150,7 +138,7 @@ function Dashboard() {
         <section>
           <div className="mb-4 rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 shadow-sm sm:px-5">
             <h2 className="text-base font-semibold tracking-tight text-white">Facility Management</h2>
-            <p className="mt-0.5 text-xs text-slate-200">Staff attendance and facility task monitoring</p>
+            <p className="mt-0.5 text-xs text-slate-200">Staff attendance, facility tasks, flat occupancy and residents</p>
           </div>
 
           <div className="grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-2 [&>*]:min-w-0">
@@ -237,16 +225,6 @@ function Dashboard() {
                 </table>
               </div>
             </SectionCard>
-          </div>
-        </section>
-      ) : (
-        <section>
-          <div className="mb-4 rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 shadow-sm sm:px-5">
-            <h2 className="text-base font-semibold tracking-tight text-white">MC Management</h2>
-            <p className="mt-0.5 text-xs text-slate-200">Resident, occupancy and visitor information</p>
-          </div>
-
-          <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-2 [&>*]:min-w-0">
             <SectionCard
               className="border-emerald-200/80 bg-emerald-50/40 dark:border-emerald-900/70 dark:bg-emerald-950/20"
               title="Flat occupancy"
@@ -309,6 +287,16 @@ function Dashboard() {
               </div>
             </SectionCard>
 
+          </div>
+        </section>
+      ) : (
+        <section>
+          <div className="mb-4 rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 shadow-sm sm:px-5">
+            <h2 className="text-base font-semibold tracking-tight text-white">MC Management</h2>
+            <p className="mt-0.5 text-xs text-slate-200">Visitor information and resident mix</p>
+          </div>
+
+          <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-2 [&>*]:min-w-0">
             <SectionCard
               className="border-amber-200/80 bg-amber-50/40 dark:border-amber-900/70 dark:bg-amber-950/20"
               title="Visitor details"
@@ -358,6 +346,17 @@ function Dashboard() {
           </div>
         </section>
       )}
+        </div>
+        <aside aria-label="Notifications" className="min-w-0 self-stretch border-l border-border md:pl-5">
+          <div className="sticky top-5 min-h-48 rounded-lg border border-border bg-card p-4 shadow-sm">
+            <div className="flex items-center gap-2 border-b border-border pb-3">
+              <Bell className="size-5 shrink-0 text-primary" />
+              <h2 className="text-sm font-semibold text-card-foreground">Notifications</h2>
+            </div>
+            <p className="py-6 text-center text-sm text-muted-foreground">No notifications at the moment.</p>
+          </div>
+        </aside>
+      </div>
     </AppShell>
   );
 }
