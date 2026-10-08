@@ -1,5 +1,9 @@
 # Roadmap
 
+- [x] Move flat occupancy and resident categories into Facility Dashboard
+- [x] Keep notifications in a permanent right column with an empty state
+- [x] Verify both dashboard views and narrow-screen layout
+
 - [x] Align login and dashboard layouts for mobile and tablet
 - [x] Place the requested small message below Sign in
 - [x] Verify mobile navigation, both dashboard views, and login layout
