@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Repair and verify manual asset creation and Excel/CSV uploads
+- [x] Repair and verify manual asset creation and Excel/CSV uploads
 
 - [x] Move flat occupancy and resident categories into Facility Dashboard
 - [x] Keep notifications in a permanent right column with an empty state
