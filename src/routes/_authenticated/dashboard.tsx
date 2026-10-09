@@ -136,11 +136,6 @@ function Dashboard() {
 
       {activeTab === "facility" ? (
         <section>
-          <div className="mb-4 rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 shadow-sm sm:px-5">
-            <h2 className="text-base font-semibold tracking-tight text-white">Facility Management</h2>
-            <p className="mt-0.5 text-xs text-slate-200">Staff attendance, facility tasks, flat occupancy and residents</p>
-          </div>
-
           <div className="grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-2 [&>*]:min-w-0">
             <SectionCard
               className="border-sky-200/80 bg-sky-50/40 dark:border-sky-900/70 dark:bg-sky-950/20"
@@ -172,59 +167,21 @@ function Dashboard() {
             </SectionCard>
 
             <SectionCard
-              className="border-indigo-200/80 bg-indigo-50/40 dark:border-indigo-900/70 dark:bg-indigo-950/20"
-              title="Task Management"
-              description="Current facility tasks by type, status and ageing"
+              className="border-violet-200/80 bg-violet-50/40 dark:border-violet-900/70 dark:bg-violet-950/20"
+              title="Resident mix"
+              description="Owners and tenant categories"
             >
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[980px] text-sm">
-                  <thead>
-                    <tr className="border-b border-indigo-200/70 bg-indigo-100/70 text-left text-indigo-900 dark:border-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-100">
-                      <th rowSpan={2} className="px-4 py-3">Task Name</th>
-                      <th rowSpan={2} className="px-4 py-3">Task Type</th>
-                      <th colSpan={3} className="px-4 py-2 text-center">Status</th>
-                      <th colSpan={3} className="px-4 py-2 text-center">Task Ageing</th>
-                    </tr>
-                    <tr className="border-b border-indigo-200/70 bg-indigo-50/70 text-left text-xs text-indigo-800 dark:border-indigo-800 dark:bg-indigo-950/30 dark:text-indigo-200">
-                      <th className="px-4 py-2 text-center">Not started</th>
-                      <th className="px-4 py-2 text-center">In-Progress</th>
-                      <th className="px-4 py-2 text-center">Completed</th>
-                      <th className="px-4 py-2 text-center">&gt;7 days</th>
-                      <th className="px-4 py-2 text-center">&gt;15 days</th>
-                      <th className="px-4 py-2 text-center">&gt;1 month</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {taskRowsWithAge.length ? (
-                      taskRowsWithAge.map((task) => {
-                        const notStarted = false;
-                        const inProgress = task.status === "In-Progress";
-                        const completed = task.status === "Completed";
-                        const ageing = task.status !== "Completed" && task.ageDays > 7;
-                        return (
-                          <tr key={task.id} className="border-b border-border last:border-0">
-                            <td className="px-4 py-3 font-medium">{task.task_name}</td>
-                            <td className="px-4 py-3">{task.task_type}</td>
-                            <td className="px-4 py-3 text-center">{notStarted ? "✓" : "—"}</td>
-                            <td className="px-4 py-3 text-center">{inProgress ? "✓" : "—"}</td>
-                            <td className="px-4 py-3 text-center">{completed ? "✓" : "—"}</td>
-                            <td className="px-4 py-3 text-center">{ageing && task.ageDays > 7 ? "✓" : "—"}</td>
-                            <td className="px-4 py-3 text-center">{ageing && task.ageDays > 15 ? "✓" : "—"}</td>
-                            <td className="px-4 py-3 text-center">{ageing && task.ageDays > 30 ? "✓" : "—"}</td>
-                          </tr>
-                        );
-                      })
-                    ) : (
-                      <tr>
-                        <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">
-                          No facility tasks found.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </SectionCard>
+               <div className="h-72 min-w-0 sm:h-80 sm:p-4">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={residentChart}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                    <XAxis dataKey="category" tickLine={false} axisLine={false} fontSize={11} interval={0} height={60} />
+                    <YAxis tickLine={false} axisLine={false} allowDecimals={false} fontSize={12} />
+                    <Tooltip />
+                    <Bar dataKey="count" name="Residents" fill="var(--chart-1)" radius={[6, 6, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+    
             <SectionCard
               className="border-emerald-200/80 bg-emerald-50/40 dark:border-emerald-900/70 dark:bg-emerald-950/20"
               title="Flat occupancy"
@@ -291,11 +248,6 @@ function Dashboard() {
         </section>
       ) : (
         <section>
-          <div className="mb-4 rounded-xl border border-slate-700 bg-slate-800 px-4 py-3 shadow-sm sm:px-5">
-            <h2 className="text-base font-semibold tracking-tight text-white">MC Management</h2>
-            <p className="mt-0.5 text-xs text-slate-200">Visitor information and resident mix</p>
-          </div>
-
           <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-2 [&>*]:min-w-0">
             <SectionCard
               className="border-amber-200/80 bg-amber-50/40 dark:border-amber-900/70 dark:bg-amber-950/20"
@@ -327,21 +279,60 @@ function Dashboard() {
             </SectionCard>
 
             <SectionCard
-              className="border-violet-200/80 bg-violet-50/40 dark:border-violet-900/70 dark:bg-violet-950/20"
-              title="Resident mix"
-              description="Owners and tenant categories"
+              className="border-indigo-200/80 bg-indigo-50/40 dark:border-indigo-900/70 dark:bg-indigo-950/20"
+              title="Task Management"
+              description="Current facility tasks by type, status and ageing"
             >
-               <div className="h-72 min-w-0 sm:h-80 sm:p-4">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={residentChart}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                    <XAxis dataKey="category" tickLine={false} axisLine={false} fontSize={11} interval={0} height={60} />
-                    <YAxis tickLine={false} axisLine={false} allowDecimals={false} fontSize={12} />
-                    <Tooltip />
-                    <Bar dataKey="count" name="Residents" fill="var(--chart-1)" radius={[6, 6, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[980px] text-sm">
+                  <thead>
+                    <tr className="border-b border-indigo-200/70 bg-indigo-100/70 text-left text-indigo-900 dark:border-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-100">
+                      <th rowSpan={2} className="px-4 py-3">Task Name</th>
+                      <th rowSpan={2} className="px-4 py-3">Task Type</th>
+                      <th colSpan={3} className="px-4 py-2 text-center">Status</th>
+                      <th colSpan={3} className="px-4 py-2 text-center">Task Ageing</th>
+                    </tr>
+                    <tr className="border-b border-indigo-200/70 bg-indigo-50/70 text-left text-xs text-indigo-800 dark:border-indigo-800 dark:bg-indigo-950/30 dark:text-indigo-200">
+                      <th className="px-4 py-2 text-center">Not started</th>
+                      <th className="px-4 py-2 text-center">In-Progress</th>
+                      <th className="px-4 py-2 text-center">Completed</th>
+                      <th className="px-4 py-2 text-center">&gt;7 days</th>
+                      <th className="px-4 py-2 text-center">&gt;15 days</th>
+                      <th className="px-4 py-2 text-center">&gt;1 month</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {taskRowsWithAge.length ? (
+                      taskRowsWithAge.map((task) => {
+                        const notStarted = false;
+                        const inProgress = task.status === "In-Progress";
+                        const completed = task.status === "Completed";
+                        const ageing = task.status !== "Completed" && task.ageDays > 7;
+                        return (
+                          <tr key={task.id} className="border-b border-border last:border-0">
+                            <td className="px-4 py-3 font-medium">{task.task_name}</td>
+                            <td className="px-4 py-3">{task.task_type}</td>
+                            <td className="px-4 py-3 text-center">{notStarted ? "✓" : "—"}</td>
+                            <td className="px-4 py-3 text-center">{inProgress ? "✓" : "—"}</td>
+                            <td className="px-4 py-3 text-center">{completed ? "✓" : "—"}</td>
+                            <td className="px-4 py-3 text-center">{ageing && task.ageDays > 7 ? "✓" : "—"}</td>
+                            <td className="px-4 py-3 text-center">{ageing && task.ageDays > 15 ? "✓" : "—"}</td>
+                            <td className="px-4 py-3 text-center">{ageing && task.ageDays > 30 ? "✓" : "—"}</td>
+                          </tr>
+                        );
+                      })
+                    ) : (
+                      <tr>
+                        <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">
+                          No facility tasks found.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
               </div>
+            </SectionCard>
+          </div>
             </SectionCard>
           </div>
         </section>
