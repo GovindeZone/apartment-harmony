@@ -1,19 +1,20 @@
-import { describe, expect, test } from "bun:test";
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
 import { parseAssetMatrix } from "./asset-import";
 
 describe("asset file import", () => {
-  test("retains imported columns and values, including zero quantities", () => {
-    expect(parseAssetMatrix([["Name", "Location", "Quantity"], ["Pump", "Block A", 0]])).toEqual([
+  it("retains imported columns and values, including zero quantities", () => {
+    assert.deepEqual(parseAssetMatrix([["Name", "Location", "Quantity"], ["Pump", "Block A", 0]]), [
       { columns: ["Name", "Location", "Quantity"], values: ["Pump", "Block A", "0"] },
     ]);
   });
-  test("ignores blank rows and fills missing cells", () => {
-    expect(parseAssetMatrix([[], ["Name", "Location"], [], ["Pump"]])).toEqual([
+  it("ignores blank rows and fills missing cells", () => {
+    assert.deepEqual(parseAssetMatrix([[], ["Name", "Location"], [], ["Pump"]]), [
       { columns: ["Name", "Location"], values: ["Pump", ""] },
     ]);
   });
-  test("rejects files with no asset rows", () => {
-    expect(() => parseAssetMatrix([["Name"]])).toThrow("No asset records");
-    expect(() => parseAssetMatrix([])).toThrow("empty");
+  it("rejects files with no asset rows", () => {
+    assert.throws(() => parseAssetMatrix([["Name"]]), /No asset records/);
+    assert.throws(() => parseAssetMatrix([]), /empty/);
   });
 });
