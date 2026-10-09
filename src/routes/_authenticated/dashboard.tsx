@@ -181,7 +181,9 @@ function Dashboard() {
                     <Bar dataKey="count" name="Residents" fill="var(--chart-1)" radius={[6, 6, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
-    
+              </div>
+            </SectionCard>
+
             <SectionCard
               className="border-emerald-200/80 bg-emerald-50/40 dark:border-emerald-900/70 dark:bg-emerald-950/20"
               title="Flat occupancy"
@@ -331,8 +333,6 @@ function Dashboard() {
                   </tbody>
                 </table>
               </div>
-            </SectionCard>
-          </div>
             </SectionCard>
           </div>
         </section>
