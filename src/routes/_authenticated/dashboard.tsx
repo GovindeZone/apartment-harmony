@@ -250,36 +250,7 @@ function Dashboard() {
         </section>
       ) : (
         <section>
-          <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-2 [&>*]:min-w-0">
-            <SectionCard
-              className="border-amber-200/80 bg-amber-50/40 dark:border-amber-900/70 dark:bg-amber-950/20"
-              title="Visitor details"
-              description="Today's visitor entries by resident category"
-            >
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead className="bg-amber-100/70 dark:bg-amber-900/30">
-                    <tr className="border-b border-amber-200/70 text-left text-amber-900 dark:border-amber-800 dark:text-amber-100">
-                      <th className="px-4 py-3">Visitor</th>
-                      <th className="px-4 py-3 text-right">To owners</th>
-                      <th className="px-4 py-3 text-right">To tenant (family)</th>
-                      <th className="px-4 py-3 text-right">To tenant (bachelor)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {visitorSummary.map((row) => (
-                      <tr key={row.label}>
-                        <td className="px-4 py-3 font-medium">{row.label}</td>
-                        <td className="px-4 py-3 text-right">{row.owner}</td>
-                        <td className="px-4 py-3 text-right">{row.family}</td>
-                        <td className="px-4 py-3 text-right">{row.bachelor}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </SectionCard>
-
+          <div className="grid min-w-0 grid-cols-1 gap-4 [&>*]:min-w-0">
             <SectionCard
               className="border-indigo-200/80 bg-indigo-50/40 dark:border-indigo-900/70 dark:bg-indigo-950/20"
               title="Task Management"
@@ -332,7 +303,36 @@ function Dashboard() {
                     )}
                   </tbody>
                 </table>
+    
+            <SectionCard
+              className="border-amber-200/80 bg-amber-50/40 dark:border-amber-900/70 dark:bg-amber-950/20"
+              title="Visitor details"
+              description="Today's visitor entries by resident category"
+            >
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-amber-100/70 dark:bg-amber-900/30">
+                    <tr className="border-b border-amber-200/70 text-left text-amber-900 dark:border-amber-800 dark:text-amber-100">
+                      <th className="px-4 py-3">Visitor</th>
+                      <th className="px-4 py-3 text-right">To owners</th>
+                      <th className="px-4 py-3 text-right">To tenant (family)</th>
+                      <th className="px-4 py-3 text-right">To tenant (bachelor)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {visitorSummary.map((row) => (
+                      <tr key={row.label}>
+                        <td className="px-4 py-3 font-medium">{row.label}</td>
+                        <td className="px-4 py-3 text-right">{row.owner}</td>
+                        <td className="px-4 py-3 text-right">{row.family}</td>
+                        <td className="px-4 py-3 text-right">{row.bachelor}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
+            </SectionCard>
+          </div>
             </SectionCard>
           </div>
         </section>
