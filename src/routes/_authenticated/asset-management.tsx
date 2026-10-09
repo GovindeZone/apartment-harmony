@@ -19,9 +19,17 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
+import { parseAssetMatrix } from "@/lib/asset-import";
 
 export const Route = createFileRoute("/_authenticated/asset-management")({
-  head: () => ({ meta: [{ title: "Asset Management — Indus Anantya Apartment" }] }),
+  head: () => ({ meta: [
+    { title: "Asset Management — Indus Anantya Apartment" },
+    { name: "description", content: "Manage apartment assets, import asset registers, and track lifecycle status." },
+    { property: "og:title", content: "Asset Management — Indus Anantya Apartment" },
+    { property: "og:description", content: "Manage apartment assets and track their lifecycle status." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: AssetManagementPage,
 });
 
@@ -55,7 +63,6 @@ type EditRow = {
 };
 
 const today = () => new Date().toISOString().slice(0, 10);
-const newAssetId = () => "AST-" + crypto.randomUUID().replace(/-/g, "").slice(0, 12).toUpperCase();
 
 function AssetManagementPage() {
   const queryClient = useQueryClient();
@@ -64,6 +71,7 @@ function AssetManagementPage() {
   const [category, setCategory] = useState("");
   const [draftRows, setDraftRows] = useState<DraftRow[]>([]);
   const [showAdd, setShowAdd] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [editingRows, setEditingRows] = useState<Record<string, EditRow>>({});
   const [retirementRequest, setRetirementRequest] = useState<{ id: string; draft: EditRow } | null>(null);
 
@@ -89,7 +97,6 @@ function AssetManagementPage() {
 
       const db = supabase as any;
       const payload = rows.map((row) => ({
-        asset_id: row.assetId,
         asset_category: category.trim(),
         asset_data: { columns: row.columns, values: row.values },
         asset_status: row.assetStatus,
@@ -101,6 +108,7 @@ function AssetManagementPage() {
     onSuccess: (_, rows) => {
       toast.success(rows.length + " asset record" + (rows.length === 1 ? "" : "s") + " saved.");
       setDraftRows((current) => current.filter((row) => !rows.some((saved) => saved.draftId === row.draftId)));
+      if (rows.length === draftRows.length) setShowAdd(false);
       queryClient.invalidateQueries({ queryKey: ["asset_records"] });
     },
     onError: (error: Error) => toast.error(error.message),
@@ -144,6 +152,7 @@ function AssetManagementPage() {
       return;
     }
 
+    setUploading(true);
     try {
       const workbook = XLSX.read(await file.arrayBuffer(), { type: "array", raw: false });
       const sheetName = workbook.SheetNames[0];
@@ -152,32 +161,21 @@ function AssetManagementPage() {
       if (!worksheet) throw new Error("The uploaded worksheet could not be read.");
 
       const matrix = XLSX.utils.sheet_to_json<unknown[]>(worksheet, { header: 1, defval: "", raw: false });
-      if (!matrix.length) throw new Error("The uploaded file is empty.");
-
-      const columns = (matrix[0] ?? []).map((value) => String(value ?? ""));
-      if (!columns.length || columns.every((column) => column === "")) {
-        throw new Error("The first row must contain the asset column headers.");
-      }
-
-      const rows = matrix
-        .slice(1)
-        .filter((row) => row.some((value) => String(value ?? "").trim() !== ""))
-        .map((row) => ({
+      const rows = parseAssetMatrix(matrix).map((data) => ({
           draftId: crypto.randomUUID(),
-          assetId: newAssetId(),
-          columns: [...columns],
-          values: columns.map((_, index) => row[index] ?? ""),
+          assetId: "Assigned on save",
+          ...data,
           assetStatus: "Active" as AssetStatus,
           assetStatusDate: today(),
           editing: true,
         }));
 
-      if (!rows.length) throw new Error("No asset records were found below the header row.");
       setDraftRows((current) => [...current, ...rows]);
       toast.success(rows.length + " asset record" + (rows.length === 1 ? "" : "s") + " loaded from " + file.name + ".");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Unable to read the uploaded file.");
     } finally {
+      setUploading(false);
       if (fileRef.current) fileRef.current.value = "";
       if (dialogFileRef.current) dialogFileRef.current.value = "";
     }
@@ -249,8 +247,8 @@ function AssetManagementPage() {
             </div>
             <div className="sm:col-span-2 lg:col-span-3 flex items-end gap-2">
               <input ref={fileRef} type="file" className="hidden" accept=".xlsx,.xls,.csv,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onChange={(event) => void handleFile(event.target.files?.[0])} />
-              <Button type="button" variant="outline" className="gap-2" onClick={() => fileRef.current?.click()}><Upload className="size-4" />Upload Excel / CSV</Button>
-              {draftRows.length > 0 ? <Button type="button" className="gap-2" disabled={insertRows.isPending} onClick={() => insertRows.mutate(draftRows)}><Save className="size-4" />{insertRows.isPending ? "Saving…" : "Save All " + draftRows.length}</Button> : null}
+              <Button type="button" variant="outline" className="gap-2" disabled={uploading} onClick={() => fileRef.current?.click()}><Upload className="size-4" />{uploading ? "Reading file…" : "Upload Excel / CSV"}</Button>
+              {draftRows.length > 0 ? <Button type="button" className="gap-2" disabled={insertRows.isPending || !category.trim()} onClick={() => insertRows.mutate(draftRows)}><Save className="size-4" />{insertRows.isPending ? "Saving…" : "Save All " + draftRows.length}</Button> : null}
             </div>
           </div>
 
@@ -272,7 +270,7 @@ function AssetManagementPage() {
         ) : records.error ? (
           <div className="p-6 text-sm text-destructive">{(records.error as Error).message}</div>
         ) : !records.data?.length ? (
-          <EmptyState message="No asset records found. Use Add Asset to upload an Excel or CSV asset register." />
+          <EmptyState message="No asset records found." />
         ) : (
           <AssetRegister
             records={records.data}
@@ -295,7 +293,7 @@ function AssetManagementPage() {
         category={category}
         categories={categories}
         onCategoryChange={setCategory}
-        pending={insertRows.isPending}
+        pending={insertRows.isPending || uploading}
         onClose={() => setShowAdd(false)}
         onUpload={handleFile}
         fileRef={dialogFileRef}
@@ -339,20 +337,40 @@ function AddAssetDialog({
   onSave: () => void;
   onSaveRow: (row: DraftRow) => void;
 }) {
+  const [name, setName] = useState("");
+  const [location, setLocation] = useState("");
+  const [quantity, setQuantity] = useState("1");
+
+  function addManualRow() {
+    if (!category.trim() || !name.trim()) return;
+    onRowsChange([...rows, {
+      draftId: crypto.randomUUID(), assetId: "Assigned on save",
+      columns: ["Name", "Location", "Quantity"], values: [name.trim(), location.trim(), quantity],
+      assetStatus: "Active", assetStatusDate: today(), editing: true,
+    }]);
+    setName(""); setLocation(""); setQuantity("1");
+  }
+
   return (
     <Dialog open={open} onOpenChange={(value) => !value && onClose()}>
       <DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-7xl">
         <DialogHeader><DialogTitle>Add Asset</DialogTitle></DialogHeader>
         <div className="grid gap-4">
           <div className="space-y-2">
-            <Label>Asset Category</Label>
-            <Input list="asset-category-options-dialog" placeholder="Select or enter Asset Category" value={category} onChange={(event) => onCategoryChange(event.target.value)} />
+            <Label htmlFor="new-asset-category">Asset Category *</Label>
+            <Input id="new-asset-category" list="asset-category-options-dialog" placeholder="Select or enter Asset Category" value={category} onChange={(event) => onCategoryChange(event.target.value)} />
             <datalist id="asset-category-options-dialog">{categories.map((item) => <option key={item} value={item} />)}</datalist>
           </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="space-y-2"><Label htmlFor="new-asset-name">Asset Name *</Label><Input id="new-asset-name" value={name} onChange={(event) => setName(event.target.value)} /></div>
+            <div className="space-y-2"><Label htmlFor="new-asset-location">Location</Label><Input id="new-asset-location" value={location} onChange={(event) => setLocation(event.target.value)} /></div>
+            <div className="space-y-2"><Label htmlFor="new-asset-quantity">Quantity</Label><Input id="new-asset-quantity" type="number" min="0" value={quantity} onChange={(event) => setQuantity(event.target.value)} /></div>
+          </div>
+          <div><Button type="button" variant="outline" disabled={pending || !category.trim() || !name.trim()} onClick={addManualRow}><Plus className="mr-2 size-4" />Add row</Button></div>
           <div className="rounded-xl border border-dashed p-5">
             <input ref={fileRef} type="file" className="hidden" accept=".xlsx,.xls,.csv,text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onChange={(event) => void onUpload(event.target.files?.[0])} />
             <div className="flex flex-wrap items-center gap-3">
-              <Button type="button" variant="outline" className="gap-2" onClick={() => fileRef.current?.click()}><Upload className="size-4" />Upload Excel / CSV</Button>
+              <Button type="button" variant="outline" disabled={pending} className="gap-2" onClick={() => fileRef.current?.click()}><Upload className="size-4" />Upload Excel / CSV</Button>
               <span className="text-xs text-muted-foreground">All uploaded columns are retained in their original order.</span>
             </div>
           </div>
@@ -360,7 +378,7 @@ function AddAssetDialog({
         </div>
         <DialogFooter>
           <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
-          <Button type="button" disabled={pending || !rows.length} onClick={onSave}>{pending ? "Saving…" : "Save All " + rows.length}</Button>
+          <Button type="button" disabled={pending || !rows.length || !category.trim()} onClick={onSave}>{pending ? "Saving…" : "Save All " + rows.length}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -373,7 +391,7 @@ function DraftTable({ rows, onRowsChange, onSaveRow, pending }: {
   onSaveRow: (row: DraftRow) => void;
   pending: boolean;
 }) {
-  const columns = rows[0]?.columns ?? [];
+  const columns = Array.from(new Set(rows.flatMap((row) => row.columns)));
 
   function patch(index: number, change: Partial<DraftRow>) {
     onRowsChange(rows.map((row, rowIndex) => rowIndex === index ? { ...row, ...change } : row));
@@ -403,11 +421,15 @@ function DraftTable({ rows, onRowsChange, onSaveRow, pending }: {
         {rows.map((row, rowIndex) => (
           <tr key={row.draftId} className="border-b border-border last:border-0">
             <td className="px-3 py-2 font-medium whitespace-nowrap">{row.assetId}</td>
-            {columns.map((_, columnIndex) => (
+            {columns.map((column) => {
+              const columnIndex = row.columns.indexOf(column);
+              if (columnIndex < 0) return <td key={column} className="px-3 py-2">—</td>;
+              return (
               <td key={columnIndex} className="px-3 py-2">
                 {row.editing ? <Input className="min-w-36" value={displayValue(row.values[columnIndex]) === "—" ? "" : displayValue(row.values[columnIndex])} onChange={(event) => patchValue(rowIndex, columnIndex, event.target.value)} /> : <span>{displayValue(row.values[columnIndex])}</span>}
               </td>
-            ))}
+              );
+            })}
             <td className="px-3 py-2">
               {row.editing ? (
                 <select value={row.assetStatus} onChange={(event) => patch(rowIndex, { assetStatus: event.target.value as AssetStatus })} className="h-9 rounded-md border border-input bg-background px-3 text-sm">
