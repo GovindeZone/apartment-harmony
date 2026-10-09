@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Swap Task Management and Resident mix dashboards and remove section headers; verify both views
+- [x] Swap Task Management and Resident mix dashboards and remove section headers; verify both views
 
 - [x] Repair and verify manual asset creation and Excel/CSV uploads
 
