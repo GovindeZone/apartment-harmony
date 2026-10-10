@@ -303,7 +303,9 @@ function Dashboard() {
                     )}
                   </tbody>
                 </table>
-    
+              </div>
+            </SectionCard>
+
             <SectionCard
               className="border-amber-200/80 bg-amber-50/40 dark:border-amber-900/70 dark:bg-amber-950/20"
               title="Visitor details"
@@ -331,8 +333,6 @@ function Dashboard() {
                   </tbody>
                 </table>
               </div>
-            </SectionCard>
-          </div>
             </SectionCard>
           </div>
         </section>

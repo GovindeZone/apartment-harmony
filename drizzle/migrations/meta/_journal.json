@@ -36,6 +36,13 @@
       "when": 1791362606645,
       "tag": "0004_create_asset_records",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791616238655,
+      "tag": "0005_create_ai_gateway_access_state",
+      "breakpoints": true
     }
   ]
 }
