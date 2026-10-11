@@ -32,6 +32,7 @@ import { cn } from "@/lib/utils";
 
 export const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/chat", label: "Data Assistant", icon: MessageSquare },
   {
     to: "/facility-management",
     label: "Facility Management",

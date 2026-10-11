@@ -14,3 +14,5 @@
 - Keep the auth screen in one shared layout across devices and constrain dashboard grid children so wide tables scroll locally rather than widening the page.
 - Keep dashboard tabs in the main grid column and notifications in an unconditional sibling aside so switching tabs or empty data never removes the notifications column.
 - Keep asset file normalization in the shared asset-import helper and let the database assign saved Asset IDs so manual and imported rows use the same sequence.
+- Keep data-chat model calls in a server-only module behind a bearer-verified streaming route; fixed read-only datasets require their module view permission and user-scoped RLS to prevent privilege escalation.
+- Keep unsaved conversations in the chat page's React state and key the chat window by its session ID so switching conversations cannot mix messages.
