@@ -19,6 +19,7 @@ import { Route as AuthenticatedAssetManagementRouteImport } from './routes/_auth
 import { Route as AuthenticatedAttendanceRouteImport } from './routes/_authenticated/attendance'
 import { Route as AuthenticatedAuditLogRouteImport } from './routes/_authenticated/audit-log'
 import { Route as AuthenticatedByeLawRepositoryRouteImport } from './routes/_authenticated/bye-law-repository'
+import { Route as AuthenticatedChatRouteImport } from './routes/_authenticated/chat'
 import { Route as AuthenticatedCheckListRouteImport } from './routes/_authenticated/check-list'
 import { Route as AuthenticatedChecklistMasterRouteImport } from './routes/_authenticated/checklist-master'
 import { Route as AuthenticatedContractorRouteImport } from './routes/_authenticated/contractor'
@@ -38,6 +39,7 @@ import { Route as AuthenticatedSecurityRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated/staff'
 import { Route as AuthenticatedUserManagementRouteImport } from './routes/_authenticated/user-management'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -92,6 +94,11 @@ const AuthenticatedByeLawRepositoryRoute =
     path: '/bye-law-repository',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedChatRoute = AuthenticatedChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedCheckListRoute = AuthenticatedCheckListRouteImport.update({
   id: '/check-list',
   path: '/check-list',
@@ -195,6 +202,11 @@ const AuthenticatedUserManagementRoute =
     path: '/user-management',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -206,6 +218,7 @@ export interface FileRoutesByFullPath {
   '/attendance': typeof AuthenticatedAttendanceRoute
   '/audit-log': typeof AuthenticatedAuditLogRoute
   '/bye-law-repository': typeof AuthenticatedByeLawRepositoryRoute
+  '/chat': typeof AuthenticatedChatRoute
   '/check-list': typeof AuthenticatedCheckListRoute
   '/checklist-master': typeof AuthenticatedChecklistMasterRoute
   '/contractor': typeof AuthenticatedContractorRoute
@@ -225,6 +238,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRoute
   '/staff': typeof AuthenticatedStaffRoute
   '/user-management': typeof AuthenticatedUserManagementRoute
+  '/api/chat': typeof ApiChatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -236,6 +250,7 @@ export interface FileRoutesByTo {
   '/attendance': typeof AuthenticatedAttendanceRoute
   '/audit-log': typeof AuthenticatedAuditLogRoute
   '/bye-law-repository': typeof AuthenticatedByeLawRepositoryRoute
+  '/chat': typeof AuthenticatedChatRoute
   '/check-list': typeof AuthenticatedCheckListRoute
   '/checklist-master': typeof AuthenticatedChecklistMasterRoute
   '/contractor': typeof AuthenticatedContractorRoute
@@ -255,6 +270,7 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRoute
   '/staff': typeof AuthenticatedStaffRoute
   '/user-management': typeof AuthenticatedUserManagementRoute
+  '/api/chat': typeof ApiChatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -268,6 +284,7 @@ export interface FileRoutesById {
   '/_authenticated/attendance': typeof AuthenticatedAttendanceRoute
   '/_authenticated/audit-log': typeof AuthenticatedAuditLogRoute
   '/_authenticated/bye-law-repository': typeof AuthenticatedByeLawRepositoryRoute
+  '/_authenticated/chat': typeof AuthenticatedChatRoute
   '/_authenticated/check-list': typeof AuthenticatedCheckListRoute
   '/_authenticated/checklist-master': typeof AuthenticatedChecklistMasterRoute
   '/_authenticated/contractor': typeof AuthenticatedContractorRoute
@@ -287,6 +304,7 @@ export interface FileRoutesById {
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/staff': typeof AuthenticatedStaffRoute
   '/_authenticated/user-management': typeof AuthenticatedUserManagementRoute
+  '/api/chat': typeof ApiChatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -300,6 +318,7 @@ export interface FileRouteTypes {
     | '/attendance'
     | '/audit-log'
     | '/bye-law-repository'
+    | '/chat'
     | '/check-list'
     | '/checklist-master'
     | '/contractor'
@@ -319,6 +338,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/staff'
     | '/user-management'
+    | '/api/chat'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -330,6 +350,7 @@ export interface FileRouteTypes {
     | '/attendance'
     | '/audit-log'
     | '/bye-law-repository'
+    | '/chat'
     | '/check-list'
     | '/checklist-master'
     | '/contractor'
@@ -349,6 +370,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/staff'
     | '/user-management'
+    | '/api/chat'
   id:
     | '__root__'
     | '/'
@@ -361,6 +383,7 @@ export interface FileRouteTypes {
     | '/_authenticated/attendance'
     | '/_authenticated/audit-log'
     | '/_authenticated/bye-law-repository'
+    | '/_authenticated/chat'
     | '/_authenticated/check-list'
     | '/_authenticated/checklist-master'
     | '/_authenticated/contractor'
@@ -380,12 +403,14 @@ export interface FileRouteTypes {
     | '/_authenticated/settings'
     | '/_authenticated/staff'
     | '/_authenticated/user-management'
+    | '/api/chat'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiChatRoute: typeof ApiChatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -458,6 +483,13 @@ declare module '@tanstack/react-router' {
       path: '/bye-law-repository'
       fullPath: '/bye-law-repository'
       preLoaderRoute: typeof AuthenticatedByeLawRepositoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/chat': {
+      id: '/_authenticated/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof AuthenticatedChatRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/check-list': {
@@ -593,6 +625,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUserManagementRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -604,6 +643,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAttendanceRoute: typeof AuthenticatedAttendanceRoute
   AuthenticatedAuditLogRoute: typeof AuthenticatedAuditLogRoute
   AuthenticatedByeLawRepositoryRoute: typeof AuthenticatedByeLawRepositoryRoute
+  AuthenticatedChatRoute: typeof AuthenticatedChatRoute
   AuthenticatedCheckListRoute: typeof AuthenticatedCheckListRoute
   AuthenticatedChecklistMasterRoute: typeof AuthenticatedChecklistMasterRoute
   AuthenticatedContractorRoute: typeof AuthenticatedContractorRoute
@@ -633,6 +673,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAttendanceRoute: AuthenticatedAttendanceRoute,
   AuthenticatedAuditLogRoute: AuthenticatedAuditLogRoute,
   AuthenticatedByeLawRepositoryRoute: AuthenticatedByeLawRepositoryRoute,
+  AuthenticatedChatRoute: AuthenticatedChatRoute,
   AuthenticatedCheckListRoute: AuthenticatedCheckListRoute,
   AuthenticatedChecklistMasterRoute: AuthenticatedChecklistMasterRoute,
   AuthenticatedContractorRoute: AuthenticatedContractorRoute,
@@ -661,6 +702,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiChatRoute: ApiChatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
