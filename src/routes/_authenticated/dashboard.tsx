@@ -42,12 +42,6 @@ function Dashboard() {
   const date = today();
 
   const todayAttendance = attendanceRows.filter((row) => row.attendance_date === date);
-  const communityStatusDate = new Date().toLocaleDateString("en-US", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-
   const departments = Array.from(new Set(staffRows.map((row) => row.department).filter(Boolean))).sort();
   const departmentSummary = departments.map((department) => {
     const departmentStaff = staffRows.filter((row) => row.status === "active" && row.department === department);
@@ -90,18 +84,13 @@ function Dashboard() {
   return (
     <AppShell
       title="Dashboard"
-      description={new Date().toLocaleDateString(undefined, {
+      description={"As of " + new Date().toLocaleDateString(undefined, {
         weekday: "long",
         day: "numeric",
         month: "long",
         year: "numeric",
       })}
     >
-      <div className="mb-5 rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent px-4 py-4 shadow-sm sm:px-5">
-        <h2 className="text-base font-semibold tracking-tight text-primary sm:text-lg">
-          Community Status as of {communityStatusDate}
-        </h2>
-      </div>
 
       <div className="grid min-w-0 grid-cols-1 items-start gap-5 md:grid-cols-[minmax(0,1fr)_240px] xl:grid-cols-[minmax(0,1fr)_280px]">
         <div className="min-w-0">
