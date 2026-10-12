@@ -58,7 +58,8 @@ export async function handleDataChat(request: Request) {
           auth: { persistSession: false, autoRefreshToken: false },
           global: { headers: { Authorization: authorization } },
         });
-        const { data, count, error } = await reader.from(name).select(CHAT_DATASETS[name].columns, { count: "exact" }).order(name === "asset_records" ? "asset_id" : name === "staff_attendance" ? "attendance_date" : name === "gate_entries" ? "entry_time" : name === "helpdesk_records" ? "created_at" : "id", { ascending: false }).limit(500).abortSignal(request.signal);
+        const columns: string = CHAT_DATASETS[name].columns;
+        const { data, count, error } = await reader.from(name).select(columns, { count: "exact" }).order(name === "asset_records" ? "asset_id" : name === "staff_attendance" ? "attendance_date" : name === "gate_entries" ? "entry_time" : name === "helpdesk_records" ? "created_at" : "id", { ascending: false }).limit(500).abortSignal(request.signal);
         if (error) throw new Error(`Could not read ${name}. Please try again later.`);
         return { dataset: name, retrievedAt: new Date().toISOString(), totalRecords: count, truncated: (count ?? 0) > (data?.length ?? 0), records: data ?? [] };
       },
