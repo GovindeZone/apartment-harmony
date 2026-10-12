@@ -16,9 +16,9 @@ import logo from "@/assets/iafoa-logo.jpeg.asset.json";
 
 export const Route = createFileRoute("/_authenticated/chat")({
   head: () => ({ meta: [
-    { title: "Data Assistant — Indus Anantya Apartment" },
+    { title: "Chatbot — Indus Anantya Apartment" },
     { name: "description", content: "Ask questions about current apartment operations and records." },
-    { property: "og:title", content: "Data Assistant — Indus Anantya Apartment" },
+    { property: "og:title", content: "Chatbot — Indus Anantya Apartment" },
     { property: "og:description", content: "Read-only answers about apartment operations." },
     { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
   ] }),
@@ -49,7 +49,7 @@ function DataChat() {
       setChats([next]); setActive(next.id);
     } else { setChats(remaining); if (active === id) setActive(remaining[0]?.id ?? "initial"); }
   };
-  return <AppShell title="Data Assistant" description="Indus Anantya Apartment">
+  return <AppShell title="Chatbot" description="Indus Anantya Apartment">
     <div className="grid min-w-0 gap-5 md:grid-cols-[220px_minmax(0,1fr)]">
       <aside className="min-w-0 border-b border-border pb-4 md:border-b-0 md:border-r md:pr-4">
         <Button className="mb-3 w-full gap-2" onClick={create}><Plus className="size-4" />New conversation</Button>
@@ -93,7 +93,7 @@ function ChatWindow({ chat, onUpdate }: { chat: SessionChat; onUpdate: (id: stri
   return <div className="flex h-[650px] min-h-96 min-w-0 flex-col md:h-[calc(100dvh-200px)]">
     <Conversation className="min-h-0">
       <ConversationContent className="mx-auto w-full max-w-3xl gap-6 px-1">
-        {!messages.length && <ConversationEmptyState title="Indus Anantya Data Assistant" description="" icon={<img src={logo.url} alt="IAFOA" className="h-20 w-auto object-contain" />} />}
+        {!messages.length && <ConversationEmptyState title="Indus Anantya Chatbot" description="" icon={<img src={logo.url} alt="IAFOA" className="h-20 w-auto object-contain" />} />}
         {messages.map((message) => <Message key={message.id} from={message.role}>
           <MessageContent>
             {message.parts.map((part, index) => {

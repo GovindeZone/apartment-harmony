@@ -6,6 +6,7 @@ import {
   Users,
   ShieldCheck,
   MessageSquare,
+  Bot,
   Home,
   FileBarChart,
   Settings as SettingsIcon,
@@ -32,7 +33,7 @@ import { cn } from "@/lib/utils";
 
 export const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/chat", label: "Data Assistant", icon: MessageSquare },
+  { to: "/chat", label: "Chatbot", icon: Bot },
   {
     to: "/facility-management",
     label: "Facility Management",
