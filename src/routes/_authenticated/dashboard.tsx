@@ -83,7 +83,7 @@ function Dashboard() {
 
   return (
     <AppShell
-      title="Dashboard"
+      title="Community Dashboard"
       description={"As of " + new Date().toLocaleDateString(undefined, {
         weekday: "long",
         day: "numeric",
