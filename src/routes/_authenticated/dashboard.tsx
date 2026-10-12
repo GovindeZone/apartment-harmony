@@ -125,14 +125,14 @@ function Dashboard() {
 
       {activeTab === "facility" ? (
         <section>
-          <div className="grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-2 [&>*]:min-w-0">
+          <div className="grid min-w-0 grid-cols-1 items-start gap-4 min-[1100px]:grid-cols-2 [&>*]:min-w-0">
             <SectionCard
               className="border-sky-200/80 bg-sky-50/40 dark:border-sky-900/70 dark:bg-sky-950/20"
               title="Staff attendance by department"
               description="Present, absent and total active staff today"
             >
               <div className="overflow-x-auto">
-                <table className="w-full text-xs sm:text-sm [&_th]:px-2 [&_td]:px-2 sm:[&_th]:px-4 sm:[&_td]:px-4">
+                <table className="w-full table-fixed text-xs [&_th]:break-words [&_th]:px-2 [&_td]:break-words [&_td]:px-2">
                   <thead className="bg-sky-100/70 dark:bg-sky-900/30">
                     <tr className="border-b border-sky-200/70 text-left text-sky-900 dark:border-sky-800 dark:text-sky-100">
                       <th className="px-4 py-3">Department</th>
@@ -155,31 +155,14 @@ function Dashboard() {
               </div>
             </SectionCard>
 
-            <SectionCard
-              className="border-violet-200/80 bg-violet-50/40 dark:border-violet-900/70 dark:bg-violet-950/20"
-              title="Resident mix"
-              description="Owners and tenant categories"
-            >
-               <div className="h-72 min-w-0 sm:h-80 sm:p-4">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={residentChart}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                    <XAxis dataKey="category" tickLine={false} axisLine={false} fontSize={11} interval={0} height={60} />
-                    <YAxis tickLine={false} axisLine={false} allowDecimals={false} fontSize={12} />
-                    <Tooltip />
-                    <Bar dataKey="count" name="Residents" fill="var(--chart-1)" radius={[6, 6, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </SectionCard>
-
+            <div className="grid min-w-0 gap-4 [&>*]:min-w-0">
             <SectionCard
               className="border-emerald-200/80 bg-emerald-50/40 dark:border-emerald-900/70 dark:bg-emerald-950/20"
               title="Flat occupancy"
               description="Current flat status"
             >
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full table-fixed text-xs [&_th]:px-2 [&_td]:px-2">
                   <thead className="bg-emerald-100/70 dark:bg-emerald-900/30">
                     <tr className="border-b border-emerald-200/70 text-left text-emerald-900 dark:border-emerald-800 dark:text-emerald-100">
                       <th className="px-4 py-3">Status</th>
@@ -198,13 +181,13 @@ function Dashboard() {
                   </tbody>
                 </table>
               </div>
-              <div className="mt-4 flex items-center gap-2 text-sm font-medium">
+              <div className="mx-2 mt-3 flex items-center gap-2 text-xs font-medium">
                 <Building className="h-4 w-4" /> Vacant flat numbers
               </div>
-              <div className="mt-2 flex flex-wrap gap-2">
+              <div className="mx-2 mb-3 mt-2 flex flex-wrap gap-2">
                 {vacantFlats.length ? vacantFlats.map((flat) => (
-                  <span key={flat.id} className="rounded-md border border-border px-2 py-1 text-sm">{flat.flat_no}</span>
-                )) : <span className="text-sm text-muted-foreground">No vacant flats</span>}
+                  <span key={flat.id} className="rounded-md border border-border px-2 py-1 text-xs">{flat.flat_no}</span>
+                )) : <span className="text-xs text-muted-foreground">No vacant flats</span>}
               </div>
             </SectionCard>
 
@@ -214,24 +197,47 @@ function Dashboard() {
               description="Active residents by category"
             >
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full table-fixed text-xs [&_th]:px-2 [&_td]:px-2">
                   <thead className="bg-violet-100/70 dark:bg-violet-900/30">
                     <tr className="border-b border-violet-200/70 text-left text-violet-900 dark:border-violet-800 dark:text-violet-100">
-                      <th className="px-4 py-3">Resident</th>
-                      <th className="px-4 py-3 text-right">No. of owner</th>
-                      <th className="px-4 py-3 text-right">No. of tenant (family)</th>
-                      <th className="px-4 py-3 text-right">No. of tenant (bachelors)</th>
+                      <th className="px-4 py-3">Resident category</th>
+                      <th className="px-4 py-3 text-right">Residents</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td className="px-4 py-3 font-medium">Resident</td>
+                    <tr className="border-b border-border">
+                      <td className="px-4 py-3 font-medium">Owners</td>
                       <td className="px-4 py-3 text-right">{owners}</td>
+                    </tr>
+                    <tr className="border-b border-border">
+                      <td className="px-4 py-3 font-medium">Tenants (family)</td>
                       <td className="px-4 py-3 text-right">{familyTenants}</td>
+                    </tr>
+                    <tr>
+                      <td className="px-4 py-3 font-medium">Tenants (bachelors)</td>
                       <td className="px-4 py-3 text-right">{bachelorTenants}</td>
                     </tr>
                   </tbody>
                 </table>
+              </div>
+            </SectionCard>
+            </div>
+
+            <SectionCard
+              className="min-[1100px]:col-span-2 border-violet-200/80 bg-violet-50/40 dark:border-violet-900/70 dark:bg-violet-950/20"
+              title="Resident mix"
+              description="Owners and tenant categories"
+            >
+              <div className="h-72 min-w-0 sm:h-80 sm:p-4">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={residentChart}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                    <XAxis dataKey="category" tickLine={false} axisLine={false} fontSize={11} interval={0} height={60} />
+                    <YAxis tickLine={false} axisLine={false} allowDecimals={false} fontSize={12} />
+                    <Tooltip />
+                    <Bar dataKey="count" name="Residents" fill="var(--chart-1)" radius={[6, 6, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </SectionCard>
 
