@@ -33,36 +33,9 @@ import { cn } from "@/lib/utils";
 
 export const NAV = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/chat", label: "Chatbot", icon: Bot },
-  {
-    to: "/facility-management",
-    label: "Facility Management",
-    icon: ClipboardList,
-    group: [
-      { to: "/attendance", label: "Attendance", icon: CalendarCheck },
-      { to: "/security", label: "Security", icon: ShieldCheck },
-      { to: "/asset-management", label: "Asset Management", icon: Boxes },
-      { to: "/helpdesk", label: "Help Desk", icon: MessageSquare },
-    ],
-  },
-  {
-    to: "/mc-handbook",
-    label: "MC Mangement",
-    icon: UsersRound,
-    group: [
-      { to: "/staff", label: "Staff", icon: Users },
-      { to: "/official-records", label: "Official Records", icon: FileText },
-      { to: "/contractor", label: "Contractor", icon: Building2 },
-      { to: "/checklist-master", label: "Checklist Master", icon: ListChecks },
-      { to: "/holiday-list", label: "Holiday List", icon: CalendarCheck },
-      { to: "/letter-head", label: "Letter Head", icon: FileText },
-      { to: "/residents", label: "Residents", icon: Home },
-      { to: "/facility-management", label: "Task Management", icon: ClipboardList },
-    ],
-  },
   {
     to: "/check-list",
-    label: "Checklists",
+    label: "Checklist",
     icon: ListChecks,
     group: [
       { to: "/check-list", tab: "fm", label: "FM Checklist", icon: ListChecks },
@@ -76,7 +49,33 @@ export const NAV = [
     ],
   },
   { to: "/reports", label: "Reports", icon: FileBarChart },
-] as const;
+  {
+    to: "/facility-management",
+    label: "Facility Management",
+    icon: ClipboardList,
+    group: [
+      { to: "/attendance", label: "Attendance", icon: CalendarCheck },
+      { to: "/security", label: "Security", icon: ShieldCheck },
+      { to: "/asset-management", label: "Asset Management", icon: Boxes },
+      { to: "/helpdesk", label: "Help Desk", icon: MessageSquare },
+    ],
+  },
+  {
+    to: "/mc-handbook",
+    label: "MC Management",
+    icon: UsersRound,
+    group: [
+      { to: "/staff", label: "Staff", icon: Users },
+      { to: "/official-records", label: "Official Records", icon: FileText },
+      { to: "/contractor", label: "Contractor", icon: Building2 },
+      { to: "/checklist-master", label: "Checklist Master", icon: ListChecks },
+      { to: "/holiday-list", label: "Holiday List", icon: CalendarCheck },
+      { to: "/letter-head", label: "Letter Head", icon: FileText },
+      { to: "/residents", label: "Residents", icon: Home },
+      { to: "/facility-management", label: "Task Management", icon: ClipboardList },
+    ],
+  },
+  { to: "/chat", label: "Chatbot", icon: Bot },] as const;
 
 function NavGroup({ label, icon: Icon, children }: {
   label: string;
