@@ -83,7 +83,7 @@ function Dashboard() {
 
   return (
     <AppShell
-      title="Community Dashboard"
+      title="Community Status | Dashboard"
       description={"As of " + new Date().toLocaleDateString(undefined, {
         weekday: "long",
         day: "numeric",
@@ -178,6 +178,10 @@ function Dashboard() {
                       <td className="px-4 py-3 font-medium">Vacant Flats</td>
                       <td className="px-4 py-3 text-right">{vacantFlats.length}</td>
                     </tr>
+                    <tr className="border-t-2 border-emerald-200 font-semibold dark:border-emerald-800">
+                      <td className="px-4 py-3">Total Flats</td>
+                      <td className="px-4 py-3 text-right">{flatRows.length}</td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
@@ -216,6 +220,10 @@ function Dashboard() {
                     <tr>
                       <td className="px-4 py-3 font-medium">Tenants (bachelors)</td>
                       <td className="px-4 py-3 text-right">{bachelorTenants}</td>
+                    </tr>
+                    <tr className="border-t-2 border-violet-200 font-semibold dark:border-violet-800">
+                      <td className="px-4 py-3">Total Flats</td>
+                      <td className="px-4 py-3 text-right">{flatRows.length}</td>
                     </tr>
                   </tbody>
                 </table>
