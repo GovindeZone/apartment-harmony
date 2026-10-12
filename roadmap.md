@@ -1,9 +1,9 @@
 # Roadmap
 
-- [ ] Verify MC Dashboard stacks Task Management above Visitor details
-- [ ] Add read-only data chatbot with separate session-only conversations
-- [ ] Verify chatbot permissions, live answers, conversation switching, and Stop
-- [ ] Check dashboard header and both dashboard views
+- [x] Verify MC Dashboard stacks Task Management above Visitor details
+- [x] Add read-only data chatbot with separate session-only conversations
+- [x] Verify chatbot permission-policy tests, live answers, conversation switching, and Stop
+- [x] Check dashboard header and both dashboard views on desktop and mobile
 
 - [x] Swap Task Management and Resident mix dashboards and remove section headers; verify both views
 
