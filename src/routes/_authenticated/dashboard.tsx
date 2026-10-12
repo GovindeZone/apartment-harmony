@@ -49,6 +49,14 @@ function Dashboard() {
     const present = todayAttendance.filter((row) => departmentIds.has(row.staff_id) && row.status === "present").length;
     return { department, present, absent: Math.max(departmentStaff.length - present, 0), total: departmentStaff.length };
   });
+  const departmentTotals = departmentSummary.reduce(
+    (totals, row) => ({
+      present: totals.present + row.present,
+      absent: totals.absent + row.absent,
+      total: totals.total + row.total,
+    }),
+    { present: 0, absent: 0, total: 0 },
+  );
 
   const occupied = flatRows.filter((flat) => flat.status === "occupied").length;
   const vacantFlats = flatRows.filter((flat) => flat.status !== "occupied");
@@ -150,6 +158,12 @@ function Dashboard() {
                         <td className="px-4 py-3 text-right">{row.total}</td>
                       </tr>
                     ))}
+                    <tr className="border-t-2 border-sky-300 bg-sky-100 font-bold text-sky-950 dark:border-sky-700 dark:bg-sky-900/60 dark:text-sky-50">
+                      <td className="px-4 py-3">Total</td>
+                      <td className="px-4 py-3 text-right">{departmentTotals.present}</td>
+                      <td className="px-4 py-3 text-right">{departmentTotals.absent}</td>
+                      <td className="px-4 py-3 text-right">{departmentTotals.total}</td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
