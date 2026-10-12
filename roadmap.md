@@ -3,6 +3,7 @@
 - [ ] Verify MC Dashboard stacks Task Management above Visitor details
 - [ ] Add read-only data chatbot with separate session-only conversations
 - [ ] Verify chatbot permissions, live answers, conversation switching, and Stop
+- [ ] Check dashboard header and both dashboard views
 
 - [x] Swap Task Management and Resident mix dashboards and remove section headers; verify both views
 
