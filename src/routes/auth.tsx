@@ -225,6 +225,9 @@ function AuthPage() {
                 <p className="mt-2 text-sm font-medium text-muted-foreground">
                   Indus Anantya Apartment, Egattur, Chennai
                 </p>
+                <p className="mt-2 text-base font-semibold text-foreground text-center">
+                  Management Committee Portal
+                </p>
               </div>
             )}
             {resetMode && (
