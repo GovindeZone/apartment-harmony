@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { createOpenAI } from "@ai-sdk/openai";
-import { convertToModelMessages, streamText, tool, stepCountIs, validateUIMessages } from "ai";
+import { convertToModelMessages, streamText, tool, stepCountIs, validateUIMessages, type UIMessage, type InferUITools } from "ai";
 import { z } from "zod";
 import type { Database } from "@/integrations/supabase/types";
 import { CHAT_DATASETS, canReadChatDataset, type ChatDataset } from "./data-chat-policy";
@@ -53,14 +53,20 @@ export async function handleDataChat(request: Request) {
         if (!(dataset in CHAT_DATASETS) || !allowed.includes(dataset as ChatDataset)) throw new Error("You do not have permission to read this module.");
         const name = dataset as ChatDataset;
         // Fixed tables and projections only. The model cannot provide SQL, columns or filters.
-        const { data, count, error } = await db.from(name).select(CHAT_DATASETS[name].columns, { count: "exact" }).order(name === "asset_records" ? "asset_id" : name === "staff_attendance" ? "attendance_date" : name === "gate_entries" ? "entry_time" : name === "helpdesk_records" ? "created_at" : "id", { ascending: false }).limit(500).abortSignal(request.signal);
+        // The projection is a runtime allowlist; avoid expanding generated unions for dynamic selects.
+        const reader = createClient(url, key, {
+          auth: { persistSession: false, autoRefreshToken: false },
+          global: { headers: { Authorization: authorization } },
+        });
+        const columns: string = CHAT_DATASETS[name].columns;
+        const { data, count, error } = await reader.from(name).select(columns, { count: "exact" }).order(name === "asset_records" ? "asset_id" : name === "staff_attendance" ? "attendance_date" : name === "gate_entries" ? "entry_time" : name === "helpdesk_records" ? "created_at" : "id", { ascending: false }).limit(500).abortSignal(request.signal);
         if (error) throw new Error(`Could not read ${name}. Please try again later.`);
         return { dataset: name, retrievedAt: new Date().toISOString(), totalRecords: count, truncated: (count ?? 0) > (data?.length ?? 0), records: data ?? [] };
       },
     }),
   };
   let messages;
-  try { messages = await validateUIMessages({ messages: body.messages, tools }); }
+  try { messages = await validateUIMessages<UIMessage<unknown, {}, InferUITools<typeof tools>>>({ messages: body.messages, tools }); }
   catch { return Response.json({ message: "Invalid message history. Start a new conversation." }, { status: 400 }); }
   const run = createLovableAiGatewayRunIdFetch();
   let upstreamFailure: { status: number; message: string } | undefined;
