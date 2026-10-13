@@ -168,26 +168,6 @@ function Dashboard() {
                 </table>
               </div>
             </SectionCard>
-
-
-            <SectionCard
-              className="min-[1100px]:col-span-1 border-violet-200/80 bg-violet-50/40 dark:border-violet-900/70 dark:bg-violet-950/20"
-              title="Resident mix"
-              description="Owners and tenant categories"
-            >
-              <div className="h-72 min-w-0 sm:h-80 sm:p-4">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={residentChart}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                    <XAxis dataKey="category" tickLine={false} axisLine={false} fontSize={11} interval={0} height={60} />
-                    <YAxis tickLine={false} axisLine={false} allowDecimals={false} fontSize={12} />
-                    <Tooltip />
-                    <Bar dataKey="count" name="Residents" fill="var(--chart-1)" radius={[6, 6, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </SectionCard>
-
             <div className="grid min-w-0 gap-4 [&>*]:min-w-0">
             <SectionCard
               className="border-emerald-200/80 bg-emerald-50/40 dark:border-emerald-900/70 dark:bg-emerald-950/20"
