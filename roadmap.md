@@ -1,7 +1,7 @@
 # Roadmap
 
-- [ ] Rename Data Assistant to Chatbot with a robot icon
-- [ ] Arrange Facility tables beside Staff attendance and Resident mix below; verify layout
+- [x] Rename Data Assistant to Chatbot with a robot icon
+- [x] Arrange Facility tables beside Staff attendance and Resident mix below; verify layout
 
 - [x] Verify MC Dashboard stacks Task Management above Visitor details
 - [x] Add read-only data chatbot with separate session-only conversations
