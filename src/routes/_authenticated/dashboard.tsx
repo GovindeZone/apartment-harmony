@@ -100,7 +100,7 @@ function Dashboard() {
       })}
     >
 
-      <div className="grid min-w-0 grid-cols-1 items-start gap-5 md:grid-cols-[minmax(0,1fr)_240px] xl:grid-cols-[minmax(0,1fr)_280px]">
+      <div className="dashboard-content grid min-w-0 grid-cols-1 items-start gap-5 md:grid-cols-[minmax(0,1fr)_240px] xl:grid-cols-[minmax(0,1fr)_280px]">
         <div className="min-w-0">
       <div className="mb-5 flex w-full max-w-xl rounded-xl bg-muted/70 p-1">
         <Button
@@ -140,7 +140,8 @@ function Dashboard() {
               description="Present, absent and total active staff today"
             >
               <div className="overflow-x-auto">
-                <table className="w-full table-fixed text-xs [&_th]:break-words [&_th]:px-2 [&_td]:break-words [&_td]:px-2">
+                <table className="w-full min-w-[360px] table-fixed text-xs [&_th]:px-2 [&_td]:px-2">
+                  <colgroup><col className="w-[40%]" /><col className="w-[20%]" /><col className="w-[20%]" /><col className="w-[20%]" /></colgroup>
                   <thead className="bg-sky-100/70 dark:bg-sky-900/30">
                     <tr className="border-b border-sky-200/70 text-left text-sky-900 dark:border-sky-800 dark:text-sky-100">
                       <th className="px-4 py-3">Department</th>
@@ -327,7 +328,7 @@ function Dashboard() {
               description="Today's visitor entries by resident category"
             >
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full min-w-[360px] table-fixed text-xs [&_th]:px-2 [&_td]:px-2 sm:text-sm">
                   <thead className="bg-amber-100/70 dark:bg-amber-900/30">
                     <tr className="border-b border-amber-200/70 text-left text-amber-900 dark:border-amber-800 dark:text-amber-100">
                       <th className="px-4 py-3">Visitor</th>
