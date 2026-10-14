@@ -119,6 +119,60 @@ export type Database = {
         }
         Relationships: []
       }
+      asset_upload_history: {
+        Row: {
+          asset_group_category: string
+          asset_type: string
+          content_type: string | null
+          deleted_at: string | null
+          deleted_by: string | null
+          deletion_reason: string | null
+          file_extension: string
+          file_size_bytes: number
+          id: string
+          is_deleted: boolean
+          original_file_name: string
+          remarks: string
+          storage_path: string
+          uploaded_at: string
+          uploaded_by: string
+        }
+        Insert: {
+          asset_group_category: string
+          asset_type: string
+          content_type?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          deletion_reason?: string | null
+          file_extension: string
+          file_size_bytes: number
+          id?: string
+          is_deleted?: boolean
+          original_file_name: string
+          remarks: string
+          storage_path: string
+          uploaded_at?: string
+          uploaded_by: string
+        }
+        Update: {
+          asset_group_category?: string
+          asset_type?: string
+          content_type?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          deletion_reason?: string | null
+          file_extension?: string
+          file_size_bytes?: number
+          id?: string
+          is_deleted?: boolean
+          original_file_name?: string
+          remarks?: string
+          storage_path?: string
+          uploaded_at?: string
+          uploaded_by?: string
+        }
+        Relationships: []
+      }
       bye_law_repository: {
         Row: {
           bye_law_type: string
