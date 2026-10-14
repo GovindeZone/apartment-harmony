@@ -1,5 +1,9 @@
 # Roadmap
 
+- [x] Hide the Lovable watermark
+- [ ] Add phone installation in the left navigation
+- [ ] Wrap the mobile header and dashboard text at word boundaries; verify phone and desktop views
+
 - [x] Rename Data Assistant to Chatbot with a robot icon
 - [x] Arrange Facility tables beside Staff attendance and Resident mix below; verify layout
 
