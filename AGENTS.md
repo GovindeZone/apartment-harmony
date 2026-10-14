@@ -17,3 +17,4 @@
 - Keep asset file normalization in the shared asset-import helper and let the database assign saved Asset IDs so manual and imported rows use the same sequence.
 - Keep data-chat model calls in a server-only module behind a bearer-verified streaming route; fixed read-only datasets require their module view permission and user-scoped RLS to prevent privilege escalation.
 - Keep unsaved conversations in the chat page's React state and key the chat window by its session ID so switching conversations cannot mix messages.
+- Use manifest-only home-screen installation with shared navigation install controls; do not register app-shell service workers because offline support is not requested.

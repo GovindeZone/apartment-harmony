@@ -168,3 +168,10 @@
   border: 1px solid var(--color-border);
   background-color: var(--color-surface);
 }
+
+.dashboard-content :is(h2, p, th, td, button, span) {
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+  white-space: normal;
+}
