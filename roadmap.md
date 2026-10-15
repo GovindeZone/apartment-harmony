@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Replace the app logo and installation icons while preserving the Letter Head logo; verify rendering
+
 - [x] Hide the Lovable watermark
 - [x] Add phone installation in the left navigation
 - [x] Wrap the mobile header and dashboard text at word boundaries; verify phone and desktop views
