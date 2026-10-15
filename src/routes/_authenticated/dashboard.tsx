@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Building, Bell } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { SectionCard } from "@/components/ui-bits";
@@ -64,7 +63,7 @@ function Dashboard() {
   const familyTenants = residentRows.filter((resident) => resident.status === "active" && resident.resident_type === "tenant" && resident.occupant_type === "family").length;
   const bachelorTenants = residentRows.filter((resident) => resident.status === "active" && resident.resident_type === "tenant" && resident.occupant_type === "bachelors").length;
 
-  const residentChart = [
+  const residentMix = [
     { category: "Owners", count: owners },
     { category: "Tenants – Family", count: familyTenants },
     { category: "Tenants – Bachelors", count: bachelorTenants },
@@ -133,7 +132,8 @@ function Dashboard() {
 
       {activeTab === "facility" ? (
         <section>
-          <div className="grid min-w-0 grid-cols-1 items-start gap-4 min-[1100px]:grid-cols-2 [&>*]:min-w-0">
+          <div className="grid min-w-0 grid-cols-1 items-start gap-3 min-[1100px]:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] [&>*]:min-w-0 [&_table]:table-auto [&_th]:align-middle [&_td]:align-middle [&_th]:py-2 [&_td]:py-2 [&_h2]:text-sm [&_[data-slot=card]]:gap-0 [&_[data-slot=card]>div:first-child]:px-3 [&_[data-slot=card]>div:first-child]:py-3">
+            <div className="grid min-w-0 gap-3 [&>*]:min-w-0">
             <SectionCard
               className="border-sky-200/80 bg-sky-50/40 dark:border-sky-900/70 dark:bg-sky-950/20"
               title="Staff attendance by department"
@@ -169,7 +169,30 @@ function Dashboard() {
                 </table>
               </div>
             </SectionCard>
-            <div className="grid min-w-0 gap-4 [&>*]:min-w-0">
+            <SectionCard
+              className="border-border bg-card"
+              title="Resident mix"
+              description="Owners and tenant categories"
+            >
+              <table className="w-full text-xs">
+                <thead className="bg-muted text-muted-foreground">
+                  <tr className="border-b border-border">
+                    {residentMix.map((row) => (
+                      <th key={row.category} scope="col" className="px-2 py-2 text-center font-medium">{row.category}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    {residentMix.map((row) => (
+                      <td key={row.category} className="px-2 py-2 text-center font-semibold tabular-nums">{row.count}</td>
+                    ))}
+                  </tr>
+                </tbody>
+              </table>
+            </SectionCard>
+            </div>
+            <div className="grid min-w-0 gap-3 [&>*]:min-w-0">
             <SectionCard
               className="border-emerald-200/80 bg-emerald-50/40 dark:border-emerald-900/70 dark:bg-emerald-950/20"
               title="Flat occupancy"
@@ -245,23 +268,6 @@ function Dashboard() {
             </SectionCard>
             </div>
 
-            <SectionCard
-              className="min-[1100px]:col-span-2 border-violet-200/80 bg-violet-50/40 dark:border-violet-900/70 dark:bg-violet-950/20"
-              title="Resident mix"
-              description="Owners and tenant categories"
-            >
-              <div className="h-72 min-w-0 sm:h-80 sm:p-4">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={residentChart}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                    <XAxis dataKey="category" tickLine={false} axisLine={false} fontSize={11} interval={0} height={60} />
-                    <YAxis tickLine={false} axisLine={false} allowDecimals={false} fontSize={12} />
-                    <Tooltip />
-                    <Bar dataKey="count" name="Residents" fill="var(--chart-1)" radius={[6, 6, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </SectionCard>
           </div>
         </section>
       ) : (
