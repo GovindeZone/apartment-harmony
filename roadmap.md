@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Replace the app logo and installation icons while preserving the Letter Head logo; verify rendering
+- [x] Replace the app logo and installation icons while preserving the Letter Head logo; verify rendering
 
 - [x] Hide the Lovable watermark
 - [x] Add phone installation in the left navigation
