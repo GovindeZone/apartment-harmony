@@ -1,3 +1,4 @@
+import { DepartmentIntegrationSettings } from "@/components/DepartmentIntegrations";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
@@ -94,7 +95,8 @@ function IntegrationMasterPage() {
 
   return (
     <AppShell title="App Integration" description="Configure external integrations and application backup settings">
-      <div className="grid gap-5 lg:grid-cols-2">
+      <DepartmentIntegrationSettings />
+      <div className="mt-5 grid gap-5 lg:grid-cols-2">
         <Card>
           <CardHeader><CardTitle>Apartment Adda</CardTitle></CardHeader>
           <CardContent className="space-y-4">

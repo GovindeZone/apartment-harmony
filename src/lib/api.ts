@@ -5,7 +5,7 @@ export type Flat = {
   id: string; flat_no: string; block: string; zone: string; floor: number; bedrooms: number; area_sqft: number | null; status: string;
 };
 export type Resident = {
-  id: string; flat_id: string | null; full_name: string; resident_type: string; occupant_type: string;
+  bhk: string | null; flat_sqft: number | null; id: string; flat_id: string | null; full_name: string; resident_type: string; occupant_type: string;
   phone: string | null; phone_country_code?: string | null; whatsapp: string | null; whatsapp_country_code?: string | null;
   email: string | null; move_in_date: string | null; move_out_date: string | null; status: string; notes?: string | null; flats?: Flat | null;
 };

@@ -40,6 +40,7 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated/staff'
 import { Route as AuthenticatedUserManagementRouteImport } from './routes/_authenticated/user-management'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as ApiDepartmentIntegrationRouteImport } from './routes/api/department-integration'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -207,6 +208,12 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiDepartmentIntegrationRoute =
+  ApiDepartmentIntegrationRouteImport.update({
+    id: '/api/department-integration',
+    path: '/api/department-integration',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -239,6 +246,7 @@ export interface FileRoutesByFullPath {
   '/staff': typeof AuthenticatedStaffRoute
   '/user-management': typeof AuthenticatedUserManagementRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/department-integration': typeof ApiDepartmentIntegrationRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -271,6 +279,7 @@ export interface FileRoutesByTo {
   '/staff': typeof AuthenticatedStaffRoute
   '/user-management': typeof AuthenticatedUserManagementRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/department-integration': typeof ApiDepartmentIntegrationRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -305,6 +314,7 @@ export interface FileRoutesById {
   '/_authenticated/staff': typeof AuthenticatedStaffRoute
   '/_authenticated/user-management': typeof AuthenticatedUserManagementRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/department-integration': typeof ApiDepartmentIntegrationRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -339,6 +349,7 @@ export interface FileRouteTypes {
     | '/staff'
     | '/user-management'
     | '/api/chat'
+    | '/api/department-integration'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -371,6 +382,7 @@ export interface FileRouteTypes {
     | '/staff'
     | '/user-management'
     | '/api/chat'
+    | '/api/department-integration'
   id:
     | '__root__'
     | '/'
@@ -404,6 +416,7 @@ export interface FileRouteTypes {
     | '/_authenticated/staff'
     | '/_authenticated/user-management'
     | '/api/chat'
+    | '/api/department-integration'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -411,6 +424,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ApiChatRoute: typeof ApiChatRoute
+  ApiDepartmentIntegrationRoute: typeof ApiDepartmentIntegrationRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -632,6 +646,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/department-integration': {
+      id: '/api/department-integration'
+      path: '/api/department-integration'
+      fullPath: '/api/department-integration'
+      preLoaderRoute: typeof ApiDepartmentIntegrationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -703,6 +724,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ApiChatRoute: ApiChatRoute,
+  ApiDepartmentIntegrationRoute: ApiDepartmentIntegrationRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,3 +1,4 @@
+import { DepartmentSheetSummary } from "@/components/DepartmentIntegrations";
 import { useMemo, useState } from "react";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -98,7 +99,8 @@ function FacilityManagementPage() {
       description="Plan, assign and track facility tasks"
       actions={<Button className="gap-2" onClick={() => setEditing(null)}><Plus className="size-4" />Add Task</Button>}
     >
-      <div className="grid gap-3 sm:grid-cols-3">
+      <DepartmentSheetSummary department="facility_manager" />
+      <div className="mt-5 grid gap-3 sm:grid-cols-3">
         <div className="rounded-2xl border border-border bg-card p-4"><p className="text-xs text-muted-foreground">Tasks shown</p><p className="mt-1 text-2xl font-semibold">{rows.length}</p></div>
         <div className="rounded-2xl border border-border bg-card p-4"><p className="text-xs text-muted-foreground">Started / In-Progress</p><p className="mt-1 text-2xl font-semibold">{activeCount}</p></div>
         <div className="rounded-2xl border border-border bg-card p-4"><p className="text-xs text-muted-foreground">Completed</p><p className="mt-1 text-2xl font-semibold">{completedCount}</p></div>
