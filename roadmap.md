@@ -2,7 +2,7 @@
 
 - [ ] Complete approved English presenter-led product video with real app screens and verify picture/audio
 
-- [ ] Replace Resident mix chart with a compact horizontal table and verify tightly aligned content-height dashboard columns
+- [x] Replace Resident mix chart with a compact horizontal table and verify tightly aligned content-height dashboard columns
 
 - [x] Replace the app logo and installation icons while preserving the Letter Head logo; verify rendering
 
