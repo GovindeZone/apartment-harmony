@@ -174,22 +174,27 @@ function Dashboard() {
               title="Resident mix"
               description="Owners and tenant categories"
             >
-              <table className="w-full text-xs">
-                <thead className="bg-muted text-muted-foreground">
-                  <tr className="border-b border-border">
-                    {residentMix.map((row) => (
-                      <th key={row.category} scope="col" className="px-2 py-2 text-center font-medium">{row.category}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    {residentMix.map((row) => (
-                      <td key={row.category} className="px-2 py-2 text-center font-semibold tabular-nums">{row.count}</td>
-                    ))}
-                  </tr>
-                </tbody>
-              </table>
+              {residents.isPending ? <p className="px-3 pb-3 text-xs text-muted-foreground">Loading resident mix…</p>
+                : residents.isError ? <p role="alert" className="px-3 pb-3 text-xs text-destructive">Unable to load resident mix.</p>
+                : owners + familyTenants + bachelorTenants === 0 ? <p className="px-3 pb-3 text-xs text-muted-foreground">No active residents to display.</p>
+                : <figure className="space-y-3 px-3 pb-3" aria-label="Active residents by category">
+                  {residentMix.map((row, index) => {
+                    const total = owners + familyTenants + bachelorTenants;
+                    const percentage = row.count / total * 100;
+                    const colors = ["bg-sky-500", "bg-emerald-500", "bg-violet-500"];
+                    return <div key={row.category} className="space-y-1">
+                      <div className="flex items-center justify-between gap-3 text-xs">
+                        <span className="font-medium">{row.category}</span>
+                        <span className="shrink-0 tabular-nums"><strong>{row.count}</strong> <span className="text-muted-foreground">({percentage.toFixed(1)}%)</span></span>
+                      </div>
+                      <div className="h-2 overflow-hidden rounded-full bg-muted" aria-hidden="true">
+                        <div className={`h-full rounded-full ${colors[index]}`} style={{ width: `${percentage}%` }} />
+                      </div>
+                    </div>;
+                  })}
+                  <figcaption className="text-xs text-muted-foreground">{owners + familyTenants + bachelorTenants} active residents</figcaption>
+                </figure>}
+
             </SectionCard>
             </div>
             <div className="grid min-w-0 gap-3 [&>*]:min-w-0">
