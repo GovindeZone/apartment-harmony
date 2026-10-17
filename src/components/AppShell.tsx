@@ -56,9 +56,9 @@ export const NAV = [
     icon: ClipboardList,
     group: [
       { to: "/attendance", label: "Attendance", icon: CalendarCheck },
-      { to: "/security", label: "Security", icon: ShieldCheck },
       { to: "/asset-management", label: "Asset Management", icon: Boxes },
       { to: "/helpdesk", label: "Help Desk", icon: MessageSquare },
+      { to: "/security", label: "Security", icon: ShieldCheck },
     ],
   },
   {
